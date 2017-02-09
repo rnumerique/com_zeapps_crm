@@ -92,7 +92,7 @@ class Zeapps_product_categories extends ZeModel {
     public function delete_r($id = NULL, $categories = NULL){
         if($id){
             if(!$categories){
-                $categories = $this->get_all();
+                $categories = $this->all();
             }
             $id_arr = array($id);
             foreach($categories as $category){

@@ -55,7 +55,7 @@ class Product extends ZeCtrl
             $product = $this->products->get($id);
 
             if($product && $product->compose == 1){
-                $lines = $this->lines->get_all(array('id_product'=>$product->id));
+                $lines = $this->lines->all(array('id_product'=>$product->id));
                 $product->lines = [];
                 if($lines && is_array($lines)){
                     foreach ($lines as $line){
@@ -75,7 +75,7 @@ class Product extends ZeCtrl
     public function getAll(){
         $this->load->model("Zeapps_product_products", "products");
 
-        $products = $this->products->get_all();
+        $products = $this->products->all();
 
         echo json_encode($products);
     }
@@ -84,7 +84,7 @@ class Product extends ZeCtrl
         if(isset($id)){
             $this->load->model("Zeapps_product_products", "products");
 
-            $products = $this->products->get_all(array('id_cat' => intval($id)));
+            $products = $this->products->all(array('id_cat' => intval($id)));
 
             echo json_encode($products);
         }
@@ -139,7 +139,7 @@ class Product extends ZeCtrl
                     }
                 }
             }
-            if($lines = $this->lines->get_all(array('id_part'=>$data['id'], 'auto'=>true))){
+            if($lines = $this->lines->all(array('id_part'=>$data['id'], 'auto'=>true))){
                 foreach ($lines as $line){
                     $this->_updatePriceOf($line->id_product);
                 }
@@ -160,7 +160,7 @@ class Product extends ZeCtrl
             $product = $this->products->get($id);
 
             if($product->compose){
-                if($lines = $this->lines->get_all(array('id_product' => $id))){
+                if($lines = $this->lines->all(array('id_product' => $id))){
                     foreach($lines as $line){
                         $this->lines->delete($line->id);
                     }
@@ -178,7 +178,7 @@ class Product extends ZeCtrl
 
     private function _updatePriceOf($id = null){
         if($id){
-            if($lines = $this->lines->get_all(array('id_product'=>$id))){
+            if($lines = $this->lines->all(array('id_product'=>$id))){
                 $price_ht = 0;
                 $price_ttc = 0;
                 foreach($lines as $line){

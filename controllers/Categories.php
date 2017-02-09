@@ -19,7 +19,7 @@ class Categories extends ZeCtrl
     public function get_tree(){
         $this->load->model("Zeapps_product_categories", "categories");
 
-        $categories = $this->categories->order_by('sort')->get_all();
+        $categories = $this->categories->order_by('sort')->all();
 
         if ($categories == false) {
             echo json_encode(array());
@@ -65,7 +65,7 @@ class Categories extends ZeCtrl
         if(isset($id)){
             $this->load->model("Zeapps_product_categories", "categories");
 
-            $categories = $this->categories->get_all("id_parent", $id);
+            $categories = $this->categories->all("id_parent", $id);
 
             echo json_encode($categories);
         }

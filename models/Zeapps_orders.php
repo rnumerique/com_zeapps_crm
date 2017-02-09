@@ -24,7 +24,7 @@ class Zeapps_orders extends ZeModel {
                 default:
                     $query .= ' 0';
             }
-            return sizeof($this->db->query($query)->result()) + 1;
+            return sizeof($this->database()->query($query)->result()) + 1;
         }
         else{
             return false;

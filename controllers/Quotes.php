@@ -46,7 +46,7 @@ class Quotes extends ZeCtrl
 
         $data['company'] = $this->quote_companies->get(array('id_quote'=>$id));
         $data['contact'] = $this->quote_contacts->get(array('id_quote'=>$id));
-        $data['lines'] = $this->quote_lines->order_by('sort')->get_all(array('id_quote'=>$id));
+        $data['lines'] = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
 
         //load the view and saved it into $html variable
         $html = $this->load->view('quotes/PDF', $data, true);
@@ -60,20 +60,17 @@ class Quotes extends ZeCtrl
         //this the the PDF filename that user will get to download
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/quotes/'.$nomPDF.'.pdf';
 
-        //load mPDF library
-        $this->load->library('m_pdf');
-
         //set the PDF header
-        $this->m_pdf->pdf->SetHeader('Devis n° : '.$data['quote']->numerotation.'|Compte Comptable : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Devis n° : '.$data['quote']->numerotation.'|Compte Comptable : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
-        $this->m_pdf->pdf->SetFooter('{PAGENO}/{nb}');
+        $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
 
         //generate the PDF from the given html
-        $this->m_pdf->pdf->WriteHTML($html);
+        $this->M_pdf->pdf->WriteHTML($html);
 
         //download it.
-        $this->m_pdf->pdf->Output($pdfFilePath, "F");
+        $this->M_pdf->pdf->Output($pdfFilePath, "F");
 
         echo json_encode($nomPDF);
     }
@@ -134,7 +131,7 @@ class Quotes extends ZeCtrl
 
             $id_order = $this->orders->insert($quote);
 
-            if($companies = $this->quote_companies->get_all(array('id_quote'=>$id))){
+            if($companies = $this->quote_companies->all(array('id_quote'=>$id))){
                 foreach($companies as $company){
                     unset($company->id);
                     unset($company->id_quote);
@@ -147,7 +144,7 @@ class Quotes extends ZeCtrl
                 }
             }
 
-            if($contacts = $this->quote_contacts->get_all(array('id_quote'=>$id))){
+            if($contacts = $this->quote_contacts->all(array('id_quote'=>$id))){
                 foreach($contacts as $contact){
                     unset($contact->id);
                     unset($contact->id_quote);
@@ -160,7 +157,7 @@ class Quotes extends ZeCtrl
                 }
             }
 
-            if($lines = $this->quote_lines->get_all(array('id_quote'=>$id))){
+            if($lines = $this->quote_lines->all(array('id_quote'=>$id))){
                 foreach($lines as $line){
                     unset($line->id);
                     unset($line->id_quote);
@@ -186,9 +183,9 @@ class Quotes extends ZeCtrl
         $this->load->model("zeapps_quote_lines", "quote_lines");
 
         if($id_company !== '0')
-            $quotes = $this->quotes->get_all(array('id_company'=>$id_company));
+            $quotes = $this->quotes->all(array('id_company'=>$id_company));
         else
-            $quotes = $this->quotes->get_all();
+            $quotes = $this->quotes->all();
 
         if($quotes && is_array($quotes)){
             for($i=0;$i<sizeof($quotes);$i++){
@@ -198,7 +195,7 @@ class Quotes extends ZeCtrl
                 }
                 $quotes[$i]->company = $this->quote_companies->get(array('id_quote'=>$quotes[$i]->id));
                 $quotes[$i]->contact = $this->quote_contacts->get(array('id_quote'=>$quotes[$i]->id));
-                $quotes[$i]->lines = $this->quote_lines->order_by('sort')->get_all(array('id_quote'=>$quotes[$i]->id));
+                $quotes[$i]->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$quotes[$i]->id));
             }
         }
 
@@ -224,9 +221,9 @@ class Quotes extends ZeCtrl
 
         $data->company = $this->quote_companies->get(array('id_quote'=>$id));
         $data->contact = $this->quote_contacts->get(array('id_quote'=>$id));
-        $data->lines = $this->quote_lines->order_by('sort')->get_all(array('id_quote'=>$id));
-        $data->documents = $this->quote_documents->get_all(array('id_quote'=>$id));
-        $data->activities = $this->quote_activities->get_all(array('id_quote'=>$id));
+        $data->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
+        $data->documents = $this->quote_documents->all(array('id_quote'=>$id));
+        $data->activities = $this->quote_activities->all(array('id_quote'=>$id));
 
         echo json_encode($data);
     }
@@ -353,7 +350,7 @@ class Quotes extends ZeCtrl
 
         $this->quotes->delete($id);
 
-        $companies = $this->quote_companies->get_all(array('id_quote' => $id));
+        $companies = $this->quote_companies->all(array('id_quote' => $id));
 
         if($companies && is_array($companies)){
             for($i=0;$i<sizeof($companies);$i++){
@@ -361,7 +358,7 @@ class Quotes extends ZeCtrl
             }
         }
 
-        $contacts = $this->quote_contacts->get_all(array('id_quote' => $id));
+        $contacts = $this->quote_contacts->all(array('id_quote' => $id));
 
         if($contacts && is_array($contacts)){
             for($i=0;$i<sizeof($contacts);$i++){
@@ -369,7 +366,7 @@ class Quotes extends ZeCtrl
             }
         }
 
-        $lines = $this->quote_lines->get_all(array('id_quote' => $id));
+        $lines = $this->quote_lines->all(array('id_quote' => $id));
 
         if($lines && is_array($lines)){
             for($i=0;$i<sizeof($lines);$i++){
@@ -377,7 +374,7 @@ class Quotes extends ZeCtrl
             }
         }
 
-        $documents = $this->quote_documents->get_all(array('id_quote' => $id));
+        $documents = $this->quote_documents->all(array('id_quote' => $id));
 
         $path = FCPATH;
 

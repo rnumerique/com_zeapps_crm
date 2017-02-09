@@ -46,7 +46,7 @@ class Orders extends ZeCtrl
 
         $data['company'] = $this->order_companies->get(array('id_order'=>$id));
         $data['contact'] = $this->order_contacts->get(array('id_order'=>$id));
-        $data['lines'] = $this->order_lines->order_by('sort')->get_all(array('id_order'=>$id));
+        $data['lines'] = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
 
         //load the view and saved it into $html variable
         $html = $this->load->view('orders/PDF', $data, true);
@@ -127,7 +127,7 @@ class Orders extends ZeCtrl
 
             $id_invoice = $this->invoices->insert($order);
 
-            if($companies = $this->order_companies->get_all(array('id_order'=>$id))){
+            if($companies = $this->order_companies->all(array('id_order'=>$id))){
                 foreach($companies as $company){
                     unset($company->id);
                     unset($company->id_order);
@@ -140,7 +140,7 @@ class Orders extends ZeCtrl
                 }
             }
 
-            if($contacts = $this->order_contacts->get_all(array('id_order'=>$id))){
+            if($contacts = $this->order_contacts->all(array('id_order'=>$id))){
                 foreach($contacts as $contact){
                     unset($contact->id);
                     unset($contact->id_order);
@@ -153,7 +153,7 @@ class Orders extends ZeCtrl
                 }
             }
 
-            if($lines = $this->order_lines->get_all(array('id_order'=>$id))){
+            if($lines = $this->order_lines->all(array('id_order'=>$id))){
                 foreach($lines as $line){
                     unset($line->id);
                     unset($line->id_order);
@@ -180,9 +180,9 @@ class Orders extends ZeCtrl
         $this->load->model("zeapps_order_lines", "order_lines");
 
         if($id_company)
-            $orders = $this->orders->get_all(array('id_company'=>$id_company));
+            $orders = $this->orders->all(array('id_company'=>$id_company));
         else
-            $orders = $this->orders->get_all();
+            $orders = $this->orders->all();
 
         if($orders && is_array($orders)){
             for($i=0;$i<sizeof($orders);$i++){
@@ -192,7 +192,7 @@ class Orders extends ZeCtrl
                 }
                 $orders[$i]->company = $this->order_companies->get(array('id_order'=>$orders[$i]->id));
                 $orders[$i]->contact = $this->order_contacts->get(array('id_order'=>$orders[$i]->id));
-                $orders[$i]->lines = $this->order_lines->order_by('sort')->get_all(array('id_order'=>$orders[$i]->id));
+                $orders[$i]->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
             }
         }
 
@@ -218,9 +218,9 @@ class Orders extends ZeCtrl
 
         $data->company = $this->order_companies->get(array('id_order'=>$id));
         $data->contact = $this->order_contacts->get(array('id_order'=>$id));
-        $data->lines = $this->order_lines->order_by('sort')->get_all(array('id_order'=>$id));
-        $data->documents = $this->order_documents->get_all(array('id_order'=>$id));
-        $data->activities = $this->order_activities->get_all(array('id_order'=>$id));
+        $data->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
+        $data->documents = $this->order_documents->all(array('id_order'=>$id));
+        $data->activities = $this->order_activities->all(array('id_order'=>$id));
 
         echo json_encode($data);
     }
@@ -347,7 +347,7 @@ class Orders extends ZeCtrl
 
         $this->orders->delete($id);
 
-        $companies = $this->order_companies->get_all(array('id_order' => $id));
+        $companies = $this->order_companies->all(array('id_order' => $id));
 
         if($companies && is_array($companies)){
             for($i=0;$i<sizeof($companies);$i++){
@@ -355,7 +355,7 @@ class Orders extends ZeCtrl
             }
         }
 
-        $contacts = $this->order_contacts->get_all(array('id_order' => $id));
+        $contacts = $this->order_contacts->all(array('id_order' => $id));
 
         if($contacts && is_array($contacts)){
             for($i=0;$i<sizeof($contacts);$i++){
@@ -363,7 +363,7 @@ class Orders extends ZeCtrl
             }
         }
 
-        $lines = $this->order_lines->get_all(array('id_order' => $id));
+        $lines = $this->order_lines->all(array('id_order' => $id));
 
         if($lines && is_array($lines)){
             for($i=0;$i<sizeof($lines);$i++){
@@ -371,7 +371,7 @@ class Orders extends ZeCtrl
             }
         }
 
-        $documents = $this->order_documents->get_all(array('id_order' => $id));
+        $documents = $this->order_documents->all(array('id_order' => $id));
 
         $path = FCPATH;
 

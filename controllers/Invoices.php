@@ -46,7 +46,7 @@ class Invoices extends ZeCtrl
 
         $data['company'] = $this->invoice_companies->get(array('id_invoice'=>$id));
         $data['contact'] = $this->invoice_contacts->get(array('id_invoice'=>$id));
-        $data['lines'] = $this->invoice_lines->order_by('sort')->get_all(array('id_invoice'=>$id));
+        $data['lines'] = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
 
         //load the view and saved it into $html variable
         $html = $this->load->view('invoices/PDF', $data, true);
@@ -141,9 +141,9 @@ class Invoices extends ZeCtrl
         $this->load->model("zeapps_invoice_lines", "invoice_lines");
 
         if($id_company)
-            $invoices = $this->invoices->get_all(array('id_company'=>$id_company));
+            $invoices = $this->invoices->all(array('id_company'=>$id_company));
         else
-            $invoices = $this->invoices->get_all();
+            $invoices = $this->invoices->all();
 
         if($invoices && is_array($invoices)){
             for($i=0;$i<sizeof($invoices);$i++){
@@ -153,7 +153,7 @@ class Invoices extends ZeCtrl
                 }
                 $invoices[$i]->company = $this->invoice_companies->get(array('id_invoice'=>$invoices[$i]->id));
                 $invoices[$i]->contact = $this->invoice_contacts->get(array('id_invoice'=>$invoices[$i]->id));
-                $invoices[$i]->lines = $this->invoice_lines->order_by('sort')->get_all(array('id_invoice'=>$invoices[$i]->id));
+                $invoices[$i]->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$invoices[$i]->id));
             }
         }
 
@@ -179,9 +179,9 @@ class Invoices extends ZeCtrl
 
         $data->company = $this->invoice_companies->get(array('id_invoice'=>$id));
         $data->contact = $this->invoice_contacts->get(array('id_invoice'=>$id));
-        $data->lines = $this->invoice_lines->order_by('sort')->get_all(array('id_invoice'=>$id));
-        $data->documents = $this->invoice_documents->get_all(array('id_invoice'=>$id));
-        $data->activities = $this->invoice_activities->get_all(array('id_invoice'=>$id));
+        $data->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+        $data->documents = $this->invoice_documents->all(array('id_invoice'=>$id));
+        $data->activities = $this->invoice_activities->all(array('id_invoice'=>$id));
 
         echo json_encode($data);
     }
@@ -308,7 +308,7 @@ class Invoices extends ZeCtrl
 
         $this->invoices->delete($id);
 
-        $companies = $this->invoice_companies->get_all(array('id_invoice' => $id));
+        $companies = $this->invoice_companies->all(array('id_invoice' => $id));
 
         if($companies && is_array($companies)){
             for($i=0;$i<sizeof($companies);$i++){
@@ -316,7 +316,7 @@ class Invoices extends ZeCtrl
             }
         }
 
-        $contacts = $this->invoice_contacts->get_all(array('id_invoice' => $id));
+        $contacts = $this->invoice_contacts->all(array('id_invoice' => $id));
 
         if($contacts && is_array($contacts)){
             for($i=0;$i<sizeof($contacts);$i++){
@@ -324,7 +324,7 @@ class Invoices extends ZeCtrl
             }
         }
 
-        $lines = $this->invoice_lines->get_all(array('id_invoice' => $id));
+        $lines = $this->invoice_lines->all(array('id_invoice' => $id));
 
         if($lines && is_array($lines)){
             for($i=0;$i<sizeof($lines);$i++){
@@ -332,7 +332,7 @@ class Invoices extends ZeCtrl
             }
         }
 
-        $documents = $this->invoice_documents->get_all(array('id_invoice' => $id));
+        $documents = $this->invoice_documents->all(array('id_invoice' => $id));
 
         $path = FCPATH;
 
