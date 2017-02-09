@@ -35,10 +35,10 @@ class Invoices extends ZeCtrl
 
     public function makePDF($id, $echo = true){
 
-        $this->load->model("zeapps_invoices", "invoices");
-        $this->load->model("zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         $data = [];
 
@@ -59,9 +59,6 @@ class Invoices extends ZeCtrl
 
         //this the the PDF filename that user will get to download
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/invoices/'.$nomPDF.'.pdf';
-
-        //load mPDF library
-        $this->load->library('m_pdf');
 
         //set the PDF header
         $this->m_pdf->pdf->SetHeader('Facture n° : '.$data['invoice']->numerotation.'|Compte Comptable : '.$data['invoice']->accounting_number.'|{DATE d/m/Y}');
@@ -91,7 +88,7 @@ class Invoices extends ZeCtrl
     }
 
     public function testFormat(){
-        $this->load->model("zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoices", "invoices");
 
         // constitution du tableau
         $data = array() ;
@@ -112,8 +109,8 @@ class Invoices extends ZeCtrl
 
     public function finalizeInvoice($id) {
         if($id) {
-            $this->load->model("zeapps_configs", "configs");
-            $this->load->model("zeapps_invoices", "invoices");
+            $this->load->model("Zeapps_configs", "configs");
+            $this->load->model("Zeapps_invoices", "invoices");
 
             $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
             $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
@@ -134,11 +131,11 @@ class Invoices extends ZeCtrl
     }
 
     public function getAll($id_company = null) {
-        $this->load->model("zeapps_users", "users");
-        $this->load->model("zeapps_invoices", "invoices");
-        $this->load->model("zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_users", "users");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         if($id_company)
             $invoices = $this->invoices->all(array('id_company'=>$id_company));
@@ -166,12 +163,12 @@ class Invoices extends ZeCtrl
     }
 
     public function get($id) {
-        $this->load->model("zeapps_invoices", "invoices");
-        $this->load->model("zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
-        $this->load->model("zeapps_invoice_documents", "invoice_documents");
-        $this->load->model("zeapps_invoice_activities", "invoice_activities");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_documents", "invoice_documents");
+        $this->load->model("Zeapps_invoice_activities", "invoice_activities");
 
         $data = new stdClass();
 
@@ -187,13 +184,13 @@ class Invoices extends ZeCtrl
     }
 
     public function save() {
-        $this->load->model("zeapps_configs", "configs");
-        $this->load->model("zeapps_companies", "companies");
-        $this->load->model("zeapps_contacts", "contacts");
-        $this->load->model("zeapps_invoices", "invoices");
-        $this->load->model("zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_configs", "configs");
+        $this->load->model("Zeapps_companies", "companies");
+        $this->load->model("Zeapps_contacts", "contacts");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -300,11 +297,11 @@ class Invoices extends ZeCtrl
     }
 
     public function delete($id) {
-        $this->load->model("zeapps_invoices", "invoices");
-        $this->load->model("zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
-        $this->load->model("zeapps_invoice_documents", "invoice_documents");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
         $this->invoices->delete($id);
 
@@ -347,7 +344,7 @@ class Invoices extends ZeCtrl
     }
 
     public function saveLine(){
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -367,7 +364,7 @@ class Invoices extends ZeCtrl
     }
 
     public function updateLinePosition(){
-        $this->load->model("zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -391,7 +388,7 @@ class Invoices extends ZeCtrl
 
     public function deleteLine($id = null){
         if($id){
-            $this->load->model("zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
             $line = $this->invoice_lines->get($id);
 
@@ -404,7 +401,7 @@ class Invoices extends ZeCtrl
 
     public function uploadDocuments($id_invoice = null){
         if($id_invoice) {
-            $this->load->model("zeapps_invoice_documents", "invoice_documents");
+            $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
             $data = [];
             $res = [];
@@ -452,7 +449,7 @@ class Invoices extends ZeCtrl
 
     public function deleteDocument($id = null){
         if($id){
-            $this->load->model("zeapps_invoice_documents", "invoice_documents");
+            $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
             $document = $this->invoice_documents->get($id);
 
@@ -471,7 +468,7 @@ class Invoices extends ZeCtrl
     }
 
     public function saveActivity(){
-        $this->load->model("zeapps_invoice_activities", "invoice_activities");
+        $this->load->model("Zeapps_invoice_activities", "invoice_activities");
 
         // constitution du tableau
         $data = array() ;
@@ -493,7 +490,7 @@ class Invoices extends ZeCtrl
 
     public function deleteActivity($id = null){
         if($id){
-            $this->load->model("zeapps_invoice_activities", "invoice_activities");
+            $this->load->model("Zeapps_invoice_activities", "invoice_activities");
 
             echo json_encode($this->invoice_activities->delete($id));
 

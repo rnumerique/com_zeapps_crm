@@ -35,10 +35,10 @@ class Orders extends ZeCtrl
 
     public function makePDF($id){
 
-        $this->load->model("zeapps_orders", "orders");
-        $this->load->model("zeapps_order_companies", "order_companies");
-        $this->load->model("zeapps_order_contacts", "order_contacts");
-        $this->load->model("zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_orders", "orders");
+        $this->load->model("Zeapps_order_companies", "order_companies");
+        $this->load->model("Zeapps_order_contacts", "order_contacts");
+        $this->load->model("Zeapps_order_lines", "order_lines");
 
         $data = [];
 
@@ -59,9 +59,6 @@ class Orders extends ZeCtrl
 
         //this the the PDF filename that user will get to download
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/orders/'.$nomPDF.'.pdf';
-
-        //load mPDF library
-        $this->load->library('m_pdf');
 
         //set the PDF header
         $this->m_pdf->pdf->SetHeader('Commande n° : '.$data['order']->numerotation.'|Compte Comptable : '.$data['order']->accounting_number.'|{DATE d/m/Y}');
@@ -88,7 +85,7 @@ class Orders extends ZeCtrl
     }
 
     public function testFormat(){
-        $this->load->model("zeapps_orders", "orders");
+        $this->load->model("Zeapps_orders", "orders");
 
         // constitution du tableau
         $data = array() ;
@@ -109,14 +106,14 @@ class Orders extends ZeCtrl
 
     public function createInvoiceFrom($id){
         if($id){
-            $this->load->model("zeapps_orders", "orders");
-            $this->load->model("zeapps_order_companies", "order_companies");
-            $this->load->model("zeapps_order_contacts", "order_contacts");
-            $this->load->model("zeapps_order_lines", "order_lines");
-            $this->load->model("zeapps_invoices", "invoices");
-            $this->load->model("zeapps_invoice_companies", "invoice_companies");
-            $this->load->model("zeapps_invoice_contacts", "invoice_contacts");
-            $this->load->model("zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_orders", "orders");
+            $this->load->model("Zeapps_order_companies", "order_companies");
+            $this->load->model("Zeapps_order_contacts", "order_contacts");
+            $this->load->model("Zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_invoices", "invoices");
+            $this->load->model("Zeapps_invoice_companies", "invoice_companies");
+            $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
+            $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
             $order = $this->orders->get($id);
 
@@ -173,11 +170,11 @@ class Orders extends ZeCtrl
 
 
     public function getAll($id_company = null) {
-        $this->load->model("zeapps_users", "users");
-        $this->load->model("zeapps_orders", "orders");
-        $this->load->model("zeapps_order_companies", "order_companies");
-        $this->load->model("zeapps_order_contacts", "order_contacts");
-        $this->load->model("zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_users", "users");
+        $this->load->model("Zeapps_orders", "orders");
+        $this->load->model("Zeapps_order_companies", "order_companies");
+        $this->load->model("Zeapps_order_contacts", "order_contacts");
+        $this->load->model("Zeapps_order_lines", "order_lines");
 
         if($id_company)
             $orders = $this->orders->all(array('id_company'=>$id_company));
@@ -205,12 +202,12 @@ class Orders extends ZeCtrl
     }
 
     public function get($id) {
-        $this->load->model("zeapps_orders", "orders");
-        $this->load->model("zeapps_order_companies", "order_companies");
-        $this->load->model("zeapps_order_contacts", "order_contacts");
-        $this->load->model("zeapps_order_lines", "order_lines");
-        $this->load->model("zeapps_order_documents", "order_documents");
-        $this->load->model("zeapps_order_activities", "order_activities");
+        $this->load->model("Zeapps_orders", "orders");
+        $this->load->model("Zeapps_order_companies", "order_companies");
+        $this->load->model("Zeapps_order_contacts", "order_contacts");
+        $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_documents", "order_documents");
+        $this->load->model("Zeapps_order_activities", "order_activities");
 
         $data = new stdClass();
 
@@ -226,13 +223,13 @@ class Orders extends ZeCtrl
     }
 
     public function save() {
-        $this->load->model("zeapps_configs", "configs");
-        $this->load->model("zeapps_companies", "companies");
-        $this->load->model("zeapps_contacts", "contacts");
-        $this->load->model("zeapps_orders", "orders");
-        $this->load->model("zeapps_order_companies", "order_companies");
-        $this->load->model("zeapps_order_contacts", "order_contacts");
-        $this->load->model("zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_configs", "configs");
+        $this->load->model("Zeapps_companies", "companies");
+        $this->load->model("Zeapps_contacts", "contacts");
+        $this->load->model("Zeapps_orders", "orders");
+        $this->load->model("Zeapps_order_companies", "order_companies");
+        $this->load->model("Zeapps_order_contacts", "order_contacts");
+        $this->load->model("Zeapps_order_lines", "order_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -339,11 +336,11 @@ class Orders extends ZeCtrl
     }
 
     public function delete($id) {
-        $this->load->model("zeapps_orders", "orders");
-        $this->load->model("zeapps_order_companies", "order_companies");
-        $this->load->model("zeapps_order_contacts", "order_contacts");
-        $this->load->model("zeapps_order_lines", "order_lines");
-        $this->load->model("zeapps_order_documents", "order_documents");
+        $this->load->model("Zeapps_orders", "orders");
+        $this->load->model("Zeapps_order_companies", "order_companies");
+        $this->load->model("Zeapps_order_contacts", "order_contacts");
+        $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_documents", "order_documents");
 
         $this->orders->delete($id);
 
@@ -386,7 +383,7 @@ class Orders extends ZeCtrl
     }
 
     public function saveLine(){
-        $this->load->model("zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_lines", "order_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -406,7 +403,7 @@ class Orders extends ZeCtrl
     }
 
     public function updateLinePosition(){
-        $this->load->model("zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_lines", "order_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -430,7 +427,7 @@ class Orders extends ZeCtrl
 
     public function deleteLine($id = null){
         if($id){
-            $this->load->model("zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_order_lines", "order_lines");
 
             $line = $this->order_lines->get($id);
 
@@ -443,7 +440,7 @@ class Orders extends ZeCtrl
 
     public function uploadDocuments($id_order = null){
         if($id_order) {
-            $this->load->model("zeapps_order_documents", "order_documents");
+            $this->load->model("Zeapps_order_documents", "order_documents");
 
             $data = [];
             $res = [];
@@ -491,7 +488,7 @@ class Orders extends ZeCtrl
 
     public function deleteDocument($id = null){
         if($id){
-            $this->load->model("zeapps_order_documents", "order_documents");
+            $this->load->model("Zeapps_order_documents", "order_documents");
 
             $document = $this->order_documents->get($id);
 
@@ -510,7 +507,7 @@ class Orders extends ZeCtrl
     }
 
     public function saveActivity(){
-        $this->load->model("zeapps_order_activities", "order_activities");
+        $this->load->model("Zeapps_order_activities", "order_activities");
 
         // constitution du tableau
         $data = array() ;
@@ -532,7 +529,7 @@ class Orders extends ZeCtrl
 
     public function deleteActivity($id = null){
         if($id){
-            $this->load->model("zeapps_order_activities", "order_activities");
+            $this->load->model("Zeapps_order_activities", "order_activities");
 
             echo json_encode($this->order_activities->delete($id));
 
