@@ -139,7 +139,7 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
 
             var formatted_data = angular.toJson(data);
 
-            zhttp.crm.invoice.post(formatted_data).then(function(response){
+            zhttp.crm.invoice.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
                     $rootScope.toasts.push({success:'Les informations de la commande ont bien été mises a jour'});
                     $scope.edit = false;

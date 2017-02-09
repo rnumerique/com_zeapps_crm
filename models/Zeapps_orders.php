@@ -1,13 +1,5 @@
 <?php
 class Zeapps_orders extends ZeModel {
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->soft_deletes = TRUE;
-    }
-
     public function get_numerotation($frequency = null){
         if($frequency){
             $query = 'SELECT * FROM zeapps_orders WHERE';
