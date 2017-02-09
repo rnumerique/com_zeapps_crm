@@ -6,10 +6,6 @@ class Zeapps_product_categories extends ZeModel {
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->soft_deletes = TRUE;
-
         $this->init_default_categories();
     }
 
@@ -29,7 +25,7 @@ class Zeapps_product_categories extends ZeModel {
         return;
     }
 
-    public function get($where = NULL){
+    public function get($where = array()){
         if($where == 0){
             return $this->root;
         }
@@ -42,9 +38,9 @@ class Zeapps_product_categories extends ZeModel {
         return;
     }
 
-    public function get_all($where = NULL){
+    public function all($where = array()){
 
-        $res = parent::get_all($where);
+        $res = parent::all($where);
         if($res)
             array_unshift($res, $this->root, $this->archive);
         else
@@ -53,7 +49,7 @@ class Zeapps_product_categories extends ZeModel {
         return $res;
     }
 
-    public function newProductIn($id = NULL, $parent = false){
+    public function newProductIn($id = array(), $parent = false){
         if($id) {
             $res = $this->get($id);
             if(!$parent) {
@@ -71,7 +67,7 @@ class Zeapps_product_categories extends ZeModel {
         return;
     }
 
-    public function removeProductIn($id = NULL, $parent = false, $qty = 1){
+    public function removeProductIn($id = array(), $parent = false, $qty = 1){
         if($id) {
             $res = $this->get($id);
             if(!$parent) {

@@ -1,13 +1,5 @@
 <?php
 class Zeapps_invoices extends ZeModel {
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->soft_deletes = TRUE;
-    }
-
     public function get_numerotation($frequency = null){
         if($frequency){
             $query = 'SELECT * FROM zeapps_invoices WHERE';
@@ -24,7 +16,7 @@ class Zeapps_invoices extends ZeModel {
                 default:
                     $query .= ' 0';
             }
-            return sizeof($this->db->query($query)->result()) + 1;
+            return sizeof($this->database()->query($query)->result()) + 1;
         }
         else{
             return false;

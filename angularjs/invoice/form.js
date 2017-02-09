@@ -37,7 +37,7 @@ app.controller('ComZeappsCrmInvoiceFormCtrl', ['$scope', '$route', '$routeParams
 
             var formatted_data = angular.toJson(data);
 
-            http.crm.post.invoice(formatted_data).then(function(response){
+            http.crm.invoice.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
                     $location.url('/ng/com_zeapps_crm/invoice/' + response.data);
                 }

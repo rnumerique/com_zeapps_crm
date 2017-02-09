@@ -1,13 +1,6 @@
 <?php
 class Zeapps_product_products extends ZeModel {
 
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->soft_deletes = TRUE;
-    }
-
     public function test($data = NULL){
         if($data){
             //Tests to see if the data we receive fits what we want

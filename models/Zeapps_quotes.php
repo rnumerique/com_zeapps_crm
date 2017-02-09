@@ -1,13 +1,6 @@
 <?php
 class Zeapps_quotes extends ZeModel {
 
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->soft_deletes = TRUE;
-    }
-
     public function get_numerotation($frequency = null){
         if($frequency){
             $query = 'SELECT * FROM zeapps_quotes WHERE';
@@ -24,7 +17,7 @@ class Zeapps_quotes extends ZeModel {
                 default:
                     $query .= ' 0';
             }
-            return sizeof($this->db->query($query)->result()) + 1;
+            return sizeof($this->database()->query($query)->result()) + 1;
         }
         else{
             return false;

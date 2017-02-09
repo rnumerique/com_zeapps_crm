@@ -247,7 +247,7 @@ class Quotes extends ZeCtrl
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
             $id = $data["id"];
-            $this->quotes->update($data, $data["id"]);
+            $this->quotes->update($data, array('id' => $data["id"]));
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_quote_format'))->value;
