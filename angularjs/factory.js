@@ -10,8 +10,9 @@ app.config(['$provide',
             var get_invoice = function(id){
                 return zeHttp.get('/com_zeapps_crm/invoices/get/' + id)
             };
-            var getAll_invoice = function(){
-                return zeHttp.get('/com_zeapps_crm/invoices/getAll');
+            var getAll_invoice = function(id_project){
+                id_project = id_project || 0;
+                return zeHttp.get('/com_zeapps_crm/invoices/getAll/' + id_project);
             };
             var post_invoice = function(data){
                 return zeHttp.post('/com_zeapps_crm/invoices/save', data);
@@ -55,8 +56,9 @@ app.config(['$provide',
             var get_order = function(id){
                 return zeHttp.get('/com_zeapps_crm/orders/get/' + id)
             };
-            var getAll_order = function(){
-                return zeHttp.get('/com_zeapps_crm/orders/getAll');
+            var getAll_order = function(id_project){
+                id_project = id_project || 0;
+                return zeHttp.get('/com_zeapps_crm/orders/getAll/' + id_project);
             };
             var post_order = function(data){
                 return zeHttp.post('/com_zeapps_crm/orders/save', data);
@@ -188,25 +190,25 @@ app.config(['$provide',
 
             // CONFIG
             var get_invoice_freq = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_invoice_frequency');
+                return zeHttp.get('/zeapps/config/get/crm_invoice_frequency');
             };
             var get_invoice_format = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_invoice_format');
+                return zeHttp.get('/zeapps/config/get/crm_invoice_format');
             };
             var get_quote_freq = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_quote_frequency');
+                return zeHttp.get('/zeapps/config/get/crm_quote_frequency');
             };
             var get_quote_format = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_quote_format');
+                return zeHttp.get('/zeapps/config/get/crm_quote_format');
             };
             var get_order_freq = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_order_frequency');
+                return zeHttp.get('/zeapps/config/get/crm_order_frequency');
             };
             var get_order_format = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_order_format');
+                return zeHttp.get('/zeapps/config/get/crm_order_format');
             };
             var get_product_attr = function(){
-                return zeHttp.get('/ze-apps/config/get/crm_product_attributes');
+                return zeHttp.get('/zeapps/config/get/crm_product_attributes');
             };
 
             zeHttp.crm = {
