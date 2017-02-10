@@ -4,23 +4,25 @@ app.controller('ComZeappsCrmQuoteListsPartialCtrl', ['$scope', '$route', '$route
         $rootScope.quotes = {};
         $scope.id_company = 0;
 
-        $scope.$emit('comZeappsContact_triggerEntrepriseHook', {});
 
-        $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data){
-            $scope.id_company = data.id_company;
-            zhttp.crm.quote.get_all($scope.id_company).then(function(response){
-                if(response.data && response.data != 'false'){
-                    $rootScope.quotes = response.data;
-                    for(var i=0; i<$rootScope.quotes.length; i++){
-                        $rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
-                        $rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
+        $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data) {
+            if ($scope.id_company !== data.id_company){
+                $scope.id_company = data.id_company;
+                zhttp.crm.quote.get_all($scope.id_company).then(function (response) {
+                    if (response.data && response.data != 'false') {
+                        $rootScope.quotes = response.data;
+                        for (var i = 0; i < $rootScope.quotes.length; i++) {
+                            $rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
+                            $rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
+                        }
                     }
-                }
-                else{
-                    $rootScope.orders = {};
-                }
-            });
+                    else {
+                        $rootScope.orders = {};
+                    }
+                });
+            }
         });
+        $scope.$emit('comZeappsContact_triggerEntrepriseHook', {});
 
 
         $scope.totalHT = function(quote){
