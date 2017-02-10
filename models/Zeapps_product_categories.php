@@ -7,6 +7,8 @@ class Zeapps_product_categories extends ZeModel {
     public function __construct()
     {
         $this->init_default_categories();
+
+        parent::__construct();
     }
 
     private function init_default_categories(){

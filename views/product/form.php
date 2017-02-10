@@ -17,39 +17,57 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="well">
                 <div class="row">
 
-                    <div class="col-md-6">
 
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Reference</label>
+                            <input type="text" ng-model="form.ref" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Nom du produit <span class="required">*</span></label>
                             <input type="text" ng-model="form.name" class="form-control" ng-required="true">
                         </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>TVA <span class="required">*</span></label>
+                            <div class="input-group">
+                                <input type="number" min="0" step="0.01" ng-model="form.tva" class="form-control" ng-change="updatePrice('ttc')" ng-required="true">
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Compte Comptable <span class="required">*</span></label>
                             <input type="text" ng-model="form.accounting_number" class="form-control" ng-required="true">
                         </div>
-
                     </div>
 
                     <div class="col-md-6">
-
                         <div class="form-group">
                             <label>Prix HT <span class="required">*</span></label>
                             <div class="input-group">
-                                <input type="number" min="0" step="0.01" ng-model="form.price_ht" class="form-control" ng-required="true">
+                                <input type="number" min="0" step="0.01" ng-model="form.price_ht" class="form-control" ng-change="updatePrice('ttc')" ng-required="true">
                                 <span class="input-group-addon">€</span>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label>TVA <span class="required">*</span></label>
+                            <label>Prix TTC <span class="required">*</span></label>
                             <div class="input-group">
-                                <input type="number" min="0" step="0.01" ng-model="form.tva" class="form-control" ng-required="true">
-                                <span class="input-group-addon">%</span>
+                                <input type="number" min="0" step="0.01" ng-model="form.price_ttc" class="form-control" ng-change="updatePrice('ht')" ng-required="true">
+                                <span class="input-group-addon">€</span>
                             </div>
                         </div>
-
                     </div>
+
 
                     <div class="col-md-12">
 

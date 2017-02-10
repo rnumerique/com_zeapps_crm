@@ -166,5 +166,8 @@
     </div>
 
 </div>
+<div class="text-center">
+    En cas de paiement par virement, veuillez indiquer la référence de votre facture : “Facture N° <?php echo $invoice->numerotation; ?>”
+</div>
 </body>
 </html>

@@ -36,6 +36,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
                             $scope.form = response.data;
                             $scope.form.price_ht = parseFloat($scope.form.price_ht);
                             $scope.form.tva = parseFloat($scope.form.tva);
+                            $scope.form.price_ttc = parseFloat($scope.form.price_ttc);
                             $scope.form.extra = angular.fromJson($scope.form.extra);
                             zhttp.crm.category.openTree($scope.tree, $scope.form.id_cat);
                             zhttp.crm.category.get($scope.form.id_cat).then(function (response) {
@@ -53,7 +54,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
             zhttp.crm.category.tree().then(function (response) {
                 if (response.status == 200) {
                     $scope.tree.branches = response.data;
-                    zhttp.crm.category.penTree($scope.tree, $routeParams.category);
+                    zhttp.crm.category.openTree($scope.tree, $routeParams.category);
                     zhttp.crm.category.get($routeParams.category).then(function (response) {
                         if (response.status == 200) {
                             $scope.activeCategory.data = response.data;
@@ -62,6 +63,17 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
                 }
             });
         }
+
+        $scope.updatePrice = function(price){
+            if($scope.form.tva && $scope.form.tva > 0) {
+                if (price === 'ht') {
+                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.tva / 100).toFixed(2));
+                }
+                if (price === 'ttc') {
+                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.tva / 100).toFixed(2));
+                }
+            }
+        };
 
         $scope.$watch('activeCategory.data', function(value, old, scope){
             if(typeof(value.id) !== 'undefined'){
@@ -137,7 +149,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
             data.id_cat = $scope.form.id_cat;
             data.description = $scope.form.description;
             data.price_ht = $scope.form.price_ht;
-            data.price_ttc = $scope.form.price_ht * ( 1 + $scope.form.tva / 100);
+            data.price_ttc = $scope.form.price_ttc;
             data.tva = $scope.form.tva;
             data.accounting_number = $scope.form.accounting_number;
             data.extra = angular.toJson($scope.form.extra);

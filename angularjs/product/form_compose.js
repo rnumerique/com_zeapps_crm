@@ -28,6 +28,9 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                         if (response.status == 200) {
                             $scope.form = response.data;
                             $scope.form.auto = !!parseInt($scope.form.auto);
+                            $scope.form.price_ht = parseFloat($scope.form.price_ht);
+                            $scope.form.tva = parseFloat($scope.form.tva);
+                            $scope.form.price_ttc = parseFloat($scope.form.price_ttc);
                             angular.forEach($scope.form.lines, function(line){
                                 line.quantite = parseInt(line.quantite);
                             });
@@ -58,6 +61,17 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
             });
         }
 
+        $scope.updatePrice = function(price){
+            if($scope.form.tva && $scope.form.tva > 0) {
+                if (price === 'ht') {
+                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.tva / 100).toFixed(2));
+                }
+                if (price === 'ttc') {
+                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.tva / 100).toFixed(2));
+                }
+            }
+        };
+
         $scope.$watch('activeCategory.data', function(value, old, scope){
             if(typeof(value.id) !== 'undefined'){
                 scope.form.id_cat = value.id;
@@ -69,11 +83,11 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                 scope.form.price_ht = 0;
                 scope.form.price_ttc = 0;
                 angular.forEach(value, function(line){
-                    scope.form.price_ht += parseInt(line.quantite) * parseFloat(line.product.price_ttc);
+                    scope.form.price_ht += parseInt(line.quantite) * parseFloat(line.product.price_ht);
                     scope.form.price_ttc += parseInt(line.quantite) * parseFloat(line.product.price_ttc);
                 });
-                scope.form.price_ht = scope.form.price_ht.toFixed(2);
-                scope.form.price_ttc = scope.form.price_ttc.toFixed(2);
+                scope.form.price_ht = parseFloat(scope.form.price_ht.toFixed(2));
+                scope.form.price_ttc = parseFloat(scope.form.price_ttc.toFixed(2));
             }
         }, true);
 
