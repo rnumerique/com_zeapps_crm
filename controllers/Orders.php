@@ -24,6 +24,13 @@ class Orders extends ZeCtrl
         $this->load->view('orders/lists', $data);
     }
 
+    public function lists_partial()
+    {
+        $data = array() ;
+
+        $this->load->view('orders/lists_partial', $data);
+    }
+
     public function config()
     {
         $data = array() ;
@@ -224,8 +231,8 @@ class Orders extends ZeCtrl
 
     public function save() {
         $this->load->model("Zeapps_configs", "configs");
-        $this->load->model("Zeapps_companies", "companies");
-        $this->load->model("Zeapps_contacts", "contacts");
+        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
+        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_companies", "order_companies");
         $this->load->model("Zeapps_order_contacts", "order_contacts");

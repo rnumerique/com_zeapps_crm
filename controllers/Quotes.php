@@ -24,6 +24,13 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/lists', $data);
     }
 
+    public function lists_partial()
+    {
+        $data = array() ;
+
+        $this->load->view('quotes/lists_partial', $data);
+    }
+
     public function config()
     {
         $data = array() ;
@@ -230,8 +237,8 @@ class Quotes extends ZeCtrl
 
     public function save() {
         $this->load->model("Zeapps_configs", "configs");
-        $this->load->model("Zeapps_companies", "companies");
-        $this->load->model("Zeapps_contacts", "contacts");
+        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
+        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
         $this->load->model("Zeapps_quote_contacts", "quote_contacts");

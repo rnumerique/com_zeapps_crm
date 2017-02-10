@@ -24,6 +24,13 @@ class Invoices extends ZeCtrl
         $this->load->view('invoices/lists', $data);
     }
 
+    public function lists_partial()
+    {
+        $data = array() ;
+
+        $this->load->view('invoices/lists_partial', $data);
+    }
+
     public function config()
     {
         $data = array() ;
@@ -185,8 +192,8 @@ class Invoices extends ZeCtrl
 
     public function save() {
         $this->load->model("Zeapps_configs", "configs");
-        $this->load->model("Zeapps_companies", "companies");
-        $this->load->model("Zeapps_contacts", "contacts");
+        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
+        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
         $this->load->model("Zeapps_invoices", "invoices");
         $this->load->model("Zeapps_invoice_companies", "invoice_companies");
         $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
