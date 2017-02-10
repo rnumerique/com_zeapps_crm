@@ -15,6 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <table class="table table-striped table-condensed table-responsive" ng-show="invoices.length">
             <thead>
             <tr>
+                <th>#</th>
                 <th>Nom</th>
                 <th>Contact</th>
                 <th>Entreprise</th>
@@ -28,6 +29,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </thead>
             <tbody>
             <tr ng-repeat="invoice in invoices">
+                <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.numerotation}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.libelle}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.contact.first_name[0] + '. ' + invoice.contact.last_name}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.company.company_name}}</a></td>

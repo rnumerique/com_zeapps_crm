@@ -39,7 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Date de création</label>
-                        <input type="date" ng-model="form.date_creation" class="form-control">
+                        <input type="date" ng-model="form.date_creation" class="form-control" ng-required="true">
                     </div>
 
 
@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Date de validité</label>
-                        <input type="date" ng-model="form.date_limit" class="form-control">
+                        <input type="date" ng-model="form.date_limit" class="form-control" ng-required="true">
                     </div>
 
                     <div class="form-group">

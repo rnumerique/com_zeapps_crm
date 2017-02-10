@@ -15,6 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <table class="table table-striped table-condensed table-responsive" ng-show="orders.length">
             <thead>
             <tr>
+                <th>#</th>
                 <th>Nom</th>
                 <th>Contact</th>
                 <th>Entreprise</th>
@@ -28,6 +29,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </thead>
             <tbody>
             <tr ng-repeat="order in orders">
+                <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.numerotation}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.libelle}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.contact.first_name[0] + '. ' + order.contact.last_name}}</a></td>
                 <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.company.company_name}}</a></td>

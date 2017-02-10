@@ -18,47 +18,51 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="row">
 
                     <div class="col-md-6">
-
+                        <div class="form-group">
+                            <label>Reference</label>
+                            <input type="text" ng-model="form.ref" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Nom du produit <span class="required">*</span></label>
                             <input type="text" ng-model="form.name" class="form-control" ng-required="true">
                         </div>
+                    </div>
 
-
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label>Prix Cumulé TTC</label>
-                            <input type="text" ng-model="form.price_ttc" class="form-control" disabled>
+                            <label>Prix Cumulé HT <span class="required">*</span></label>
+                            <input type="number" ng-model="form.price_ht" ng-change="updatePrice('ttc')" class="form-control">
                         </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Prix Cumulé TTC <span class="required">*</span></label>
+                            <input type="number" ng-model="form.price_ttc" ng-change="updatePrice('ht')" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Compte Comptable <span class="required">*</span></label>
+                            <input type="text" ng-model="form.accounting_number" class="form-control" ng-required="true">
+                        </div>
+                    </div>
 
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" ng-model="form.auto">
                                 Mise a jour automatique du prix
                             </label>
                         </div>
-
-                    </div>
-
-                    <div class="col-md-6">
-
-                        <div class="form-group">
-                            <label>Reference</label>
-                            <input type="text" ng-model="form.ref" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Compte Comptable <span class="required">*</span></label>
-                            <input type="text" ng-model="form.account" class="form-control" ng-required="true">
-                        </div>
                     </div>
 
                     <div class="col-md-12">
-
                         <div class="form-group">
                             <label>Description</label>
                             <input type="text" ng-model="form.description" class="form-control">
                         </div>
-
                     </div>
 
                 </div>

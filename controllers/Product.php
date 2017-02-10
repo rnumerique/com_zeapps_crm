@@ -80,15 +80,12 @@ class Product extends ZeCtrl
         echo json_encode($products);
     }
 
-    public function getProductsOf($id = NULL){
-        if(isset($id)){
-            $this->load->model("Zeapps_product_products", "products");
+    public function getProductsOf($id = null){
+        $this->load->model("Zeapps_product_products", "products");
 
-            $products = $this->products->all(array('id_cat' => intval($id)));
+        $products = $this->products->all(array('id_cat' => $id));
 
-            echo json_encode($products);
-        }
-        return;
+        echo json_encode($products);
     }
 
     public function save() {
