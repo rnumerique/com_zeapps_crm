@@ -10,8 +10,8 @@ app.controller('ComZeappsCrmOrderFormCtrl', ['$scope', '$route', '$routeParams',
 
             data['libelle'] = $scope.form.libelle;
             data['id_user'] = $scope.form.id_user_account_manager;
-            data['id_company'] = $scope.form.company.id || 0;
-            data['id_contact'] = $scope.form.contact.id || 0;
+            data['id_company'] = $scope.form.company ? ($scope.form.company.id || 0) : 0;
+            data['id_contact'] = $scope.form.contact ? ($scope.form.contact.id || 0) : 0;
             data['accounting_number'] = $scope.form.accounting_number;
             data['global_discount'] = $scope.form.global_discount;
             if($scope.form.date_creation) {
@@ -39,7 +39,7 @@ app.controller('ComZeappsCrmOrderFormCtrl', ['$scope', '$route', '$routeParams',
 
             zhttp.crm.order.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
-                    $location.url('/ng/com_zeapps_crm/order/' + response.data);
+                    $location.url('/ng/com_zeapps_crm/order/' + angular.fromJson(response.data));
                 }
             });
         };
@@ -99,6 +99,7 @@ app.controller('ComZeappsCrmOrderFormCtrl', ['$scope', '$route', '$routeParams',
             zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {}, function(objReturn) {
                 if (objReturn) {
                     $scope.form.contact = objReturn;
+                    $scope.form.contact.name = $scope.form.contact.last_name + ' ' + $scope.form.contact.first_name;
                     $scope.form.accounting_number = $scope.form.accounting_number || $scope.form.contact.accounting_number;
                 }
             });

@@ -24,6 +24,13 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/lists', $data);
     }
 
+    public function lists_partial()
+    {
+        $data = array() ;
+
+        $this->load->view('quotes/lists_partial', $data);
+    }
+
     public function config()
     {
         $data = array() ;
@@ -35,10 +42,10 @@ class Quotes extends ZeCtrl
 
     public function makePDF($id){
 
-        $this->load->model("zeapps_quotes", "quotes");
-        $this->load->model("zeapps_quote_companies", "quote_companies");
-        $this->load->model("zeapps_quote_contacts", "quote_contacts");
-        $this->load->model("zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quote_companies", "quote_companies");
+        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         $data = [];
 
@@ -85,7 +92,7 @@ class Quotes extends ZeCtrl
     }
 
     public function testFormat(){
-        $this->load->model("zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quotes", "quotes");
 
         // constitution du tableau
         $data = array() ;
@@ -106,15 +113,15 @@ class Quotes extends ZeCtrl
 
     public function createOrderFrom($id){
         if($id){
-            $this->load->model("zeapps_configs", "configs");
-            $this->load->model("zeapps_quotes", "quotes");
-            $this->load->model("zeapps_quote_companies", "quote_companies");
-            $this->load->model("zeapps_quote_contacts", "quote_contacts");
-            $this->load->model("zeapps_quote_lines", "quote_lines");
-            $this->load->model("zeapps_orders", "orders");
-            $this->load->model("zeapps_order_companies", "order_companies");
-            $this->load->model("zeapps_order_contacts", "order_contacts");
-            $this->load->model("zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_configs", "configs");
+            $this->load->model("Zeapps_quotes", "quotes");
+            $this->load->model("Zeapps_quote_companies", "quote_companies");
+            $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+            $this->load->model("Zeapps_quote_lines", "quote_lines");
+            $this->load->model("Zeapps_orders", "orders");
+            $this->load->model("Zeapps_order_companies", "order_companies");
+            $this->load->model("Zeapps_order_contacts", "order_contacts");
+            $this->load->model("Zeapps_order_lines", "order_lines");
 
             $quote = $this->quotes->get($id);
 
@@ -176,11 +183,11 @@ class Quotes extends ZeCtrl
     }
 
     public function getAll($id_company = '0') {
-        $this->load->model("zeapps_users", "users");
-        $this->load->model("zeapps_quotes", "quotes");
-        $this->load->model("zeapps_quote_companies", "quote_companies");
-        $this->load->model("zeapps_quote_contacts", "quote_contacts");
-        $this->load->model("zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_users", "users");
+        $this->load->model("Zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quote_companies", "quote_companies");
+        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         if($id_company !== '0')
             $quotes = $this->quotes->all(array('id_company'=>$id_company));
@@ -208,12 +215,12 @@ class Quotes extends ZeCtrl
     }
 
     public function get($id) {
-        $this->load->model("zeapps_quotes", "quotes");
-        $this->load->model("zeapps_quote_companies", "quote_companies");
-        $this->load->model("zeapps_quote_contacts", "quote_contacts");
-        $this->load->model("zeapps_quote_lines", "quote_lines");
-        $this->load->model("zeapps_quote_documents", "quote_documents");
-        $this->load->model("zeapps_quote_activities", "quote_activities");
+        $this->load->model("Zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quote_companies", "quote_companies");
+        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_documents", "quote_documents");
+        $this->load->model("Zeapps_quote_activities", "quote_activities");
 
         $data = new stdClass();
 
@@ -229,13 +236,13 @@ class Quotes extends ZeCtrl
     }
 
     public function save() {
-        $this->load->model("zeapps_configs", "configs");
-        $this->load->model("zeapps_companies", "companies");
-        $this->load->model("zeapps_contacts", "contacts");
-        $this->load->model("zeapps_quotes", "quotes");
-        $this->load->model("zeapps_quote_companies", "quote_companies");
-        $this->load->model("zeapps_quote_contacts", "quote_contacts");
-        $this->load->model("zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_configs", "configs");
+        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
+        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
+        $this->load->model("Zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quote_companies", "quote_companies");
+        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -342,11 +349,11 @@ class Quotes extends ZeCtrl
     }
 
     public function delete($id) {
-        $this->load->model("zeapps_quotes", "quotes");
-        $this->load->model("zeapps_quote_companies", "quote_companies");
-        $this->load->model("zeapps_quote_contacts", "quote_contacts");
-        $this->load->model("zeapps_quote_lines", "quote_lines");
-        $this->load->model("zeapps_quote_documents", "quote_documents");
+        $this->load->model("Zeapps_quotes", "quotes");
+        $this->load->model("Zeapps_quote_companies", "quote_companies");
+        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_documents", "quote_documents");
 
         $this->quotes->delete($id);
 
@@ -389,7 +396,7 @@ class Quotes extends ZeCtrl
     }
 
     public function saveLine(){
-        $this->load->model("zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -409,7 +416,7 @@ class Quotes extends ZeCtrl
     }
 
     public function updateLinePosition(){
-        $this->load->model("zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -433,7 +440,7 @@ class Quotes extends ZeCtrl
 
     public function deleteLine($id = null){
         if($id){
-            $this->load->model("zeapps_quote_lines", "quote_lines");
+            $this->load->model("Zeapps_quote_lines", "quote_lines");
 
             $line = $this->quote_lines->get($id);
 
@@ -446,7 +453,7 @@ class Quotes extends ZeCtrl
 
     public function uploadDocuments($id_quote = null){
         if($id_quote) {
-            $this->load->model("zeapps_quote_documents", "quote_documents");
+            $this->load->model("Zeapps_quote_documents", "quote_documents");
 
             $data = [];
             $res = [];
@@ -494,7 +501,7 @@ class Quotes extends ZeCtrl
 
     public function deleteDocument($id = null){
         if($id){
-            $this->load->model("zeapps_quote_documents", "quote_documents");
+            $this->load->model("Zeapps_quote_documents", "quote_documents");
 
             $document = $this->quote_documents->get($id);
 
@@ -513,7 +520,7 @@ class Quotes extends ZeCtrl
     }
 
     public function saveActivity(){
-        $this->load->model("zeapps_quote_activities", "quote_activities");
+        $this->load->model("Zeapps_quote_activities", "quote_activities");
 
         // constitution du tableau
         $data = array() ;
@@ -535,7 +542,7 @@ class Quotes extends ZeCtrl
 
     public function deleteActivity($id = null){
         if($id){
-            $this->load->model("zeapps_quote_activities", "quote_activities");
+            $this->load->model("Zeapps_quote_activities", "quote_activities");
 
             echo json_encode($this->quote_activities->delete($id));
 

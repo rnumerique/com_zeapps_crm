@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="form-group">
                         <label>Contact</label>
                         <div class="input-group">
-                            <input type="text" ng-model="form.contact.last_name" class="form-control" disabled>
+                            <input type="text" ng-model="form.contact.name" class="form-control" disabled>
 
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button" ng-click="removeContact()"
