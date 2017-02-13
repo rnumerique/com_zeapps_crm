@@ -5,6 +5,21 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
 
         $scope.form = {};
 
+        function Initform(){
+            $scope.form.id_user_account_manager = $rootScope.user.id;
+            $scope.form.name_user_account_manager = $rootScope.user.firstname + ' ' + $rootScope.user.lastname;
+            $scope.form.date_creation = new Date();
+            $scope.form.date_limit = new Date();
+            $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+        }
+
+        Initform();
+
+        $scope.updateDateLimit = function(){
+            $scope.form.date_limit = new Date($scope.form.date_creation);
+            $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+        };
+
         $scope.success = function(){
             var data = {};
 
@@ -64,15 +79,15 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
                     $scope.form.id_user_account_manager = objReturn.id;
                     $scope.form.name_user_account_manager = objReturn.firstname + ' ' + objReturn.lastname;
                 } else {
-                    $scope.form.id_user_account_manager = 0;
-                    $scope.form.name_user_account_manager = '';
+                    delete $scope.form.id_user_account_manager;
+                    delete $scope.form.name_user_account_manager;
                 }
             });
         };
 
         $scope.removeAccountManager = function() {
-            $scope.form.id_user_account_manager = 0;
-            $scope.form.name_user_account_manager = '';
+            delete $scope.form.id_user_account_manager;
+            delete $scope.form.name_user_account_manager;
         };
 
         $scope.loadCompany = function () {

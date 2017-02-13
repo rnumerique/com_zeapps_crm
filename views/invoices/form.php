@@ -20,7 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="form-group">
                         <label>Société</label>
                         <div class="input-group">
-                            <input type="text" ng-model="form.company.company_name" class="form-control" disabled>
+                            <input type="text" ng-model="form.company.company_name" class="form-control" disabled ng-required="!form.contact">
 
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button" ng-click="removeCompany()"
@@ -39,7 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Date de création</label>
-                        <input type="date" ng-model="form.date_creation" class="form-control" ng-required="true">
+                        <input type="date" ng-model="form.date_creation" ng-change="updateDateLimit()" class="form-control" ng-required="true">
                     </div>
 
 
@@ -55,7 +55,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="form-group">
                         <label>Gestionnaire de la facture</label>
                         <div class="input-group">
-                            <input type="text" ng-model="form.name_user_account_manager" class="form-control" disabled>
+                            <input type="text" ng-model="form.name_user_account_manager" class="form-control" disabled ng-required="true">
 
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button" ng-click="removeAccountManager()"
@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="form-group">
                         <label>Contact</label>
                         <div class="input-group">
-                            <input type="text" ng-model="form.contact.name" class="form-control" disabled>
+                            <input type="text" ng-model="form.contact.name" class="form-control" disabled ng-required="!form.company">
 
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button" ng-click="removeContact()"
