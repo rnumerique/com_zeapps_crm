@@ -1,5 +1,5 @@
-app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal', 'Upload',
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal, Upload) {
+app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload',
+    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload) {
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_invoice");
 
@@ -405,7 +405,13 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
             if($scope.invoice.finalized !== '0')
                 return;
 
+            $scope.activity = {};
+            $scope.activity.reminder = new Date();
             $scope.showActivityInput = !$scope.showActivityInput;
+        };
+
+        $scope.closeActivity = function(){
+            $scope.showActivityInput = false;
         };
 
         $scope.addActivity = function(){
@@ -437,7 +443,8 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
                     if(response.data && response.data != 'false'){
                         if($scope.activity.id == undefined)
                             $scope.activities.push(response.data);
-                        delete $scope.activity;
+                        $scope.activity = {};
+                        $scope.activity.reminder = new Date();
                     }
                 });
             }
@@ -449,6 +456,50 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
 
             $scope.activity = activity;
             $scope.showActivityInput = true;
+        };
+
+        $scope.deleteActivity = function(activity){
+            if($scope.invoice.finalized !== '0')
+                return;
+
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: '/assets/angular/popupModalDeBase.html',
+                controller: 'ZeAppsPopupModalDeBaseCtrl',
+                size: 'lg',
+                resolve: {
+                    titre: function () {
+                        return 'Attention';
+                    },
+                    msg: function () {
+                        return 'Souhaitez-vous supprimer définitivement cette activité ?';
+                    },
+                    action_danger: function () {
+                        return 'Annuler';
+                    },
+                    action_primary: function () {
+                        return false;
+                    },
+                    action_success: function () {
+                        return 'Je confirme la suppression';
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (selectedItem) {
+                if (selectedItem.action == 'danger') {
+
+                } else if (selectedItem.action == 'success') {
+                    zhttp.crm.invoice.activity.del(activity.id).then(function (response) {
+                        if (response.status == 200) {
+                            $scope.activities.splice($scope.activities.indexOf(activity), 1);
+                        }
+                    });
+                }
+
+            }, function () {
+                //console.log("rien");
+            });
         };
 
 
@@ -490,10 +541,43 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
             if($scope.invoice.finalized !== '0')
                 return;
 
-            zhttp.crm.invoice.document.del(document.id).then(function(response){
-                if(response.data && response.data != 'false'){
-                    $scope.documents.splice($scope.documents.indexOf(document), 1);
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: '/assets/angular/popupModalDeBase.html',
+                controller: 'ZeAppsPopupModalDeBaseCtrl',
+                size: 'lg',
+                resolve: {
+                    titre: function () {
+                        return 'Attention';
+                    },
+                    msg: function () {
+                        return 'Souhaitez-vous supprimer définitivement cette activité ?';
+                    },
+                    action_danger: function () {
+                        return 'Annuler';
+                    },
+                    action_primary: function () {
+                        return false;
+                    },
+                    action_success: function () {
+                        return 'Je confirme la suppression';
+                    }
                 }
+            });
+
+            modalInstance.result.then(function (selectedItem) {
+                if (selectedItem.action == 'danger') {
+
+                } else if (selectedItem.action == 'success') {
+                    zhttp.crm.invoice.document.del(document.id).then(function(response){
+                        if(response.data && response.data != 'false'){
+                            $scope.documents.splice($scope.documents.indexOf(document), 1);
+                        }
+                    });
+                }
+
+            }, function () {
+                //console.log("rien");
             });
         };
 

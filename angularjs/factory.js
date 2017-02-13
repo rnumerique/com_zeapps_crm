@@ -35,6 +35,9 @@ app.config(['$provide',
             var save_activity_invoice = function(data){
                 return zeHttp.post('com_zeapps_crm/invoices/saveActivity', data);
             };
+            var del_activity_invoice = function(id){
+                return zeHttp.post('com_zeapps_crm/invoices/deleteActivity/' + id);
+            };
             var url_document_invoice = function(){
                 return '/com_zeapps_crm/invoices/uploadDocuments/';
             };
@@ -78,6 +81,9 @@ app.config(['$provide',
             var save_activity_order = function(data){
                 return zeHttp.post('com_zeapps_crm/orders/saveActivity', data);
             };
+            var del_activity_order = function(id){
+                return zeHttp.post('com_zeapps_crm/orders/deleteActivity/' + id);
+            };
             var url_document_order = function(){
                 return '/com_zeapps_crm/orders/uploadDocuments/';
             };
@@ -120,6 +126,9 @@ app.config(['$provide',
             };
             var save_activity_quote = function(data){
                 return zeHttp.post('com_zeapps_crm/quotes/saveActivity', data);
+            };
+            var del_activity_quote = function(id){
+                return zeHttp.post('com_zeapps_crm/quotes/deleteActivity/' + id);
             };
             var url_document_quote = function(){
                 return '/com_zeapps_crm/quotes/uploadDocuments/';
@@ -225,7 +234,8 @@ app.config(['$provide',
                         del : del_line_invoice
                     },
                     activity : {
-                        save : save_activity_invoice
+                        save : save_activity_invoice,
+                        del : del_activity_invoice
                     },
                     document : {
                         upload : url_document_invoice,
@@ -248,7 +258,8 @@ app.config(['$provide',
                         del : del_line_order
                     },
                     activity : {
-                        save : save_activity_order
+                        save : save_activity_order,
+                        del : del_activity_order
                     },
                     document : {
                         upload : url_document_order,
@@ -271,7 +282,8 @@ app.config(['$provide',
                         del : del_line_quote
                     },
                     activity : {
-                        save : save_activity_quote
+                        save : save_activity_quote,
+                        del : del_activity_quote
                     },
                     document : {
                         upload : url_document_quote,

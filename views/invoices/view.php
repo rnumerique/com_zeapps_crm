@@ -91,14 +91,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='body'">
             <div class="row">
                 <div class="col-md-12 text-right"  ng-hide="invoice.finalized !== '0'">
-                    <button type="button" class="btn btn-success btn-sm" ng-click="addLine()">
-                        <span class="glyphicon glyphicon-tags"></span>
+                    <button type="button" class="btn btn-success btn-xs" ng-click="addLine()">
+                        <span class="fa fa-fw fa-tags"></span> produit
                     </button>
-                    <button type="button" class="btn btn-info btn-sm" ng-click="addSubTotal()">
-                        <span class="glyphicon glyphicon-euro"></span>
+                    <button type="button" class="btn btn-info btn-xs" ng-click="addSubTotal()">
+                        <span class="fa fa-fw fa-euro"></span> sous-total
                     </button>
-                    <button type="button" class="btn btn-warning btn-sm" ng-click="toggleComment()">
-                        <span class="glyphicon glyphicon-align-center"></span>
+                    <button type="button" class="btn btn-warning btn-xs" ng-click="toggleComment()">
+                        <span class="fa fa-fw fa-commenting"></span> commentaire
                     </button>
                     <div ng-show="showCommentInput">
                         <div class='form-group text-left'>
@@ -295,8 +295,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='activity'">
             <div class="row">
                 <div class="col-md-12 text-right" ng-hide="invoice.finalized !== '0'">
-                    <button type="button" class="btn btn-success btn-sm" ng-click="toggleActivity()">
-                        <span class="glyphicon glyphicon-plus"></span>
+                    <button type="button" class="btn btn-success btn-xs" ng-click="toggleActivity()">
+                        <span class="fa fa-fw fa-plus"></span> activité
                     </button>
                     <div ng-show="showActivityInput" class="text-left">
                         <div class="col-md-6 form-group">
@@ -305,13 +305,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div class="col-md-6 form-group">
                             <label i8n="deadline"></label>
-                            <input type="date" class="form-control" ng-model="activity.reminder">
+                            <input type="date" class="form-control" ng-model="activity.reminder" ng-required="true">
                         </div>
                         <div class='col-md-12 form-group'>
                             <label i8n="Commentaire"></label>
                             <textarea class="form-control" ng-model="activity.description" rows="3"></textarea>
                         </div>
                         <div class="text-center">
+                            <button type="button" class="btn btn-default btn-xs" ng-click="closeActivity()">
+                                Annuler
+                            </button>
                             <button type="button" class="btn btn-success btn-sm" ng-click="addActivity()">
                                 Valider
                             </button>
@@ -323,7 +326,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-12" ng-repeat="activity in activities">
                     <div>
                         <strong class="editable">
-                            {{ activity.libelle }} <span class="glyphicon glyphicon-pencil" ng-click="editActivity(activity)"></span>
+                            {{ activity.libelle }}
+                            <button type="button" class="btn btn-info btn-xs" ng-click="editActivity(activity)">
+                                <span class="fa fa-fw fa-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="deleteActivity()">
+                                <span class="fa fa-fw fa-trash"></span>
+                            </button>
                         </strong>
                     </div>
                     <div class="text-muted">
@@ -339,8 +348,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='document'">
             <div class="row">
                 <div class="col-md-12 text-right" ng-hide="invoice.finalized !== '0'">
-                    <button type="button" class="btn btn-sm btn-success" ngf-select="upload($files)" multiple ng-if="!progress">
-                        <span class="glyphicon glyphicon-plus"></span>
+                    <button type="button" class="btn btn-xs btn-success" ngf-select="upload($files)" multiple ng-if="!progress">
+                        <span class="fa fa-fw fa-plus"></span> document
                     </button>
                     <div class="progress" ng-if="progress">
                         <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" ng-style="{'width': progress + '%' }">
@@ -356,7 +365,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <strong>
                             {{ document.name }}
                         </strong>
-                        <span class="glyphicon glyphicon-trash text-danger pointer" ng-click="deleteDocument(document)" ng-hide="invoice.finalized !== '0'"></span>
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)" ng-hide="invoice.finalized !== '0'">
+                            <span class="fa fa-fw fa-trash"></span>
+                        </button>
                     </div>
                     <div class="text-muted">
                         <span i8n="Ajouté le"></span> {{ document.created_at | date:'dd/MM/yyyy' }}

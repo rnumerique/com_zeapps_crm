@@ -5,6 +5,21 @@ app.controller('ComZeappsCrmInvoiceFormCtrl', ['$scope', '$route', '$routeParams
 
         $scope.form = {};
 
+        function Initform(){
+            $scope.form.id_user_account_manager = $rootScope.user.id;
+            $scope.form.name_user_account_manager = $rootScope.user.firstname + ' ' + $rootScope.user.lastname;
+            $scope.form.date_creation = new Date();
+            $scope.form.date_limit = new Date();
+            $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+        }
+
+        Initform();
+
+        $scope.updateDateLimit = function(){
+            $scope.form.date_limit = new Date($scope.form.date_creation);
+            $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+        };
+
         $scope.success = function(){
             var data = {};
 
@@ -37,7 +52,7 @@ app.controller('ComZeappsCrmInvoiceFormCtrl', ['$scope', '$route', '$routeParams
 
             var formatted_data = angular.toJson(data);
 
-            http.crm.invoice.save(formatted_data).then(function(response){
+            zhttp.crm.invoice.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
                     $location.url('/ng/com_zeapps_crm/invoice/' + angular.fromJson(response.data));
                 }

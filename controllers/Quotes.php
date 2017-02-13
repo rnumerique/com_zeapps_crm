@@ -471,6 +471,8 @@ class Quotes extends ZeCtrl
             $day = date('d', $time);
             $hour = date('H', $time);
 
+            $data['created_at'] = $year . '-' . $month . '-' . $day;
+
             $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
 
             recursive_mkdir(FCPATH . $path);
