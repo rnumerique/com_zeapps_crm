@@ -55,6 +55,13 @@ class Invoices extends ZeCtrl
         $data['contact'] = $this->invoice_contacts->get(array('id_invoice'=>$id));
         $data['lines'] = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
 
+        $data['showDiscount'] = false;
+        foreach($data['lines'] as $line){
+            if(floatval($line->discount) > 0)
+                $data['showDiscount'] = true;
+        }
+
+
         //load the view and saved it into $html variable
         $html = $this->load->view('invoices/PDF', $data, true);
 

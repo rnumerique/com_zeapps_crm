@@ -76,7 +76,9 @@
             <th>Qte</th>
             <th>P.U. HT</th>
             <th>Taxe</th>
-            <th>Remise</th>
+            <?php if($showDiscount){ ?>
+                <th>Remise</th>
+            <?php } ?>
             <th>T. HT</th>
             <th>T. TTC</th>
         </tr>
@@ -126,7 +128,9 @@
                     <td><?php echo number_format(floatval($line->qty), 3, ',', ' '); ?></td>
                     <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
                     <td><?php echo number_format(floatval($line->taxe), 2, ',', ' ') . '%'; ?></td>
-                    <td><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
+                    <?php if($showDiscount){ ?>
+                        <td><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
+                    <?php } ?>
                     <td><?php echo number_format(floatval($t_ht), 2, ',', ' '); ?></td>
                     <td><?php echo number_format(floatval($t_ttc), 2, ',', ' '); ?></td>
                 </tr>
@@ -138,24 +142,26 @@
     </tbody>
 </table>
 <div id="total">
-    <div>
-        <strong>Total HT av remise</strong>
-        <span><?php echo number_format(floatval($total_ht), 2, ',', ' '); ?></span>
-    </div>
-    <div>
-        <strong>Total TTC av remise</strong>
-        <span><?php echo number_format(floatval($total_ttc), 2, ',', ' '); ?></span>
-    </div>
-    <div class="separator"></div>
-    <div>
-        <strong>Remise Globable</strong>
-        <span><?php echo number_format(floatval($quote->global_discount), 2, ',', ' ') . '%'; ?></span>
-    </div>
-    <div>
-        <strong>Remise (avant taxes)</strong>
-        <span><?php $discount_prct = number_format(floatval(floatval($quote->global_discount) / 100), 2, ',', ' '); echo ($discount_prct * $total_ht) ? : '0,00'; ?></span>
-    </div>
-    <div class="separator"></div>
+    <?php if(floatval($quote->global_discount) > 0){ ?>
+        <div>
+            <strong>Total HT av remise</strong>
+            <span><?php echo number_format(floatval($total_ht), 2, ',', ' '); ?></span>
+        </div>
+        <div>
+            <strong>Total TTC av remise</strong>
+            <span><?php echo number_format(floatval($total_ttc), 2, ',', ' '); ?></span>
+        </div>
+        <div class="separator"></div>
+        <div>
+            <strong>Remise Globable</strong>
+            <span><?php echo number_format(floatval($quote->global_discount), 2, ',', ' ') . '%'; ?></span>
+        </div>
+        <div>
+            <strong>Remise (avant taxes)</strong>
+            <span><?php $discount_prct = number_format(floatval(floatval($quote->global_discount) / 100), 2, ',', ' '); echo ($discount_prct * $total_ht) ? : '0,00'; ?></span>
+        </div>
+        <div class="separator"></div>
+    <?php } ?>
     <div>
         <strong>Total HT</strong>
         <span><?php echo number_format($total_ht - ($discount_prct * $total_ht), 2, ',', ' '); ?></span>

@@ -55,6 +55,12 @@ class Quotes extends ZeCtrl
         $data['contact'] = $this->quote_contacts->get(array('id_quote'=>$id));
         $data['lines'] = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
 
+        $data['showDiscount'] = false;
+        foreach($data['lines'] as $line){
+            if(floatval($line->discount) > 0)
+                $data['showDiscount'] = true;
+        }
+
         //load the view and saved it into $html variable
         $html = $this->load->view('quotes/PDF', $data, true);
 

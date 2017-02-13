@@ -55,6 +55,13 @@ class Orders extends ZeCtrl
         $data['contact'] = $this->order_contacts->get(array('id_order'=>$id));
         $data['lines'] = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
 
+        $data['showDiscount'] = false;
+        foreach($data['lines'] as $line){
+            if(floatval($line->discount) > 0)
+                $data['showDiscount'] = true;
+        }
+
+
         //load the view and saved it into $html variable
         $html = $this->load->view('orders/PDF', $data, true);
 
