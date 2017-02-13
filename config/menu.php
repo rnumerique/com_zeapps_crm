@@ -6,11 +6,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /********** CONFIG MENU ************/
 $tabMenu = array () ;
+$tabMenu["id"] = "com_ze_apps_modalities" ;
+$tabMenu["space"] = "com_ze_apps_config" ;
+$tabMenu["label"] = "Modalités" ;
+$tabMenu["url"] = "/ng/com_zeapps/modalities" ;
+$tabMenu["order"] = 40 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
 $tabMenu["id"] = "com_ze_apps_quotes" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Devis" ;
 $tabMenu["url"] = "/ng/com_zeapps/quote" ;
-$tabMenu["order"] = 40 ;
+$tabMenu["order"] = 41 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -18,7 +26,7 @@ $tabMenu["id"] = "com_ze_apps_orders" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Commandes" ;
 $tabMenu["url"] = "/ng/com_zeapps/order" ;
-$tabMenu["order"] = 41 ;
+$tabMenu["order"] = 42 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;

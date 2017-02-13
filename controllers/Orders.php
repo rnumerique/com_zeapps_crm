@@ -75,16 +75,16 @@ class Orders extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/orders/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->m_pdf->pdf->SetHeader('Commande n° : '.$data['order']->numerotation.'|Compte Comptable : '.$data['order']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Commande €n° : '.$data['order']->numerotation.'|C. Compta : '.$data['order']->accounting_number.'|Fait le {DATE d/m/Y}');
 
         //set the PDF footer
-        $this->m_pdf->pdf->SetFooter('{PAGENO}/{nb}');
+        $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
 
         //generate the PDF from the given html
-        $this->m_pdf->pdf->WriteHTML($html);
+        $this->M_pdf->pdf->WriteHTML($html);
 
         //download it.
-        $this->m_pdf->pdf->Output($pdfFilePath, "F");
+        $this->M_pdf->pdf->Output($pdfFilePath, "F");
 
         echo json_encode($nomPDF);
     }

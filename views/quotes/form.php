@@ -45,7 +45,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Modalités de règlement</label>
-                        <input type="text" ng-model="form.modalities" class="form-control">
+                        <select ng-model="form.modalities" class="form-control">
+                            <option ng-repeat="modality in modalities">
+                                {{ modality.label }}
+                            </option>
+                        </select>
                     </div>
                 </div>
 
