@@ -55,6 +55,13 @@ class Invoices extends ZeCtrl
         $data['contact'] = $this->invoice_contacts->get(array('id_invoice'=>$id));
         $data['lines'] = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
 
+        $data['showDiscount'] = false;
+        foreach($data['lines'] as $line){
+            if(floatval($line->discount) > 0)
+                $data['showDiscount'] = true;
+        }
+
+
         //load the view and saved it into $html variable
         $html = $this->load->view('invoices/PDF', $data, true);
 
@@ -68,16 +75,16 @@ class Invoices extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/invoices/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->m_pdf->pdf->SetHeader('Facture n° : '.$data['invoice']->numerotation.'|Compte Comptable : '.$data['invoice']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Facture €n° : '.$data['invoice']->numerotation.'|C. Compta : '.$data['invoice']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
-        $this->m_pdf->pdf->SetFooter('{PAGENO}/{nb}');
+        $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
 
         //generate the PDF from the given html
-        $this->m_pdf->pdf->WriteHTML($html);
+        $this->M_pdf->pdf->WriteHTML($html);
 
         //download it.
-        $this->m_pdf->pdf->Output($pdfFilePath, "F");
+        $this->M_pdf->pdf->Output($pdfFilePath, "F");
 
         if($echo)
             echo json_encode($nomPDF);
@@ -119,16 +126,27 @@ class Invoices extends ZeCtrl
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_invoices", "invoices");
 
+            $invoice = $this->invoices->update($id);
+            $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+
+            $total = 0;
+
+            foreach($lines as $line){
+                $total += floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
+            }
+
+            $total = $total - (floatval($invoice->global_discount) / 100 * $total);
+
             $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
             $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
             $num = $this->invoices->get_numerotation($frequency);
             $numerotation = $this->parseFormat($format, $num);
 
-            $this->invoices->update(array('numerotation' => $numerotation, 'finalized' => true), $id);
+            $this->invoices->update(array(), $id);
 
             $nomPDF = $this->makePDF($id, false);
 
-            $this->invoices->update(array('final_pdf' => $nomPDF), $id);
+            $this->invoices->update(array('numerotation' => $numerotation, 'finalized' => true, 'balance' => $total, 'final_pdf' => $nomPDF), $id);
 
             echo json_encode(array('nomPDF'=>$nomPDF, 'numerotation'=>$numerotation));
         }

@@ -1,6 +1,12 @@
 app.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider
+            // MODALITIES
+            .when('/ng/com_zeapps/modalities', {
+                templateUrl: '/com_zeapps_crm/modalities/config',
+                controller: 'ComZeappsCrmModalityConfigCtrl'
+            })
+
             // QUOTE
             .when('/ng/com_zeapps_crm/quote', {
                 templateUrl: '/com_zeapps_crm/quotes/lists',

@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-6">
                     <div class="titleWell">
                         Commande :
-                        <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.libelle }} <span class="glyphicon glyphicon-pencil"></span></span>
+                        <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.libelle }} <span class="fa fa-fw fa-pencil"></span></span>
                         <input type="text" class="form-control" ng-model="order.libelle" ng-show="edit">
                     </div>
                     <div>
@@ -20,16 +20,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="glyphicon glyphicon-arrow-left"></span></button>
+                        <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
                         <button type="button" class="btn btn-info btn-xs" ng-click="print()"><i class="fa fa-download" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-success btn-xs" ng-click="createInvoice()" i8n="Creer une facture a partir de la commande"></button>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_orders > 0">
-                            <button type="button" class="btn btn-default" ng-class="order_first == 0 ? 'disabled' :''" ng-click="first_order()"><span class="glyphicon glyphicon-fast-backward"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="order_previous == 0 ? 'disabled' :''" ng-click="previous_order()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="order_first == 0 ? 'disabled' :''" ng-click="first_order()"><span class="fa fa-fw fa-fast-backward"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="order_previous == 0 ? 'disabled' :''" ng-click="previous_order()"><span class="fa fa-fw fa-chevron-left"></span></button>
                             <button type="button" class="btn btn-default disabled">{{order_order}}/{{nb_orders}}</button>
-                            <button type="button" class="btn btn-default" ng-class="order_next == 0 ? 'disabled' :''" ng-click="next_order()"><span class="glyphicon glyphicon-chevron-right"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="order_last == 0 ? 'disabled' :''" ng-click="last_order()"><span class="glyphicon glyphicon-fast-forward"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="order_next == 0 ? 'disabled' :''" ng-click="next_order()"><span class="fa fa-fw fa-chevron-right"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="order_last == 0 ? 'disabled' :''" ng-click="last_order()"><span class="fa fa-fw fa-fast-forward"></span></button>
                         </div>
                     </div>
                 </div>
@@ -44,13 +44,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de facturation :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_1 }} <span class="glyphicon glyphicon-pencil" ng-show="order.billing_address_1"></span></span><br ng-if="order.billing_address_1 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_1 }} <span class="fa fa-fw fa-pencil" ng-show="order.billing_address_1"></span></span><br ng-if="order.billing_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_2 }} <span class="glyphicon glyphicon-pencil" ng-show="order.billing_address_2"></span></span><br ng-if="order.billing_address_2 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_2 }} <span class="fa fa-fw fa-pencil" ng-show="order.billing_address_2"></span></span><br ng-if="order.billing_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_3 }} <span class="glyphicon glyphicon-pencil" ng-show="order.billing_address_3"></span></span><br ng-if="order.billing_address_3 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_address_3 }} <span class="fa fa-fw fa-pencil" ng-show="order.billing_address_3"></span></span><br ng-if="order.billing_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_3" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_zipcode + ' ' + order.billing_city }} <span class="glyphicon glyphicon-pencil"></span></span>
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.billing_zipcode + ' ' + order.billing_city }} <span class="fa fa-fw fa-pencil"></span></span>
                     <input type="text" class="form-control" ng-model="order.billing_zipcode" ng-show="edit">
                     <input type="text" class="form-control" ng-model="order.billing_city" ng-show="edit">
                 </div>
@@ -61,13 +61,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de livraison :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_1 }} <span class="glyphicon glyphicon-pencil" ng-show="order.delivery_address_1"></span></span><br ng-if="order.delivery_address_1 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_1 }} <span class="fa fa-fw fa-pencil" ng-show="order.delivery_address_1"></span></span><br ng-if="order.delivery_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_2 }} <span class="glyphicon glyphicon-pencil" ng-show="order.delivery_address_2"></span></span><br ng-if="order.delivery_address_2 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_2 }} <span class="fa fa-fw fa-pencil" ng-show="order.delivery_address_2"></span></span><br ng-if="order.delivery_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_3 }} <span class="glyphicon glyphicon-pencil" ng-show="order.delivery_address_3"></span></span><br ng-if="order.delivery_address_3 && !edit">
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_address_3 }} <span class="fa fa-fw fa-pencil" ng-show="order.delivery_address_3"></span></span><br ng-if="order.delivery_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_3" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_zipcode + ' ' + order.delivery_city }} <span class="glyphicon glyphicon-pencil"></span></span>
+                    <span ng-hide="edit" ng-click="toggleEdit()" class="editable">{{ order.delivery_zipcode + ' ' + order.delivery_city }} <span class="fa fa-fw fa-pencil"></span></span>
                     <input type="text" class="form-control" ng-model="order.delivery_zipcode" ng-show="edit">
                     <input type="text" class="form-control" ng-model="order.delivery_city" ng-show="edit">
                 </div>
@@ -83,7 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <li data-menu-item="activity"><a href="#" data-ng-click="navigationState = 'activity'">Activité</a></li>
             <li data-menu-item="document"><a href="#" data-ng-click="navigationState = 'document'">Documents</a></li>
 
-            <li data-more-menu-item><a class="btn btn-primary"><span class="glyphicon glyphicon-menu-down"></span></a>
+            <li data-more-menu-item><a class="btn btn-primary"><span class="fa fa-fw fa-menu-down"></span></a>
             </li>
         </ul>
 
@@ -185,13 +185,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td class="text-right">
                                     <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.num == 'subTotal' || line.num == 'comment' || line.edit">
-                                        <span class="glyphicon glyphicon-pencil"></span>
+                                        <span class="fa fa-fw fa-pencil"></span>
                                     </button>
                                     <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.num == 'subTotal' || line.num == 'comment' || !line.edit">
-                                        <span class="glyphicon glyphicon-ok"></span>
+                                        <span class="fa fa-fw fa-ok"></span>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-xs" ng-click="deleteLine(line)">
-                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <span class="fa fa-fw fa-trash"></span>
                                     </button>
                                 </td>
                             </tr>
@@ -228,7 +228,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Remise Globale
                             </div>
                             <div class="col-md-6 text-right">
-                                <span ng-hide="edit" ng-click="toggleEdit()" class="editable">-{{ order.global_discount | number:2 }}% <span class="glyphicon glyphicon-pencil"></span></span>
+                                <span ng-hide="edit" ng-click="toggleEdit()" class="editable">-{{ order.global_discount | number:2 }}% <span class="fa fa-fw fa-pencil"></span></span>
                                 <div class="input-group" ng-show="edit">
                                     <input type="text" class="form-control" ng-model="order.global_discount">
                                     <div class="input-group-addon">%</div>
@@ -272,23 +272,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.reference_client }} <span class="glyphicon glyphicon-pencil"></span></span></div>
+            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.reference_client }} <span class="fa fa-fw fa-pencil"></span></span></div>
             <input type="text" class="form-control" ng-model="order.reference_client" ng-show="edit">
             <br/>
             <strong>Date de création de la commande :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.date_creation | date:'dd/MM/yyyy' }} <span class="glyphicon glyphicon-pencil"></span></span></div>
+            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.date_creation | date:'dd/MM/yyyy' }} <span class="fa fa-fw fa-pencil"></span></span></div>
             <input type="date" class="form-control" ng-model="order.date_creation" ng-show="edit">
             <br/>
             <strong>Date de validité de la commande :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.date_limit | date:'dd/MM/yyyy' }} <span class="glyphicon glyphicon-pencil"></span></span></div>
+            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.date_limit | date:'dd/MM/yyyy' }} <span class="fa fa-fw fa-pencil"></span></span></div>
             <input type="date" class="form-control" ng-model="order.date_limit" ng-show="edit">
             <br/>
         </div>
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.modalities }} <span class="glyphicon glyphicon-pencil"></span></span></div>
-            <input type="text" class="form-control" ng-model="order.modalities" ng-show="edit">
+            <div ng-hide="edit" ng-click="toggleEdit()"><span class="editable">{{ order.modalities }} <span class="fa fa-fw fa-pencil"></span></span></div>
+            <select ng-model="order.modalities" class="form-control" ng-show="edit">
+                <option ng-repeat="modality in modalities">
+                    {{ modality.label }}
+                </option>
+            </select>
             <br/>
         </div>
 
@@ -305,7 +309,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div class="col-md-6 form-group">
                             <label i8n="deadline"></label>
-                            <input type="date" class="form-control" ng-model="activity.reminder" ng-required="true">
+                            <input type="date" class="form-control" ng-model="activity.reminder">
                         </div>
                         <div class='col-md-12 form-group'>
                             <label i8n="Commentaire"></label>

@@ -1,7 +1,8 @@
 app.controller('ComZeappsCrmQuoteListsPartialCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal',
     function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
 
-        $rootScope.quotes = {};
+        if(!$rootScope.quotes)
+            $rootScope.quotes = {};
         $scope.id_company = 0;
 
 

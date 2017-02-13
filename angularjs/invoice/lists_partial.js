@@ -1,7 +1,8 @@
 app.controller('ComZeappsCrmInvoiceListsPartialCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal',
     function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
 
-        $rootScope.invoices = {};
+        if(!$rootScope.invoices)
+            $rootScope.invoices = {};
         $scope.id_company = 0;
 
         $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data){
@@ -25,7 +26,6 @@ app.controller('ComZeappsCrmInvoiceListsPartialCtrl', ['$scope', '$route', '$rou
         $scope.$emit('comZeappsContact_triggerEntrepriseHook', {});
 
         $scope.totalHT = function(invoice){
-
             var total = 0;
             for(var i = 0; i < invoice.lines.length; i++){
                 if(invoice.lines[i] != undefined && invoice.lines[i].num != 'subTotal' && invoice.lines[i].num != 'comment'){

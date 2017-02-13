@@ -55,6 +55,12 @@ class Quotes extends ZeCtrl
         $data['contact'] = $this->quote_contacts->get(array('id_quote'=>$id));
         $data['lines'] = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
 
+        $data['showDiscount'] = false;
+        foreach($data['lines'] as $line){
+            if(floatval($line->discount) > 0)
+                $data['showDiscount'] = true;
+        }
+
         //load the view and saved it into $html variable
         $html = $this->load->view('quotes/PDF', $data, true);
 
@@ -68,7 +74,7 @@ class Quotes extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/quotes/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Devis n° : '.$data['quote']->numerotation.'|Compte Comptable : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Devis €n° : '.$data['quote']->numerotation.'|C. Compta : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');

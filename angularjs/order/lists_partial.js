@@ -1,7 +1,8 @@
 app.controller('ComZeappsCrmOrderListsPartialCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal',
     function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
 
-        $rootScope.orders = {};
+        if(!$rootScope.orders)
+            $rootScope.orders = {};
         $scope.id_company = 0;
 
 

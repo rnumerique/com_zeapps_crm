@@ -3,6 +3,21 @@ app.config(['$provide',
         $provide.decorator('zeHttp', function($delegate){
             var zeHttp = $delegate;
 
+            // MODALITY
+            var get_modality = function(id){
+                return zeHttp.get('/com_zeapps_crm/modalities/get/' + id)
+            };
+            var getAll_modality = function(){
+                return zeHttp.get('/com_zeapps_crm/modalities/getAll/');
+            };
+            var post_modality = function(data){
+                return zeHttp.post('/com_zeapps_crm/modalities/save', data);
+            };
+            var del_modality = function(id){
+                return zeHttp.delete('/com_zeapps_crm/modalities/delete/' + id);
+            };
+
+
             // INVOICE
             var test_invoice = function(data){
                 return zeHttp.post('/com_zeapps_crm/invoices/testFormat', data);
@@ -221,6 +236,12 @@ app.config(['$provide',
             };
 
             zeHttp.crm = {
+                modality : {
+                    get : get_modality,
+                    get_all : getAll_modality,
+                    save : post_modality,
+                    del : del_modality
+                },
                 invoice : {
                     get : get_invoice,
                     get_all : getAll_invoice,
