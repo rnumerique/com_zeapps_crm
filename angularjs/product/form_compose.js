@@ -29,7 +29,7 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                             $scope.form = response.data;
                             $scope.form.auto = !!parseInt($scope.form.auto);
                             $scope.form.price_ht = parseFloat($scope.form.price_ht);
-                            $scope.form.tva = parseFloat($scope.form.tva);
+                            $scope.form.value_taxe = parseFloat($scope.form.value_taxe);
                             $scope.form.price_ttc = parseFloat($scope.form.price_ttc);
                             angular.forEach($scope.form.lines, function(line){
                                 line.quantite = parseInt(line.quantite);
@@ -62,12 +62,12 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
         }
 
         $scope.updatePrice = function(price){
-            if($scope.form.tva && $scope.form.tva > 0) {
+            if($scope.form.value_taxe && $scope.form.value_taxe > 0) {
                 if (price === 'ht') {
-                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.tva / 100).toFixed(2));
+                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.value_taxe / 100).toFixed(2));
                 }
                 if (price === 'ttc') {
-                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.tva / 100).toFixed(2));
+                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.value_taxe / 100).toFixed(2));
                 }
             }
         };

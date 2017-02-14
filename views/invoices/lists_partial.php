@@ -7,6 +7,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="pull-right">
                 <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/invoice/new/{{ id_company || ""}}'><span class='fa fa-plus' aria-hidden='true'></span> Facture</a>
             </div>
+            <span ng-click="shownFilter = !shownFilter">
+                <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>
+            </span>
             <h3>Factures</h3>
         </div>
     </div>
@@ -17,11 +20,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nom</th>
+                    <th>Libelle</th>
+                    <th>Destinataire</th>
                     <th>Contact</th>
-                    <th>Entreprise</th>
-                    <th>Total HT</th>
-                    <th>Total TTC</th>
+                    <th>Total HT (€)</th>
+                    <th>Total TTC (€)</th>
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
@@ -32,8 +35,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr ng-repeat="invoice in invoices">
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.numerotation}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.libelle}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.contact.first_name[0] + '. ' + invoice.contact.last_name}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.company.company_name}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">
+                            {{invoice.company.company_name}}
+                            <span ng-if="invoice.company.company_name && invoice.contact.last_name">-</span>
+                            {{invoice.contact.first_name[0] + '. ' + invoice.contact.last_name}}
+                        </a></td>
+                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">
+                            {{invoice.contact.mobile || invoice.contact.phone || invoice.contact.other_phone}}
+                            <span ng-if="(invoice.contact.mobile || invoice.contact.phone || invoice.contact.other_phone) && quote.contact.email">-</span>
+                            {{invoice.contact.email}}
+                        </a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{totalHT(invoice)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{totalTTC(invoice)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.date_creation | date:'dd/MM/yyyy'}}</a></td>

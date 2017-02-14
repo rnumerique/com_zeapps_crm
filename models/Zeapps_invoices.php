@@ -22,4 +22,17 @@ class Zeapps_invoices extends ZeModel {
             return false;
         }
     }
+
+    public function getDueOf($type, $id = null){
+        $total = 0;
+        $invoices = $this->all(array('id_'.$type => $id, 'due >' => 0));
+
+        if($invoices) {
+            foreach ($invoices as $invoice){
+                $total += floatval($invoice->due);
+            }
+        }
+
+        return array('due' => $total, 'due_lines' => $invoices);
+    }
 }

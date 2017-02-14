@@ -23,10 +23,9 @@
                 </thead>
                 <tbody>
 
-                <tr ng-repeat="produit in produits">
+                <tr ng-repeat="produit in produits | filter:{compose : 0}">
                     <td>
                         <i class="fa fa-tag" ng-if="produit.compose == 0"></i>
-                        <i class="fa fa-tags" ng-if="produit.compose != 0"></i>
                     </td>
                     <td><a href="#" ng-click="returnProduct(produit.id)">{{produit.ref}}</a></td>
                     <td><a href="#" ng-click="returnProduct(produit.id)">{{produit.name}}</a></td>

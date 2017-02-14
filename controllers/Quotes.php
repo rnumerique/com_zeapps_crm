@@ -227,6 +227,7 @@ class Quotes extends ZeCtrl
         $this->load->model("Zeapps_quote_lines", "quote_lines");
         $this->load->model("Zeapps_quote_documents", "quote_documents");
         $this->load->model("Zeapps_quote_activities", "quote_activities");
+        $this->load->model("Zeapps_invoices", "invoices");
 
         $data = new stdClass();
 
@@ -237,6 +238,17 @@ class Quotes extends ZeCtrl
         $data->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
         $data->documents = $this->quote_documents->all(array('id_quote'=>$id));
         $data->activities = $this->quote_activities->all(array('id_quote'=>$id));
+
+        if($data->company){
+            $res = $this->invoices->getDueOf('company', $data->quote->id_company);
+            $data->company->due = $res['due'];
+            $data->company->due_lines = $res['due_lines'];
+        }
+        elseif($data->contact){
+            $res = $this->invoices->getDueOf('contact', $data->quote->id_contact);
+            $data->contact->due = $res['due'];
+            $data->contact->due_lines = $res['due_lines'];
+        }
 
         echo json_encode($data);
     }
@@ -333,6 +345,7 @@ class Quotes extends ZeCtrl
             $id = $this->quotes->insert($data);
             if($id) {
                 if($company){
+                    $company->id_company = $company->id;
                     unset($company->id);
                     unset($company->created_at);
                     unset($company->updated_at);
@@ -341,6 +354,7 @@ class Quotes extends ZeCtrl
                     $this->quote_companies->insert($company);
                 }
                 if($contact){
+                    $contact->id_contact = $contact->id;
                     unset($contact->id);
                     unset($contact->created_at);
                     unset($contact->updated_at);

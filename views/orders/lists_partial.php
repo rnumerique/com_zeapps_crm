@@ -17,11 +17,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nom</th>
-                    <th>Contact</th>
-                    <th>Entreprise</th>
-                    <th>Total HT</th>
-                    <th>Total TTC</th>
+                    <th>Libelle</th>
+                    <th>Destinataire</th>
+                    <th>Total HT (€)</th>
+                    <th>Total TTC (€)</th>
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
@@ -32,8 +31,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr ng-repeat="order in orders">
                     <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.numerotation}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.libelle}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.contact.first_name[0] + '. ' + order.contact.last_name}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.company.company_name}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">
+                            {{order.company.company_name}}
+                            <span ng-if="order.company.company_name && order.contact.last_name">-</span>
+                            {{order.contact.first_name[0] + '. ' + order.contact.last_name}}
+                        </a></td>
                     <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{totalHT(order)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{totalTTC(order)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.date_creation | date:'dd/MM/yyyy'}}</a></td>

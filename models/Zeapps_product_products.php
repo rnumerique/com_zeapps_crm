@@ -24,10 +24,6 @@ class Zeapps_product_products extends ZeModel {
                 echo 'There\'s an error with the account, make sure to select an account from the list.';
                 return;
             }
-            else if(!isset($data['taxe']) || empty($data['taxe']) || !is_numeric($data['taxe']) || strlen($data['taxe']) > 10){
-                echo 'There\'s an error with the Taxe, make sure to select the Taxe from the list.';
-                return;
-            }
             else if(strlen($data['desc_long']) > 1000){
                 echo 'There\'s an error with the long description, make sure it\'s a string of characters shorter than 1000 characters.';
                 return;
