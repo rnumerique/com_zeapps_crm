@@ -35,10 +35,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>TVA <span class="required">*</span></label>
-                            <div class="input-group">
-                                <input type="number" min="0" step="0.01" ng-model="form.tva" class="form-control" ng-change="updatePrice('ttc')" ng-required="true">
-                                <span class="input-group-addon">%</span>
-                            </div>
+                            <select ng-model="form.id_taxe" ng-change="updateTaxe();updatePrice('ttc')" class="form-control" ng-required="true">
+                                <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.id}}">
+                                    {{ taxe.label }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-6">

@@ -17,6 +17,20 @@ app.config(['$provide',
                 return zeHttp.delete('/com_zeapps_crm/modalities/delete/' + id);
             };
 
+            // TAXE
+            var get_taxe = function(id){
+                return zeHttp.get('/com_zeapps_crm/taxes/get/' + id)
+            };
+            var getAll_taxe = function(){
+                return zeHttp.get('/com_zeapps_crm/taxes/getAll/');
+            };
+            var post_taxe = function(data){
+                return zeHttp.post('/com_zeapps_crm/taxes/save', data);
+            };
+            var del_taxe = function(id){
+                return zeHttp.delete('/com_zeapps_crm/taxes/delete/' + id);
+            };
+
 
             // INVOICE
             var test_invoice = function(data){
@@ -241,6 +255,12 @@ app.config(['$provide',
                     get_all : getAll_modality,
                     save : post_modality,
                     del : del_modality
+                },
+                taxe : {
+                    get : get_taxe,
+                    get_all : getAll_taxe,
+                    save : post_taxe,
+                    del : del_taxe
                 },
                 invoice : {
                     get : get_invoice,

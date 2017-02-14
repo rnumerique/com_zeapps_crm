@@ -205,6 +205,17 @@ class Invoices extends ZeCtrl
         $data->documents = $this->invoice_documents->all(array('id_invoice'=>$id));
         $data->activities = $this->invoice_activities->all(array('id_invoice'=>$id));
 
+        if($data->company){
+            $res = $this->invoices->getDueOf('company', $data->invoice->id_company);
+            $data->company->due = $res['due'];
+            $data->company->due_lines = $res['due_lines'];
+        }
+        elseif($data->contact){
+            $res = $this->invoices->getDueOf('contact', $data->invoice->id_contact);
+            $data->contact->due = $res['due'];
+            $data->contact->due_lines = $res['due_lines'];
+        }
+
         echo json_encode($data);
     }
 
@@ -300,6 +311,7 @@ class Invoices extends ZeCtrl
             $id = $this->invoices->insert($data);
             if($id) {
                 if($company){
+                    $company->id_company = $company->id;
                     unset($company->id);
                     unset($company->created_at);
                     unset($company->updated_at);
@@ -308,6 +320,7 @@ class Invoices extends ZeCtrl
                     $this->invoice_companies->insert($company);
                 }
                 if($contact){
+                    $contact->id_contact = $contact->id;
                     unset($contact->id);
                     unset($contact->created_at);
                     unset($contact->updated_at);

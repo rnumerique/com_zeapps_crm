@@ -34,9 +34,73 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-
         </div>
 
+        <div class="well">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Destinataire</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" ng-if="company">
+                    <strong>Entreprise :</strong> {{ company.company_name }}<br>
+                    <strong>En cours :</strong> {{ company.due | currency:'€':2 }}
+                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
+                        {{ showDetailsEntreprise ? 'masquer' : 'détails' }}
+                    </button>
+                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsEntreprise">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Libelle</th>
+                            <th>Date limite</th>
+                            <th class="text-right">Somme due</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tr ng-repeat="due_line in company.due_lines">
+                            <td>{{ due_line.numerotation }}</td>
+                            <td>{{ due_line.libelle }}</td>
+                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
+                            <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
+                            <td class="text-right">
+                                <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
+                                    <i class="fa fa-fw fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-12" ng-if="contact && !company">
+                    <strong>Contact :</strong> {{ contact.last_name + ' ' + contact.first_name }}<br>
+                    <strong>En cours :</strong> {{ contact.due | currency:'€':2 }}
+                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsContact = !showDetailsContact">détails</button>
+                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsContact">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Libelle</th>
+                            <th>Date limite</th>
+                            <th class="text-right">Somme due</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tr ng-repeat="due_line in contact.due_lines">
+                            <td>{{ due_line.numerotation }}</td>
+                            <td>{{ due_line.libelle }}</td>
+                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
+                            <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
+                            <td class="text-right">
+                                <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
+                                    <i class="fa fa-fw fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-6">

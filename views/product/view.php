@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th i8n="Référence"></th>
                             <th i8n="Nom du produit"></th>
                             <th i8n="Prix HT"></th>
-                            <th>TVA</th>
+                            <th>TVA (%)</th>
                             <th>Compte comptable</th>
                             <th class="text-right">Actions</th>
                         </tr>
@@ -60,7 +60,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.ref }}</a></td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.name }}</a></td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.price_ht | currency }}</a></td>
-                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.tva }}</a></td>
+                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.value_taxe }}</a></td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.accounting_number }}</a></td>
                             <td class="text-right">
                                 <button type="button" class="btn btn-xs btn-danger" ng-click="delete(product)">

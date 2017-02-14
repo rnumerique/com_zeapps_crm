@@ -35,7 +35,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
                         if (response.status == 200) {
                             $scope.form = response.data;
                             $scope.form.price_ht = parseFloat($scope.form.price_ht);
-                            $scope.form.tva = parseFloat($scope.form.tva);
+                            $scope.form.value_taxe = parseFloat($scope.form.value_taxe);
                             $scope.form.price_ttc = parseFloat($scope.form.price_ttc);
                             $scope.form.extra = angular.fromJson($scope.form.extra);
                             zhttp.crm.category.openTree($scope.tree, $scope.form.id_cat);
@@ -64,13 +64,21 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
             });
         }
 
+        $scope.updateTaxe = function(){
+            angular.forEach($rootScope.taxes, function(taxe){
+                if(taxe.id === $scope.form.id_taxe){
+                    $scope.form.value_taxe = taxe.value;
+                }
+            });
+        };
+
         $scope.updatePrice = function(price){
-            if($scope.form.tva && $scope.form.tva > 0) {
+            if($scope.form.value_taxe && $scope.form.value_taxe > 0) {
                 if (price === 'ht') {
-                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.tva / 100).toFixed(2));
+                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.value_taxe / 100).toFixed(2));
                 }
                 if (price === 'ttc') {
-                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.tva / 100).toFixed(2));
+                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.value_taxe / 100).toFixed(2));
                 }
             }
         };
@@ -150,7 +158,8 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
             data.description = $scope.form.description;
             data.price_ht = $scope.form.price_ht;
             data.price_ttc = $scope.form.price_ttc;
-            data.tva = $scope.form.tva;
+            data.id_taxe = $scope.form.id_taxe;
+            data.value_taxe = $scope.form.value_taxe;
             data.accounting_number = $scope.form.accounting_number;
             data.extra = angular.toJson($scope.form.extra);
 

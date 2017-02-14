@@ -17,11 +17,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Nom</th>
-                    <th>Contact</th>
-                    <th>Entreprise</th>
-                    <th>Total HT</th>
-                    <th>Total TTC</th>
+                    <th>Libelle</th>
+                    <th>Destinataire</th>
+                    <th>Total HT (€)</th>
+                    <th>Total TTC (€)</th>
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
@@ -32,8 +31,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr ng-repeat="quote in quotes">
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.numerotation}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.libelle}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.contact.first_name[0] + '. ' + quote.contact.last_name}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.company.company_name}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">
+                            {{quote.company.company_name}}
+                            <span ng-if="quote.company.company_name && quote.contact.last_name">-</span>
+                            {{quote.contact.first_name[0] + '. ' + quote.contact.last_name}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{totalHT(quote)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{totalTTC(quote)}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_creation | date:'dd/MM/yyyy'}}</a></td>

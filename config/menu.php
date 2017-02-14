@@ -14,11 +14,19 @@ $tabMenu["order"] = 40 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
+$tabMenu["id"] = "com_ze_apps_taxes" ;
+$tabMenu["space"] = "com_ze_apps_config" ;
+$tabMenu["label"] = "Taxes" ;
+$tabMenu["url"] = "/ng/com_zeapps/taxes" ;
+$tabMenu["order"] = 41 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
 $tabMenu["id"] = "com_ze_apps_quotes" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Devis" ;
 $tabMenu["url"] = "/ng/com_zeapps/quote" ;
-$tabMenu["order"] = 41 ;
+$tabMenu["order"] = 45 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -26,7 +34,15 @@ $tabMenu["id"] = "com_ze_apps_orders" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Commandes" ;
 $tabMenu["url"] = "/ng/com_zeapps/order" ;
-$tabMenu["order"] = 42 ;
+$tabMenu["order"] = 46 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
+$tabMenu["id"] = "com_ze_apps_invoices" ;
+$tabMenu["space"] = "com_ze_apps_config" ;
+$tabMenu["label"] = "Factures" ;
+$tabMenu["url"] = "/ng/com_zeapps/invoice" ;
+$tabMenu["order"] = 46 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
