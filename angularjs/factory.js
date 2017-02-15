@@ -39,9 +39,10 @@ app.config(['$provide',
             var get_invoice = function(id){
                 return zeHttp.get('/com_zeapps_crm/invoices/get/' + id)
             };
-            var getAll_invoice = function(id_project){
+            var getAll_invoice = function(id_project, type){
                 id_project = id_project || 0;
-                return zeHttp.get('/com_zeapps_crm/invoices/getAll/' + id_project);
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/invoices/getAll/' + id_project + '/' + type);
             };
             var post_invoice = function(data){
                 return zeHttp.post('/com_zeapps_crm/invoices/save', data);
@@ -88,9 +89,10 @@ app.config(['$provide',
             var get_order = function(id){
                 return zeHttp.get('/com_zeapps_crm/orders/get/' + id)
             };
-            var getAll_order = function(id_project){
+            var getAll_order = function(id_project, type){
                 id_project = id_project || 0;
-                return zeHttp.get('/com_zeapps_crm/orders/getAll/' + id_project);
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/orders/getAll/' + id_project + '/' + type);
             };
             var post_order = function(data){
                 return zeHttp.post('/com_zeapps_crm/orders/save', data);
@@ -134,9 +136,10 @@ app.config(['$provide',
             var get_quote = function(id){
                 return zeHttp.get('/com_zeapps_crm/quotes/get/' + id)
             };
-            var getAll_quote = function(id_project){
+            var getAll_quote = function(id_project, type){
                 id_project = id_project || 0;
-                return zeHttp.get('/com_zeapps_crm/quotes/getAll/' + id_project);
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/quotes/getAll/' + id_project + '/' + type);
             };
             var post_quote = function(data){
                 return zeHttp.post('/com_zeapps_crm/quotes/save', data);

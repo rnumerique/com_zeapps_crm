@@ -188,7 +188,7 @@ class Quotes extends ZeCtrl
         echo json_encode($id_order);
     }
 
-    public function getAll($id_company = '0') {
+    public function getAll($id_company = '0', $type = 'company') {
         $this->load->model("Zeapps_users", "users");
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
@@ -196,7 +196,7 @@ class Quotes extends ZeCtrl
         $this->load->model("Zeapps_quote_lines", "quote_lines");
 
         if($id_company !== '0')
-            $quotes = $this->quotes->all(array('id_company'=>$id_company));
+            $quotes = $this->quotes->all(array('id_'.$type=>$id_company));
         else
             $quotes = $this->quotes->all();
 

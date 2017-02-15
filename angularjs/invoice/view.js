@@ -1,5 +1,5 @@
-app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload',
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload) {
+app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload', 'crmTotal',
+    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal) {
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_invoice");
 
@@ -216,7 +216,8 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
                 if (objReturn) {
                     var line = {
                         id_invoice: $routeParams.id,
-                        num: objReturn.ref,
+                        type: 'product',
+                        ref: objReturn.ref,
                         designation_title: objReturn.name,
                         designation_desc: objReturn.description,
                         qty: '1',
@@ -243,7 +244,7 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
 
             var subTotal = {
                 id_invoice: $routeParams.id,
-                num: 'subTotal',
+                type: 'subTotal',
                 sort: $scope.lines.length
             };
 
@@ -263,7 +264,7 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
             if($scope.comment != ''){
                 var comment = {
                     id_invoice: $routeParams.id,
-                    num: 'comment',
+                    type: 'comment',
                     designation_desc: '',
                     sort: $scope.lines.length
                 };
@@ -292,7 +293,6 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
             if($scope.invoice.finalized !== '0')
                 return;
 
-            console.log(line.id);
             var formatted_data = angular.toJson(line);
             zhttp.crm.invoice.line.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
@@ -314,92 +314,36 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
             }
         };
 
-
         $scope.subtotalHT = function(index){
-            var total = 0;
-            for(var i = index - 1; i >= 0; i--){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty;
-                }
-                else if($scope.lines[i].num == 'subTotal'){
-                    i = -1;
-                }
-            }
-            return total;
+            return crmTotal.sub.HT($scope.lines, index);
         };
 
         $scope.subtotalTTC = function(index){
-            var total = 0;
-            for(var i = index - 1; i >= 0; i--){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 + ($scope.lines[i].taxe / 100) );
-                }
-                else if($scope.lines[i].num == 'subTotal'){
-                    i = -1;
-                }
-            }
-            return total;
+            return crmTotal.sub.TTC($scope.lines, index);
         };
-
-        $scope.totalAvDiscountHT = function(){
-            var total = 0;
-            for(var i = 0; i < $scope.lines.length; i++){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty;
-                }
-            }
-            return total;
-        };
-
-        $scope.totalAvDiscountTTC = function(){
-            var total = 0;
-            for(var i = 0; i < $scope.lines.length; i++){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 + ($scope.lines[i].taxe / 100) );
-                }
-            }
-            return total;
-        };
-
-        $scope.totalDiscount = function(){
-            var total = 0;
+        $scope.$watch('lines', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        }, true);
+        $scope.$watch('invoice.global_discount', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        });
+        function updateTotals(){
             if($scope.invoice) {
-                for (var i = 0; i < $scope.lines.length; i++) {
-                    if ($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment') {
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ($scope.lines[i].discount / 100);
-                    }
-                }
-                total = total + $scope.totalAvDiscountHT() * ($scope.invoice.global_discount / 100);
-            }
-            return total;
-        };
+                $scope.invoice.total_prediscount_ht = crmTotal.preDiscount.HT($scope.lines);
+                $scope.invoice.total_prediscount_ttc = crmTotal.preDiscount.TTC($scope.lines);
+                $scope.invoice.total_discount = crmTotal.discount($scope.lines, $scope.invoice.global_discount);
+                $scope.invoice.total_ht = crmTotal.total.HT($scope.lines, $scope.invoice.global_discount);
+                $scope.invoice.total_ttc = crmTotal.total.TTC($scope.lines, $scope.invoice.global_discount);
 
-        $scope.totalHT = function(){
-            var total = 0;
-            if($scope.invoice) {
-                for(var i = 0; i < $scope.lines.length; i++){
-                    if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 - ($scope.lines[i].discount / 100) );
-                    }
-                }
-                total = total * (1- ($scope.invoice.global_discount / 100) );
-            }
-            return total;
-        };
+                var data = $scope.invoice;
 
-        $scope.totalTTC = function(){
-            var total = 0;
-            if($scope.invoice) {
-                for(var i = 0; i < $scope.lines.length; i++){
-                    if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 - ($scope.lines[i].discount / 100) ) * ( 1 + ($scope.lines[i].taxe / 100) );
-                    }
-                }
-                total = total * (1- ($scope.invoice.global_discount / 100) );
-            }
-            return total;
-        };
+                var formatted_data = angular.toJson(data);
 
+                zhttp.crm.invoice.save(formatted_data);
+            }
+        }
 
         $scope.toggleActivity = function(){
             if($scope.invoice.finalized !== '0')

@@ -166,7 +166,7 @@ $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_order" ;
 $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Commandes" ;
-$tabMenu["url"] = "/ng/com_zeapps_crm/contacts" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/order" ;
 $tabMenu["order"] = 4 ;
 $menuHeader[] = $tabMenu ;
 
