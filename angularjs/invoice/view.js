@@ -224,7 +224,9 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
                         discount: 0.00,
                         price_unit: objReturn.price_ht,
                         taxe: objReturn.tva,
-                        sort: $scope.lines.length
+                        sort: $scope.lines.length,
+                        total_ht: objReturn.price_ht,
+                        total_ttc: (parseFloat(objReturn.price_ht) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
                     };
 
                     var formatted_data = angular.toJson(line);
@@ -287,6 +289,11 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
                 return;
 
             line.edit = true;
+        };
+
+        $scope.updateSums = function(line){
+            line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) );
+            line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 + (parseFloat(line.taxe) / 100) );
         };
 
         $scope.submitLine = function(line){
