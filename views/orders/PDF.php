@@ -108,7 +108,7 @@
         </td>
         <td class="border">
             <strong>Date d'échéance</strong><br>
-            <?php echo date('d/m/Y', $order->date_limit); ?>
+            <?php if($quote->date_limit) echo date('d/m/Y', $order->date_limit); ?>
         </td>
     </tr>
     <tr>
@@ -161,17 +161,17 @@
                             <tr>
                                 <td class="text-left"><?php echo $line->ref; ?></td>
                                 <td class="text-left">
-                                    <strong><?php echo $line->designation_title; ?> :</strong><br/>
+                                    <strong><?php echo $line->designation_title; ?></strong><br/>
                                     <?php echo $line->designation_desc; ?>
                                 </td>
-                                <td><?php echo number_format(floatval($line->qty), 3, ',', ' '); ?></td>
-                                <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
-                                <td><?php echo number_format(floatval($line->taxe), 2, ',', ' ') . '%'; ?></td>
+                                <td class="text-center"><?php echo floatval($line->qty) === round(floatval($line->qty)) ? intval($line->qty) : number_format(floatval($line->qty), 3, ',', ' '); ?></td>
+                                <td class="text-right"><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
+                                <td class="text-right"><?php echo number_format(floatval($line->taxe), 2, ',', ' ') . '%'; ?></td>
                                 <?php if($showDiscount){ ?>
-                                    <td><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
+                                    <td class="text-right"><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
                                 <?php } ?>
-                                <td><?php echo number_format(floatval($line->total_ht), 2, ',', ' '); ?></td>
-                                <td><?php echo number_format(floatval($line->total_ttc), 2, ',', ' '); ?></td>
+                                <td class="text-right"><?php echo number_format(floatval($line->total_ht), 2, ',', ' '); ?></td>
+                                <td class="text-right"><?php echo number_format(floatval($line->total_ttc), 2, ',', ' '); ?></td>
                             </tr>
                             <?php
                         }
@@ -195,7 +195,7 @@
                 <tbody>
                 <?php
                 foreach ($lines as $line) {
-                    if($line->type !== 'subTotal' && $line->type !== 'comment') {
+                    if($line->type !== 'subTotal' && $line->type !== 'comment' && floatval($line->taxe) != 0) {
                         ?>
                         <tr>
                             <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
