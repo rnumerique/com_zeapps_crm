@@ -258,7 +258,7 @@
                         <strong>TVA</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format(floatval($invoice->total_ttc)-floatval($invoice->total_ht), 2, ',', ' '); ?>
+                        <?php echo number_format((floatval($invoice->total_ttc)-floatval($invoice->total_ht)), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>
