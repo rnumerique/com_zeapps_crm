@@ -125,8 +125,9 @@ class Invoices extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_invoices", "invoices");
+            $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
-            $invoice = $this->invoices->update($id);
+            $invoice = $this->invoices->get($id);
             $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
 
             $total = 0;
@@ -141,8 +142,6 @@ class Invoices extends ZeCtrl
             $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
             $num = $this->invoices->get_numerotation($frequency);
             $numerotation = $this->parseFormat($format, $num);
-
-            $this->invoices->update(array(), $id);
 
             $nomPDF = $this->makePDF($id, false);
 

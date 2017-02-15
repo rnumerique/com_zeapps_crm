@@ -6,9 +6,7 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
         $scope.$on('comZeappsCrm_triggerOrderHook', function(event, data){
             $rootScope.$broadcast('comZeappsCrm_dataOrderHook',
                 {
-                    id_order: $routeParams.id,
-                    id_company: $scope.company.id,
-                    id_contact: $scope.contact.id
+                    order: $scope.order
                 }
             );
         });
@@ -175,6 +173,7 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
         $scope.sortable = {
             connectWith: ".sortableContainer",
             axis: 'y',
+            delay: 200,
             stop: function( event, ui ) {
 
                 var data = {};
@@ -220,8 +219,10 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
                         qty: '1',
                         discount: 0.00,
                         price_unit: objReturn.price_ht,
-                        taxe: objReturn.tva,
-                        sort: $scope.lines.length
+                        taxe: objReturn.value_taxe,
+                        sort: $scope.lines.length,
+                        total_ht: objReturn.price_ht,
+                        total_ttc: (parseFloat(objReturn.price_ht) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
                     };
 
                     var formatted_data = angular.toJson(line);
@@ -274,7 +275,20 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
         };
 
         $scope.editLine = function(line){
-            line.edit = true;
+            if(line.type === 'product')
+                line.edit = true;
+            else{
+                $rootScope.$broadcast('comZeappsCrm_orderEditTrigger',
+                    {
+                        line : line
+                    }
+                );
+            }
+        };
+
+        $scope.updateSums = function(line){
+            line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) );
+            line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 + (parseFloat(line.taxe) / 100) );
         };
 
         $scope.submitLine = function(line){
@@ -291,6 +305,12 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
                 zhttp.crm.order.line.del(line.id).then(function(response){
                     if(response.data && response.data != 'false'){
                         $scope.lines.splice($scope.lines.indexOf(line), 1);
+
+                        $rootScope.$broadcast('comZeappsCrm_orderDeleteTrigger',
+                            {
+                                id_line : line.id
+                            }
+                        );
                     }
                 });
             }

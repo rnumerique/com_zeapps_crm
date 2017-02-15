@@ -91,7 +91,7 @@ $tabMenu["label"] = "Contrats" ;
 $tabMenu["fa-icon"] = "handshake-o" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/contract" ;
 $tabMenu["order"] = 6 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_opportunity" ;
@@ -100,7 +100,7 @@ $tabMenu["label"] = "Opportunités" ;
 $tabMenu["fa-icon"] = "search" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/opportunity" ;
 $tabMenu["order"] = 7 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_product" ;
@@ -118,7 +118,7 @@ $tabMenu["label"] = "Grille tarifaire" ;
 $tabMenu["fa-icon"] = "tags" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/product_price" ;
 $tabMenu["order"] = 9 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 
 
@@ -129,7 +129,7 @@ $tabMenu["space"] = "com_ze_apps_purchase" ;
 $tabMenu["label"] = "Achats" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/purchase" ;
 $tabMenu["order"] = 1 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_delivery_receipt" ;
@@ -137,7 +137,7 @@ $tabMenu["space"] = "com_ze_apps_purchase" ;
 $tabMenu["label"] = "Bon de réception" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/delivery_receipt" ;
 $tabMenu["order"] = 2 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 
 $tabMenu = array () ;
@@ -146,7 +146,7 @@ $tabMenu["space"] = "com_ze_apps_accounting" ;
 $tabMenu["label"] = "Achats" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/purchase" ;
 $tabMenu["order"] = 1 ;
-$menuLeft[] = $tabMenu ;
+//$menuLeft[] = $tabMenu ;
 
 
 
@@ -184,7 +184,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Contrats" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/contract" ;
 $tabMenu["order"] = 6 ;
-$menuHeader[] = $tabMenu ;
+//$menuHeader[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_opportunity" ;
@@ -192,7 +192,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Opportunités" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/opportunity" ;
 $tabMenu["order"] = 7 ;
-$menuHeader[] = $tabMenu ;
+//$menuHeader[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_product" ;
@@ -208,7 +208,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Grille tarifaire" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/product_price" ;
 $tabMenu["order"] = 9 ;
-$menuHeader[] = $tabMenu ;
+//$menuHeader[] = $tabMenu ;
 
 
 
@@ -218,7 +218,7 @@ $tabMenu["space"] = "com_ze_apps_purchase" ;
 $tabMenu["label"] = "Achats" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/purchase" ;
 $tabMenu["order"] = 1 ;
-$menuHeader[] = $tabMenu ;
+//$menuHeader[] = $tabMenu ;
 
 $tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_delivery_receipt" ;
@@ -226,4 +226,4 @@ $tabMenu["space"] = "com_ze_apps_purchase" ;
 $tabMenu["label"] = "Bon de réception" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/delivery_receipt" ;
 $tabMenu["order"] = 2 ;
-$menuHeader[] = $tabMenu ;
+//$menuHeader[] = $tabMenu ;

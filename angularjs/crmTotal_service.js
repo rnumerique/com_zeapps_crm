@@ -23,7 +23,7 @@ app.factory('crmTotal', function(){
         var total = 0;
         for(var i = index - 1; i >= 0; i--){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty;
+                total += parseFloat(array[i].total_ht);
             }
             else if(array[i].type == 'subTotal'){
                 i = -1;
@@ -36,7 +36,7 @@ app.factory('crmTotal', function(){
         var total = 0;
         for(var i = index - 1; i >= 0; i--){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty * ( 1 + (array[i].taxe / 100) );
+                total += parseFloat(array[i].total_ttc);
             }
             else if(array[i].type == 'subTotal'){
                 i = -1;
@@ -49,7 +49,7 @@ app.factory('crmTotal', function(){
         var total = 0;
         for(var i = 0; i < array.length; i++){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty;
+                total += parseFloat(array[i].total_ht);
             }
         }
         return total;
@@ -59,7 +59,7 @@ app.factory('crmTotal', function(){
         var total = 0;
         for(var i = 0; i < array.length; i++){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty * ( 1 + (array[i].taxe / 100) );
+                total += parseFloat(array[i].total_ttc);
             }
         }
         return total;
@@ -70,7 +70,7 @@ app.factory('crmTotal', function(){
 
         for (var i = 0; i < array.length; i++) {
             if (array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment') {
-                total += array[i].price_unit * array[i].qty * (array[i].discount / 100);
+                total += parseFloat(array[i].total_ht) * (array[i].discount / 100);
             }
         }
         total = total + totalPreDiscountHT(array) * (global_discount / 100);
@@ -83,7 +83,7 @@ app.factory('crmTotal', function(){
 
         for(var i = 0; i < array.length; i++){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty * ( 1 - (array[i].discount / 100) );
+                total += parseFloat(array[i].total_ht);
             }
         }
         total = total * (1- (global_discount / 100) );
@@ -96,7 +96,7 @@ app.factory('crmTotal', function(){
 
         for(var i = 0; i < array.length; i++){
             if(array[i] != undefined && array[i].type != 'subTotal' && array[i].type != 'comment'){
-                total += array[i].price_unit * array[i].qty * ( 1 - (array[i].discount / 100) ) * ( 1 + (array[i].taxe / 100) );
+                total += parseFloat(array[i].total_ttc);
             }
         }
         total = total * (1- (global_discount / 100) );
