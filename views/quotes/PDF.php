@@ -59,7 +59,7 @@
 <table class="root">
     <tr>
         <td id="logo" colspan="2">
-            <img src="<?php echo $logo; ?>">
+            <img src="/assets/images/quiltmania.jpg">
         </td>
     </tr>
     <tr>
