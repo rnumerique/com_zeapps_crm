@@ -183,7 +183,7 @@ class Orders extends ZeCtrl
     }
 
 
-    public function getAll($id_company = null) {
+    public function getAll($id_company = null, $type = 'company') {
         $this->load->model("Zeapps_users", "users");
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_companies", "order_companies");
@@ -191,7 +191,7 @@ class Orders extends ZeCtrl
         $this->load->model("Zeapps_order_lines", "order_lines");
 
         if($id_company)
-            $orders = $this->orders->all(array('id_company'=>$id_company));
+            $orders = $this->orders->all(array('id_'.$type=>$id_company));
         else
             $orders = $this->orders->all();
 

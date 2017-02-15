@@ -192,31 +192,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                         </thead>
                         <tbody ui-sortable="sortable" class="sortableContainer" ng-model="lines">
-                            <tr ng-repeat="line in lines" ng-class="[line.num == 'subTotal' ? 'sous-total info' : '', line.num == 'comment' ? 'warning' : '']" data-id="{{ line.id }}">
+                            <tr ng-repeat="line in lines" ng-class="[line.type == 'subTotal' ? 'sous-total info' : '', line.type == 'comment' ? 'warning' : '']" data-id="{{ line.id }}">
 
-                                <td ng-if="line.num != 'subTotal' && line.num != 'comment'">
-                                    {{ line.num }}
+                                <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
+                                    {{ line.ref }}
                                 </td>
 
-                                <td ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <strong>{{ line.designation_title }} :</strong><br>
                                     {{ line.designation_desc }}
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.qty | number }}</span>
                                     <input type="text" class="form-control" ng-model="line.qty" ng-show="line.edit">
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     {{ line.price_unit | currency:'€':2 }}
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     {{ line.taxe | number:2 }}%
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">-{{ line.discount | number:2 }}%</span>
                                     <div class="input-group" ng-show="line.edit">
                                         <input type="text" class="form-control" ng-model="line.discount">
@@ -224,35 +224,35 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </div>
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     {{ line.price_unit * line.qty | currency:'€':2 }}
                                 </td>
 
-                                <td class="text-right" ng-if="line.num != 'subTotal' && line.num != 'comment'">
+                                <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     {{ (line.price_unit * line.qty) * ( 1 + (line.taxe / 100) ) | currency:'€':2 }}
                                 </td>
 
-                                <td colspan="6" class="text-right" ng-if="line.num == 'subTotal'">
+                                <td colspan="6" class="text-right" ng-if="line.type == 'subTotal'">
                                     Sous-Total
                                 </td>
 
-                                <td class="text-right" ng-if="line.num == 'subTotal'">
+                                <td class="text-right" ng-if="line.type == 'subTotal'">
                                     {{ subtotalHT($index) | currency:'€':2 }}
                                 </td>
-                                <td class="text-right" ng-if="line.num == 'subTotal'">
+                                <td class="text-right" ng-if="line.type == 'subTotal'">
                                     {{ subtotalTTC($index) | currency:'€':2 }}
                                 </td>
 
-                                <td colspan="8" ng-if="line.num == 'comment'">
+                                <td colspan="8" ng-if="line.type == 'comment'">
                                     {{ line.designation_desc }}
                                 </td>
 
                                 <td class="text-right">
-                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.num == 'subTotal' || line.num == 'comment' || line.edit">
+                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.edit">
                                         <span class="fa fa-fw fa-pencil"></span>
                                     </button>
-                                    <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.num == 'subTotal' || line.num == 'comment' || !line.edit">
-                                        <span class="fa fa-fw fa-ok"></span>
+                                    <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || !line.edit">
+                                        <span class="fa fa-fw fa-check"></span>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-xs" ng-click="deleteLine(line)">
                                         <span class="fa fa-fw fa-trash"></span>
@@ -274,7 +274,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total HT av remise
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ totalAvDiscountHT() | currency:'€':2 }}
+                                {{ quote.total_prediscount_ht | currency:'€':2 }}
                             </div>
                         </div>
                         <div class="row">
@@ -282,7 +282,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TTC av remise
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ totalAvDiscountTTC() | currency:'€':2 }}
+                                {{ quote.total_prediscount_ttc | currency:'€':2 }}
                             </div>
                         </div>
                         <hr>
@@ -305,7 +305,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Remise (avant Taxes)
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ totalDiscount() | currency:'€':2 }}
+                                {{ quote.total_discount | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -316,7 +316,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total HT
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ totalHT() | currency:'€':2 }}
+                                {{ quote.total_ht | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -325,7 +325,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TTC
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ totalTTC() | currency:'€':2 }}
+                                {{ quote.total_ttc | currency:'€':2 }}
                             </div>
                         </div>
                     </div>

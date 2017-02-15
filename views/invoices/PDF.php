@@ -132,11 +132,9 @@
                 <?php
                 $subtotal_ht = 0;
                 $subtotal_ttc = 0;
-                $total_ht = 0;
-                $total_ttc = 0;
                 if($lines) {
                     foreach ($lines as $line) {
-                        if ($line->num == 'subTotal') {
+                        if ($line->type == 'subTotal') {
                             ?>
                             <tr>
                                 <td colspan="<?php echo $showDiscount ? 6 : 5; ?>" class="text-right">
@@ -148,7 +146,7 @@
                             <?php
                             $subtotal_ht = 0;
                             $subtotal_ttc = 0;
-                        } elseif ($line->num == 'comment') {
+                        } elseif ($line->type == 'comment') {
                             ?>
                             <tr>
                                 <td class="text-left" colspan="<?php echo $showDiscount ? 8 : 7; ?>">
@@ -159,13 +157,11 @@
                         } else {
                             $t_ht = floatval($line->price_unit) * floatval($line->qty);
                             $subtotal_ht += $t_ht;
-                            $total_ht += $t_ht;
                             $t_ttc = floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
                             $subtotal_ttc += $t_ttc;
-                            $total_ttc += $t_ttc;
                             ?>
                             <tr>
-                                <td class="text-left"><?php echo $line->num; ?></td>
+                                <td class="text-left"><?php echo $line->ref; ?></td>
                                 <td class="text-left">
                                     <strong><?php echo $line->designation_title; ?> :</strong><br/>
                                     <?php echo $line->designation_desc; ?>
@@ -201,7 +197,7 @@
                 <tbody>
                 <?php
                 foreach ($lines as $line) {
-                    if($line->num !== 'subTotal' && $line->num !== 'comment') {
+                    if($line->type !== 'subTotal' && $line->type !== 'comment') {
                         ?>
                         <tr>
                             <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
@@ -223,7 +219,7 @@
                             <strong>Total HT av remise</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($total_ht), 2, ',', ' '); ?>
+                            <?php echo number_format(floatval($invoice->total_prediscount_ht), 2, ',', ' '); ?>
                         </td>
                     </tr>
                     <tr>
@@ -231,7 +227,7 @@
                             <strong>Total TTC av remise</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($total_ttc), 2, ',', ' '); ?>
+                            <?php echo number_format(floatval($invoice->total_prediscount_ttc), 2, ',', ' '); ?>
                         </td>
                     </tr>
                     <tr>
@@ -247,16 +243,16 @@
                             <strong>Remise (avant taxes)</strong>
                         </td>
                         <td class="text-right">
-                            <?php $discount_prct = floatval(floatval($invoice->global_discount) / 100); echo number_format(floatval($discount_prct * $total_ht), 2, ',', ' ') ? : '0,00'; ?>
+                            <?php echo number_format(floatval($invoice->total_discount), 2, ',', ' ') ? : '0,00'; ?>
                         </td>
                     </tr>
-                <?php } else {$discount_prct = 0;}?>
+                <?php }?>
                 <tr>
                     <td class="text-left">
                         <strong>Total HT</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format($total_ht - ($discount_prct * $total_ht), 2, ',', ' '); ?>
+                        <?php echo number_format(floatval($invoice->total_ht), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>
@@ -264,7 +260,7 @@
                         <strong>Total TTC</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format($total_ttc - ($discount_prct * $total_ttc), 2, ',', ' '); ?>
+                        <?php echo number_format(floatval($invoice->total_ttc), 2, ',', ' '); ?>
                     </td>
                 </tr>
             </table>

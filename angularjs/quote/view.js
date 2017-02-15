@@ -1,5 +1,5 @@
-app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload',
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload) {
+app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload', 'crmTotal',
+    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal) {
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
 
@@ -201,13 +201,14 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                 if (objReturn) {
                     var line = {
                         id_quote: $routeParams.id,
-                        num: objReturn.ref,
+                        type: 'product',
+                        ref: objReturn.ref,
                         designation_title: objReturn.name,
                         designation_desc: objReturn.description,
                         qty: '1',
                         discount: 0.00,
                         price_unit: objReturn.price_ht,
-                        taxe: objReturn.tva,
+                        taxe: objReturn.value_taxe,
                         sort: $scope.lines.length
                     };
 
@@ -225,7 +226,7 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
         $scope.addSubTotal = function(){
             var subTotal = {
                 id_quote: $routeParams.id,
-                num: 'subTotal',
+                type: 'subTotal',
                 sort: $scope.lines.length
             };
 
@@ -242,7 +243,7 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             if($scope.comment != ''){
                 var comment = {
                     id_quote: $routeParams.id,
-                    num: 'comment',
+                    type: 'comment',
                     designation_desc: '',
                     sort: $scope.lines.length
                 };
@@ -265,7 +266,6 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
         };
 
         $scope.submitLine = function(line){
-            console.log(line.id);
             var formatted_data = angular.toJson(line);
             zhttp.crm.quote.line.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
@@ -284,92 +284,36 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             }
         };
 
-
         $scope.subtotalHT = function(index){
-            var total = 0;
-            for(var i = index - 1; i >= 0; i--){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty;
-                }
-                else if($scope.lines[i].num == 'subTotal'){
-                    i = -1;
-                }
-            }
-            return total;
+            return crmTotal.sub.HT($scope.lines, index);
         };
 
         $scope.subtotalTTC = function(index){
-            var total = 0;
-            for(var i = index - 1; i >= 0; i--){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 + ($scope.lines[i].taxe / 100) );
-                }
-                else if($scope.lines[i].num == 'subTotal'){
-                    i = -1;
-                }
-            }
-            return total;
+            return crmTotal.sub.TTC($scope.lines, index);
         };
-
-        $scope.totalAvDiscountHT = function(){
-            var total = 0;
-            for(var i = 0; i < $scope.lines.length; i++){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty;
-                }
-            }
-            return total;
-        };
-
-        $scope.totalAvDiscountTTC = function(){
-            var total = 0;
-            for(var i = 0; i < $scope.lines.length; i++){
-                if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                    total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 + ($scope.lines[i].taxe / 100) );
-                }
-            }
-            return total;
-        };
-
-        $scope.totalDiscount = function(){
-            var total = 0;
+        $scope.$watch('lines', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        }, true);
+        $scope.$watch('quote.global_discount', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        });
+        function updateTotals(){
             if($scope.quote) {
-                for (var i = 0; i < $scope.lines.length; i++) {
-                    if ($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment') {
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ($scope.lines[i].discount / 100);
-                    }
-                }
-                total = total + $scope.totalAvDiscountHT() * ($scope.quote.global_discount / 100);
-            }
-            return total;
-        };
+                $scope.quote.total_prediscount_ht = crmTotal.preDiscount.HT($scope.lines);
+                $scope.quote.total_prediscount_ttc = crmTotal.preDiscount.TTC($scope.lines);
+                $scope.quote.total_discount = crmTotal.discount($scope.lines, $scope.quote.global_discount);
+                $scope.quote.total_ht = crmTotal.total.HT($scope.lines, $scope.quote.global_discount);
+                $scope.quote.total_ttc = crmTotal.total.TTC($scope.lines, $scope.quote.global_discount);
 
-        $scope.totalHT = function(){
-            var total = 0;
-            if($scope.quote) {
-                for(var i = 0; i < $scope.lines.length; i++){
-                    if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 - ($scope.lines[i].discount / 100) );
-                    }
-                }
-                total = total * (1- ($scope.quote.global_discount / 100) );
-            }
-            return total;
-        };
+                var data = $scope.quote;
 
-        $scope.totalTTC = function(){
-            var total = 0;
-            if($scope.quote) {
-                for(var i = 0; i < $scope.lines.length; i++){
-                    if($scope.lines[i] != undefined && $scope.lines[i].num != 'subTotal' && $scope.lines[i].num != 'comment'){
-                        total += $scope.lines[i].price_unit * $scope.lines[i].qty * ( 1 - ($scope.lines[i].discount / 100) ) * ( 1 + ($scope.lines[i].taxe / 100) );
-                    }
-                }
-                total = total * (1- ($scope.quote.global_discount / 100) );
-            }
-            return total;
-        };
+                var formatted_data = angular.toJson(data);
 
+                zhttp.crm.quote.save(formatted_data);
+            }
+        }
 
         $scope.toggleActivity = function(){
             $scope.activity = {};

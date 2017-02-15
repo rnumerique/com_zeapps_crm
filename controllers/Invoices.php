@@ -146,7 +146,7 @@ class Invoices extends ZeCtrl
 
             $nomPDF = $this->makePDF($id, false);
 
-            $this->invoices->update(array('numerotation' => $numerotation, 'finalized' => true, 'balance' => $total, 'final_pdf' => $nomPDF), $id);
+            $this->invoices->update(array('numerotation' => $numerotation, 'finalized' => true, 'due' => $total, 'final_pdf' => $nomPDF), $id);
 
             echo json_encode(array('nomPDF'=>$nomPDF, 'numerotation'=>$numerotation));
         }
@@ -155,7 +155,7 @@ class Invoices extends ZeCtrl
         }
     }
 
-    public function getAll($id_company = null) {
+    public function getAll($id_company = null, $type = 'company') {
         $this->load->model("Zeapps_users", "users");
         $this->load->model("Zeapps_invoices", "invoices");
         $this->load->model("Zeapps_invoice_companies", "invoice_companies");
@@ -163,7 +163,7 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         if($id_company)
-            $invoices = $this->invoices->all(array('id_company'=>$id_company));
+            $invoices = $this->invoices->all(array('id_'.$type=>$id_company));
         else
             $invoices = $this->invoices->all();
 
