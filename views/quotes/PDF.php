@@ -8,7 +8,7 @@
 
         table {
             width: 100%;
-            margin: 25px 0;
+            margin: 10px 0;
             background-color: #ffffff;
             border-collapse: collapse;
         }
@@ -35,11 +35,11 @@
             vertical-align: middle;
         }
         #logo{
-            padding: 50px 0;
+            padding: 10px 0;
         }
         #billing_address,
         #delivery_address{
-            padding: 0 0 50px 0;
+            padding: 0 0 10px 0;
         }
         .text-left {
             text-align: left;
@@ -51,7 +51,7 @@
             text-align: right;
         }
         .object{
-            padding: 20px 0;
+            padding: 10px 0;
         }
     </style>
 </header>
@@ -155,10 +155,8 @@
                             </tr>
                             <?php
                         } else {
-                            $t_ht = floatval($line->price_unit) * floatval($line->qty);
-                            $subtotal_ht += $t_ht;
-                            $t_ttc = floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
-                            $subtotal_ttc += $t_ttc;
+                            $subtotal_ht = floatval($line->price_unit) * floatval($line->qty);
+                            $subtotal_ttc = floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
                             ?>
                             <tr>
                                 <td class="text-left"><?php echo $line->ref; ?></td>
@@ -172,8 +170,8 @@
                                 <?php if($showDiscount){ ?>
                                     <td><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
                                 <?php } ?>
-                                <td><?php echo number_format(floatval($t_ht), 2, ',', ' '); ?></td>
-                                <td><?php echo number_format(floatval($t_ttc), 2, ',', ' '); ?></td>
+                                <td><?php echo number_format(floatval($line->total_ht), 2, ',', ' '); ?></td>
+                                <td><?php echo number_format(floatval($line->total_ttc), 2, ',', ' '); ?></td>
                             </tr>
                             <?php
                         }
@@ -253,6 +251,14 @@
                     </td>
                     <td class="text-right">
                         <?php echo number_format(floatval($quote->total_ht), 2, ',', ' '); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-left">
+                        <strong>TVA</strong>
+                    </td>
+                    <td class="text-right">
+                        <?php echo number_format(floatval($invoice->total_ttc)-floatval($invoice->total_ht), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>
