@@ -138,10 +138,10 @@
                             ?>
                             <tr>
                                 <td colspan="<?php echo $showDiscount ? 6 : 5; ?>" class="text-right">
-                                    Sous-Total
+                                    <b>Sous-Total</b>
                                 </td>
-                                <td><?php echo number_format(floatval($subtotal_ht), 2, ',', ' '); ?></td>
-                                <td><?php echo number_format(floatval($subtotal_ttc), 2, ',', ' '); ?></td>
+                                <td class="text-right"><b><?php echo number_format(floatval($subtotal_ht), 2, ',', ' '); ?></b></td>
+                                <td class="text-right"><b><?php echo number_format(floatval($subtotal_ttc), 2, ',', ' '); ?></b></td>
                             </tr>
                             <?php
                             $subtotal_ht = 0;
