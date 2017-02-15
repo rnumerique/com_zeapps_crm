@@ -59,7 +59,7 @@
 <table class="root">
     <tr>
         <td id="logo" colspan="2">
-            <img src="/assets/images/quiltmania.jpg">
+            <img src="/assets/images/quiltmania.jpg" width="190">
         </td>
     </tr>
     <tr>
