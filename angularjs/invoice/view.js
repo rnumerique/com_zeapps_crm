@@ -502,7 +502,7 @@ app.controller('ComZeappsCrmInvoiceViewCtrl', ['$scope', '$route', '$routeParams
                         return 'Attention';
                     },
                     msg: function () {
-                        return 'Souhaitez-vous supprimer définitivement cette activité ?';
+                        return 'Souhaitez-vous supprimer définitivement ce document ?';
                     },
                     action_danger: function () {
                         return 'Annuler';
