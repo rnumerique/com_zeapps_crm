@@ -34,14 +34,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="well">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>Destinataire</h4>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-12" ng-if="company">
                     <strong>Entreprise :</strong> {{ company.company_name }}<br>

@@ -34,14 +34,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="well">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>Destinataire</h4>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-12" ng-if="company">
                     <strong>Entreprise :</strong> {{ company.company_name }}<br>
@@ -160,7 +152,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </button>
 
                     <!-- HOOK comZeappsCrm_OrderHook -->
-                    <span ng-repeat="hook in hooks" ng-include="hook.template"></span>
+                    <span ng-repeat="hook in hooks | orderBy:'sort'" ng-include="hook.template"></span>
 
                     <button type="button" class="btn btn-info btn-xs" ng-click="addSubTotal()">
                         <span class="fa fa-fw fa-euro"></span> sous-total
@@ -209,7 +201,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.qty | number }}</span>
-                                    <input type="text" class="form-control" ng-model="line.qty" ng-show="line.edit">
+                                    <input type="text" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -217,23 +209,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.taxe | number:2 }}%
+                                    {{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">-{{ line.discount | number:2 }}%</span>
+                                    <span ng-hide="line.edit">{{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}</span>
                                     <div class="input-group" ng-show="line.edit">
-                                        <input type="text" class="form-control" ng-model="line.discount">
+                                        <input type="text" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
                                         <div class="input-group-addon">%</div>
                                     </div>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.price_unit * line.qty | currency:'€':2 }}
+                                    {{ line.total_ht | currency:'€':2 }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ (line.price_unit * line.qty) * ( 1 + (line.taxe / 100) ) | currency:'€':2 }}
+                                    {{ line.total_ttc | currency:'€':2 }}
                                 </td>
 
                                 <td colspan="6" class="text-right" ng-if="line.type == 'subTotal'">
@@ -252,7 +244,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td class="text-right">
-                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.edit">
+                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.type == 'abonnement' || line.edit">
                                         <span class="fa fa-fw fa-pencil"></span>
                                     </button>
                                     <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || !line.edit">
