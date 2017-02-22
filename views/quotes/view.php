@@ -426,10 +426,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <strong>
                             {{ document.name }}
                         </strong>
-                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(activity)">
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)">
                             <span class="fa fa-fw fa-trash"></span>
                         </button>
-                        <span class="fa fa-fw fa-trash text-danger pointer" ng-click="deleteDocument(document)"></span>
                     </div>
                     <div class="text-muted">
                         <span i8n="Ajouté le"></span> {{ document.created_at | date:'dd/MM/yyyy' }}
