@@ -3,255 +3,6 @@ app.config(['$provide',
         $provide.decorator('zeHttp', function($delegate){
             var zeHttp = $delegate;
 
-            // MODALITY
-            var get_modality = function(id){
-                return zeHttp.get('/com_zeapps_crm/modalities/get/' + id)
-            };
-            var getAll_modality = function(){
-                return zeHttp.get('/com_zeapps_crm/modalities/getAll/');
-            };
-            var post_modality = function(data){
-                return zeHttp.post('/com_zeapps_crm/modalities/save', data);
-            };
-            var del_modality = function(id){
-                return zeHttp.delete('/com_zeapps_crm/modalities/delete/' + id);
-            };
-
-            // TAXE
-            var get_taxe = function(id){
-                return zeHttp.get('/com_zeapps_crm/taxes/get/' + id)
-            };
-            var getAll_taxe = function(){
-                return zeHttp.get('/com_zeapps_crm/taxes/getAll/');
-            };
-            var post_taxe = function(data){
-                return zeHttp.post('/com_zeapps_crm/taxes/save', data);
-            };
-            var del_taxe = function(id){
-                return zeHttp.delete('/com_zeapps_crm/taxes/delete/' + id);
-            };
-
-
-            // INVOICE
-            var test_invoice = function(data){
-                return zeHttp.post('/com_zeapps_crm/invoices/testFormat', data);
-            };
-            var get_invoice = function(id){
-                return zeHttp.get('/com_zeapps_crm/invoices/get/' + id)
-            };
-            var getAll_invoice = function(id_project, type){
-                id_project = id_project || 0;
-                type = type || '';
-                return zeHttp.get('/com_zeapps_crm/invoices/getAll/' + id_project + '/' + type);
-            };
-            var post_invoice = function(data){
-                return zeHttp.post('/com_zeapps_crm/invoices/save', data);
-            };
-            var del_invoice = function(id){
-                return zeHttp.delete('/com_zeapps_crm/invoices/delete/' + id);
-            };
-            var finalize_invoice = function(id){
-                return zeHttp.get('/com_zeapps_crm/invoices/finalizeInvoice/' + id)
-            };
-            var save_line_invoice = function(data){
-                return zeHttp.post('/com_zeapps_crm/invoices/saveLine', data);
-            };
-            var update_linepos_invoice = function(data){
-                return zeHttp.post('/com_zeapps_crm/invoices/updateLinePosition/', data);
-            };
-            var del_line_invoice = function(id){
-                return zeHttp.delete('/com_zeapps_crm/invoices/deleteLine/' + id);
-            };
-            var save_activity_invoice = function(data){
-                return zeHttp.post('com_zeapps_crm/invoices/saveActivity', data);
-            };
-            var del_activity_invoice = function(id){
-                return zeHttp.post('com_zeapps_crm/invoices/deleteActivity/' + id);
-            };
-            var url_document_invoice = function(){
-                return '/com_zeapps_crm/invoices/uploadDocuments/';
-            };
-            var del_document_invoice = function(id){
-                return zeHttp.post('/com_zeapps_crm/invoices/deleteDocument/' + id);
-            };
-            var get_pdf_invoice = function(){
-                return '/com_zeapps_crm/invoices/getPDF/';
-            };
-            var make_pdf_invoice = function(id){
-                return zeHttp.post('/com_zeapps_crm/invoices/makePDF/' + id);
-            };
-
-
-            // ORDER
-            var test_order = function(data){
-                return zeHttp.post('/com_zeapps_crm/orders/testFormat', data);
-            };
-            var get_order = function(id){
-                return zeHttp.get('/com_zeapps_crm/orders/get/' + id)
-            };
-            var getAll_order = function(id_project, type){
-                id_project = id_project || 0;
-                type = type || '';
-                return zeHttp.get('/com_zeapps_crm/orders/getAll/' + id_project + '/' + type);
-            };
-            var post_order = function(data){
-                return zeHttp.post('/com_zeapps_crm/orders/save', data);
-            };
-            var del_order = function(id){
-                return zeHttp.delete('/com_zeapps_crm/orders/delete/' + id);
-            };
-            var save_line_order = function(data){
-                return zeHttp.post('/com_zeapps_crm/orders/saveLine', data);
-            };
-            var update_linepos_order = function(data){
-                return zeHttp.post('/com_zeapps_crm/orders/updateLinePosition/', data);
-            };
-            var del_line_order = function(id){
-                return zeHttp.delete('/com_zeapps_crm/orders/deleteLine/' + id);
-            };
-            var save_activity_order = function(data){
-                return zeHttp.post('com_zeapps_crm/orders/saveActivity', data);
-            };
-            var del_activity_order = function(id){
-                return zeHttp.post('com_zeapps_crm/orders/deleteActivity/' + id);
-            };
-            var url_document_order = function(){
-                return '/com_zeapps_crm/orders/uploadDocuments/';
-            };
-            var del_document_order = function(id){
-                return zeHttp.post('/com_zeapps_crm/orders/deleteDocument/' + id);
-            };
-            var get_pdf_order = function(){
-                return '/com_zeapps_crm/orders/getPDF/';
-            };
-            var make_pdf_order = function(id){
-                return zeHttp.post('/com_zeapps_crm/orders/makePDF/' + id);
-            };
-
-
-            // QUOTE
-            var test_quote = function(data){
-                return zeHttp.post('/com_zeapps_crm/quotes/testFormat', data);
-            };
-            var get_quote = function(id){
-                return zeHttp.get('/com_zeapps_crm/quotes/get/' + id)
-            };
-            var getAll_quote = function(id_project, type){
-                id_project = id_project || 0;
-                type = type || '';
-                return zeHttp.get('/com_zeapps_crm/quotes/getAll/' + id_project + '/' + type);
-            };
-            var post_quote = function(data){
-                return zeHttp.post('/com_zeapps_crm/quotes/save', data);
-            };
-            var del_quote = function(id){
-                return zeHttp.delete('/com_zeapps_crm/quotes/delete/' + id);
-            };
-            var save_line_quote = function(data){
-                return zeHttp.post('/com_zeapps_crm/quotes/saveLine', data);
-            };
-            var update_linepos_quote = function(data){
-                return zeHttp.post('/com_zeapps_crm/quotes/updateLinePosition/', data);
-            };
-            var del_line_quote = function(id){
-                return zeHttp.delete('/com_zeapps_crm/quotes/deleteLine/' + id);
-            };
-            var save_activity_quote = function(data){
-                return zeHttp.post('com_zeapps_crm/quotes/saveActivity', data);
-            };
-            var del_activity_quote = function(id){
-                return zeHttp.post('com_zeapps_crm/quotes/deleteActivity/' + id);
-            };
-            var url_document_quote = function(){
-                return '/com_zeapps_crm/quotes/uploadDocuments/';
-            };
-            var del_document_quote = function(id){
-                return zeHttp.post('/com_zeapps_crm/quotes/deleteDocument/' + id);
-            };
-            var get_pdf_quote = function(){
-                return '/com_zeapps_crm/quotes/getPDF/';
-            };
-            var make_pdf_quote = function(id){
-                return zeHttp.post('/com_zeapps_crm/quotes/makePDF/' + id);
-            };
-
-
-            // PRODUCT
-            var get_product = function(id){
-                return zeHttp.get('/com_zeapps_crm/product/get/'+id);
-            };
-            var getAll_product = function(){
-                return zeHttp.get('/com_zeapps_crm/product/getAll');
-            };
-            var get_products_of = function(id){
-                return zeHttp.get('/com_zeapps_crm/product/getProductsOf/'+id);
-            };
-            var save_product = function(data){
-                return zeHttp.post('/com_zeapps_crm/product/save', data);
-            };
-            var delete_product = function(id){
-                return zeHttp.post('/com_zeapps_crm/product/delete/'+id);
-            };
-
-
-            // CATEGORIES
-            var get_categories_tree = function(){
-                return zeHttp.get('/com_zeapps_crm/categories/get_tree');
-            };
-            var get_category = function(id){
-                return zeHttp.get('/com_zeapps_crm/categories/get/'+id);
-            };
-            var save_category = function(data){
-                return zeHttp.post('/com_zeapps_crm/categories/save', data);
-            };
-            var update_category_order = function(data){
-                return zeHttp.post('/com_zeapps_crm/categories/update_order', data);
-            };
-            var delete_category = function(id, force){
-                if(force === undefined)
-                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id);
-                else if(force)
-                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id+'/true');
-                else
-                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id+'/false');
-
-            };
-            var recursiveOpening = function(branch, id){
-                if(angular.isArray(branch.branches)){
-                    for(var i = 0; i < branch.branches.length; i++){
-                        if(recursiveOpening(branch.branches[i], id)){
-                            branch.open = true;
-                            return true;
-                        }
-                    }
-                }
-                return branch.id == id;
-            };
-
-
-            // CONFIG
-            var get_invoice_freq = function(){
-                return zeHttp.get('/zeapps/config/get/crm_invoice_frequency');
-            };
-            var get_invoice_format = function(){
-                return zeHttp.get('/zeapps/config/get/crm_invoice_format');
-            };
-            var get_quote_freq = function(){
-                return zeHttp.get('/zeapps/config/get/crm_quote_frequency');
-            };
-            var get_quote_format = function(){
-                return zeHttp.get('/zeapps/config/get/crm_quote_format');
-            };
-            var get_order_freq = function(){
-                return zeHttp.get('/zeapps/config/get/crm_order_frequency');
-            };
-            var get_order_format = function(){
-                return zeHttp.get('/zeapps/config/get/crm_order_format');
-            };
-            var get_product_attr = function(){
-                return zeHttp.get('/zeapps/config/get/crm_product_attributes');
-            };
-
             zeHttp.crm = {
                 modality : {
                     get : get_modality,
@@ -352,6 +103,12 @@ app.config(['$provide',
                     update_order : update_category_order,
                     del : delete_category,
                     openTree : recursiveOpening
+                },
+                product_stock : {
+                    get : get_product_stock,
+                    get_all : getAll_product_stock,
+                    save : save_product_stock,
+                    del : delete_product_stock
                 }
             };
 
@@ -382,5 +139,270 @@ app.config(['$provide',
             });
 
             return zeHttp;
+
+            // MODALITY
+            function get_modality(id){
+                return zeHttp.get('/com_zeapps_crm/modalities/get/' + id);
+            }
+            function getAll_modality(){
+                return zeHttp.get('/com_zeapps_crm/modalities/getAll/');
+            }
+            function post_modality(data){
+                return zeHttp.post('/com_zeapps_crm/modalities/save', data);
+            }
+            function del_modality(id){
+                return zeHttp.delete('/com_zeapps_crm/modalities/delete/' + id);
+            }
+
+            // TAXE
+            function get_taxe(id){
+                return zeHttp.get('/com_zeapps_crm/taxes/get/' + id);
+            }
+            function getAll_taxe(){
+                return zeHttp.get('/com_zeapps_crm/taxes/getAll/');
+            }
+            function post_taxe(data){
+                return zeHttp.post('/com_zeapps_crm/taxes/save', data);
+            }
+            function del_taxe(id){
+                return zeHttp.delete('/com_zeapps_crm/taxes/delete/' + id);
+            }
+
+
+            // INVOICE
+            function test_invoice(data){
+                return zeHttp.post('/com_zeapps_crm/invoices/testFormat', data);
+            }
+            function get_invoice(id){
+                return zeHttp.get('/com_zeapps_crm/invoices/get/' + id);
+            }
+            function getAll_invoice(id_project, type){
+                id_project = id_project || 0;
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/invoices/getAll/' + id_project + '/' + type);
+            }
+            function post_invoice(data){
+                return zeHttp.post('/com_zeapps_crm/invoices/save', data);
+            }
+            function del_invoice(id){
+                return zeHttp.delete('/com_zeapps_crm/invoices/delete/' + id);
+            }
+            function finalize_invoice(id){
+                return zeHttp.get('/com_zeapps_crm/invoices/finalizeInvoice/' + id);
+            }
+            function save_line_invoice(data){
+                return zeHttp.post('/com_zeapps_crm/invoices/saveLine', data);
+            }
+            function update_linepos_invoice(data){
+                return zeHttp.post('/com_zeapps_crm/invoices/updateLinePosition/', data);
+            }
+            function del_line_invoice(id){
+                return zeHttp.delete('/com_zeapps_crm/invoices/deleteLine/' + id);
+            }
+            function save_activity_invoice(data){
+                return zeHttp.post('com_zeapps_crm/invoices/saveActivity', data);
+            }
+            function del_activity_invoice(id){
+                return zeHttp.post('com_zeapps_crm/invoices/deleteActivity/' + id);
+            }
+            function url_document_invoice(){
+                return '/com_zeapps_crm/invoices/uploadDocuments/';
+            }
+            function del_document_invoice(id){
+                return zeHttp.post('/com_zeapps_crm/invoices/deleteDocument/' + id);
+            }
+            function get_pdf_invoice(){
+                return '/com_zeapps_crm/invoices/getPDF/';
+            }
+            function make_pdf_invoice(id){
+                return zeHttp.post('/com_zeapps_crm/invoices/makePDF/' + id);
+            }
+
+
+            // ORDER
+            function test_order(data){
+                return zeHttp.post('/com_zeapps_crm/orders/testFormat', data);
+            }
+            function get_order(id){
+                return zeHttp.get('/com_zeapps_crm/orders/get/' + id);
+            }
+            function getAll_order(id_project, type){
+                id_project = id_project || 0;
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/orders/getAll/' + id_project + '/' + type);
+            }
+            function post_order(data){
+                return zeHttp.post('/com_zeapps_crm/orders/save', data);
+            }
+            function del_order(id){
+                return zeHttp.delete('/com_zeapps_crm/orders/delete/' + id);
+            }
+            function save_line_order(data){
+                return zeHttp.post('/com_zeapps_crm/orders/saveLine', data);
+            }
+            function update_linepos_order(data){
+                return zeHttp.post('/com_zeapps_crm/orders/updateLinePosition/', data);
+            }
+            function del_line_order(id){
+                return zeHttp.delete('/com_zeapps_crm/orders/deleteLine/' + id);
+            }
+            function save_activity_order(data){
+                return zeHttp.post('com_zeapps_crm/orders/saveActivity', data);
+            }
+            function del_activity_order(id){
+                return zeHttp.post('com_zeapps_crm/orders/deleteActivity/' + id);
+            }
+            function url_document_order(){
+                return '/com_zeapps_crm/orders/uploadDocuments/';
+            }
+            function del_document_order(id){
+                return zeHttp.post('/com_zeapps_crm/orders/deleteDocument/' + id);
+            }
+            function get_pdf_order(){
+                return '/com_zeapps_crm/orders/getPDF/';
+            }
+            function make_pdf_order(id){
+                return zeHttp.post('/com_zeapps_crm/orders/makePDF/' + id);
+            }
+
+
+            // QUOTE
+            function test_quote(data){
+                return zeHttp.post('/com_zeapps_crm/quotes/testFormat', data);
+            }
+            function get_quote(id){
+                return zeHttp.get('/com_zeapps_crm/quotes/get/' + id);
+            }
+            function getAll_quote(id_project, type){
+                id_project = id_project || 0;
+                type = type || '';
+                return zeHttp.get('/com_zeapps_crm/quotes/getAll/' + id_project + '/' + type);
+            }
+            function post_quote(data){
+                return zeHttp.post('/com_zeapps_crm/quotes/save', data);
+            }
+            function del_quote(id){
+                return zeHttp.delete('/com_zeapps_crm/quotes/delete/' + id);
+            }
+            function save_line_quote(data){
+                return zeHttp.post('/com_zeapps_crm/quotes/saveLine', data);
+            }
+            function update_linepos_quote(data){
+                return zeHttp.post('/com_zeapps_crm/quotes/updateLinePosition/', data);
+            }
+            function del_line_quote(id){
+                return zeHttp.delete('/com_zeapps_crm/quotes/deleteLine/' + id);
+            }
+            function save_activity_quote(data){
+                return zeHttp.post('com_zeapps_crm/quotes/saveActivity', data);
+            }
+            function del_activity_quote(id){
+                return zeHttp.post('com_zeapps_crm/quotes/deleteActivity/' + id);
+            }
+            function url_document_quote(){
+                return '/com_zeapps_crm/quotes/uploadDocuments/';
+            }
+            function del_document_quote(id){
+                return zeHttp.post('/com_zeapps_crm/quotes/deleteDocument/' + id);
+            }
+            function get_pdf_quote(){
+                return '/com_zeapps_crm/quotes/getPDF/';
+            }
+            function make_pdf_quote(id){
+                return zeHttp.post('/com_zeapps_crm/quotes/makePDF/' + id);
+            }
+
+
+            // PRODUCT
+            function get_product(id){
+                return zeHttp.get('/com_zeapps_crm/product/get/'+id);
+            }
+            function getAll_product(){
+                return zeHttp.get('/com_zeapps_crm/product/getAll');
+            }
+            function get_products_of(id){
+                return zeHttp.get('/com_zeapps_crm/product/getProductsOf/'+id);
+            }
+            function save_product(data){
+                return zeHttp.post('/com_zeapps_crm/product/save', data);
+            }
+            function delete_product(id){
+                return zeHttp.post('/com_zeapps_crm/product/delete/'+id);
+            }
+
+
+            // CATEGORIES
+            function get_categories_tree(){
+                return zeHttp.get('/com_zeapps_crm/categories/get_tree');
+            }
+            function get_category(id){
+                return zeHttp.get('/com_zeapps_crm/categories/get/'+id);
+            }
+            function save_category(data){
+                return zeHttp.post('/com_zeapps_crm/categories/save', data);
+            }
+            function update_category_order(data){
+                return zeHttp.post('/com_zeapps_crm/categories/update_order', data);
+            }
+            function delete_category(id, force){
+                if(force === undefined)
+                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id);
+                else if(force)
+                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id+'/true');
+                else
+                    return zeHttp.post('/com_zeapps_crm/categories/delete/'+id+'/false');
+
+            }
+            function recursiveOpening(branch, id){
+                if(angular.isArray(branch.branches)){
+                    for(var i = 0; i < branch.branches.length; i++){
+                        if(recursiveOpening(branch.branches[i], id)){
+                            branch.open = true;
+                            return true;
+                        }
+                    }
+                }
+                return branch.id == id;
+            }
+
+
+            // PRODUCT STOCKS
+            function get_product_stock(id){
+                return zeHttp.get('/com_zeapps_crm/stock/get/'+id);
+            }
+            function getAll_product_stock(id){
+                id = id || '';
+                return zeHttp.get('/com_zeapps_crm/stock/getAll/' + id);
+            }
+            function save_product_stock(data){
+                return zeHttp.post('/com_zeapps_crm/stock/save', data);
+            }
+            function delete_product_stock(id){
+                return zeHttp.post('/com_zeapps_crm/stock/delete/'+id);
+            }
+
+
+            // CONFIG
+            function get_invoice_freq(){
+                return zeHttp.get('/zeapps/config/get/crm_invoice_frequency');
+            }
+            function get_invoice_format(){
+                return zeHttp.get('/zeapps/config/get/crm_invoice_format');
+            }
+            function get_quote_freq(){
+                return zeHttp.get('/zeapps/config/get/crm_quote_frequency');
+            }
+            function get_quote_format(){
+                return zeHttp.get('/zeapps/config/get/crm_quote_format');
+            }
+            function get_order_freq(){
+                return zeHttp.get('/zeapps/config/get/crm_order_frequency');
+            }
+            function get_order_format(){
+                return zeHttp.get('/zeapps/config/get/crm_order_format');
+            }
+            function get_product_attr(){
+                return zeHttp.get('/zeapps/config/get/crm_product_attributes');
+            }
         });
     }]);
