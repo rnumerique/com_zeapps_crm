@@ -126,6 +126,15 @@ $tabMenu["url"] = "/ng/com_zeapps_crm/product_price" ;
 $tabMenu["order"] = 9 ;
 //$menuLeft[] = $tabMenu ;
 
+$tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_stock" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Stocks" ;
+$tabMenu["fa-icon"] = "cubes" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/stock" ;
+$tabMenu["order"] = 10 ;
+$menuLeft[] = $tabMenu ;
+
 
 
 
@@ -215,6 +224,15 @@ $tabMenu["label"] = "Grille tarifaire" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/product_price" ;
 $tabMenu["order"] = 9 ;
 //$menuHeader[] = $tabMenu ;
+
+
+$tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_stock" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Stocks" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/stock" ;
+$tabMenu["order"] = 10 ;
+$menuHeader[] = $tabMenu ;
 
 
 
