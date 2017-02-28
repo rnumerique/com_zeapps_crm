@@ -2,6 +2,8 @@
 class Zeapps_stocks extends ZeModel {
     public function all($where = array()){
 
+        $where['deleted_at'] = null;
+
         return $this->database()->select('*,
                                         sum(total) as total')
                                 ->where($where)

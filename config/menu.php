@@ -47,7 +47,7 @@ $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Factures" ;
 $tabMenu["fa-icon"] = "credit-card" ;
 $tabMenu["url"] = "/ng/com_zeapps/invoice" ;
-$tabMenu["order"] = 46 ;
+$tabMenu["order"] = 47 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -56,6 +56,15 @@ $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Produits" ;
 $tabMenu["fa-icon"] = "tags" ;
 $tabMenu["url"] = "/ng/com_zeapps/produits" ;
+$tabMenu["order"] = 50 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
+$tabMenu["id"] = "com_ze_apps_warehouses" ;
+$tabMenu["space"] = "com_ze_apps_config" ;
+$tabMenu["label"] = "Entrepôts" ;
+$tabMenu["fa-icon"] = "building" ;
+$tabMenu["url"] = "/ng/com_zeapps/warehouses" ;
 $tabMenu["order"] = 50 ;
 $menuLeft[] = $tabMenu ;
 

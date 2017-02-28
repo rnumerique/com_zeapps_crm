@@ -108,7 +108,15 @@ app.config(['$provide',
                     get : get_product_stock,
                     get_all : getAll_product_stock,
                     save : save_product_stock,
-                    del : delete_product_stock
+                    del : delete_product_stock,
+                    ignore_mvt : ignore_mvt
+                },
+                warehouse : {
+                    get : get_warehouse,
+                    get_all : getAll_warehouse,
+                    save : save_warehouse,
+                    save_all : saveAll_warehouse,
+                    del : delete_warehouse
                 }
             };
 
@@ -367,18 +375,42 @@ app.config(['$provide',
 
 
             // PRODUCT STOCKS
-            function get_product_stock(id){
-                return zeHttp.get('/com_zeapps_crm/stock/get/'+id);
+            function get_product_stock(id_stock, id_warehouse){
+                id_warehouse = parseInt(id_warehouse) || '';
+                return zeHttp.get('/com_zeapps_crm/stock/get/'+id_stock+'/'+id_warehouse);
             }
             function getAll_product_stock(id){
                 id = id || '';
                 return zeHttp.get('/com_zeapps_crm/stock/getAll/' + id);
             }
-            function save_product_stock(data){
-                return zeHttp.post('/com_zeapps_crm/stock/save', data);
+            function save_product_stock(data, id_warehouse){
+                id_warehouse = parseInt(id_warehouse) || '';
+                return zeHttp.post('/com_zeapps_crm/stock/save/'+id_warehouse, data);
             }
             function delete_product_stock(id){
                 return zeHttp.post('/com_zeapps_crm/stock/delete/'+id);
+            }
+            function ignore_mvt(id, value, id_stock, id_warehouse){
+                id_warehouse = parseInt(id_warehouse) || '';
+                return zeHttp.post('/com_zeapps_crm/stock/ignore_mvt/'+id+'/'+value+'/'+id_stock+'/'+id_warehouse);
+            }
+
+
+            // WAREHOUSES
+            function get_warehouse(id){
+                return zeHttp.get('/com_zeapps_crm/warehouse/get/'+id);
+            }
+            function getAll_warehouse(){
+                return zeHttp.get('/com_zeapps_crm/warehouse/getAll/');
+            }
+            function save_warehouse(data){
+                return zeHttp.post('/com_zeapps_crm/warehouse/save/', data);
+            }
+            function saveAll_warehouse(data){
+                return zeHttp.post('/com_zeapps_crm/warehouse/save_all/', data);
+            }
+            function delete_warehouse(id){
+                return zeHttp.post('/com_zeapps_crm/warehouse/delete/'+id);
             }
 
 

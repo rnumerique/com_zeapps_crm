@@ -147,6 +147,11 @@ app.config(['$routeProvider',
                 templateUrl: '/com_zeapps_crm/stock/details',
                 controller: 'ComZeappsCrmStockDetailsCtrl'
             })
+
+            .when('/ng/com_zeapps/warehouses', {
+                templateUrl: '/com_zeapps_crm/warehouse/config',
+                controller: 'ComZeappsCrmWarehouseConfigCtrl'
+            })
         ;
     }]);
 
