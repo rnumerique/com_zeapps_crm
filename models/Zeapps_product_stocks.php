@@ -4,6 +4,8 @@ class Zeapps_product_stocks extends ZeModel {
     public function get($where = array()){
         $where['zeapps_product_stocks.deleted_at'] = null;
 
+        $this->database()->clearSql();
+
         return $this->database()->select('*,
                                         zeapps_product_stocks.id as id,
                                         zeapps_product_stocks.label as label,

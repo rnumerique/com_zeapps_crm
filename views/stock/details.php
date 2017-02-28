@@ -3,62 +3,72 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div id="breadcrumb">Stocks</div>
 <div id="content">
+    <div class="row">
+        <div class="col-md-12" ng-hide="shownForm">
+            <h3>
+                {{ product_stock.ref ? product_stock.ref + ' - ' : '' }}{{product_stock.label }}
+                <button type="button" class="btn btn-xs btn-info">
+                    <i class="fa fa-fw fa-pencil" ng-click="shownForm = !shownForm"></i>
+                </button>
+            </h3>
+        </div>
+    </div>
+    <div class="well" ng-show="shownForm">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Référence</label>
+                    <input class="form-control" type="text" ng-model="product_stock.ref">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Libellé</label>
+                    <input class="form-control" type="text" ng-model="product_stock.label">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button type="button" class="btn btn-sm btn-success" ng-click="success()">
+                        Modifier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
+        <div class="col-md-12 form-inline">
+            <div class="form-group">
+                <label>Entrepôt</label>
+                <select class="form-control" ng-change="updateWarehouse()" ng-model="$root.selectedWarehouse">
+                    <option value="0">Stock Global</option>
+                    <option ng-repeat="warehouse in warehouses" value="{{warehouse.id}}">
+                        {{warehouse.label}}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
-            <h3>{{ product_stock.label }}</h3>
+            <strong>Date prévu de rupture de stocks : </strong>{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
+        </div>
+    </div>
+    <div class="row" ng-if="selectedWarehouse > 0">
+        <div class="col-md-12">
+            <strong>Date limite de réapprivisionnement estimée pour cet entrepôt : </strong>{{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}
         </div>
     </div>
 
-    <div ng-show="product_stock.movements.length">
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Mouvements de stocks</h4>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <strong>Date prévu de rupture de stocks : </strong>{{ product_stock.timeleft + ' (' +  product_stock.dateRupture + ')' }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h5>Visualisation</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <canvas id="base" class="chart-line"
-                        chart-data="data"
-                        chart-labels="labels">
-                </canvas>
-            </div>
-        </div>
-        </div><div class="row">
-            <div class="col-md-12">
-                <h5>Historique</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-condensed table-responsive">
-                    <thead>
-                    <tr>
-                        <th>Libellé</th>
-                        <th>Date</th>
-                        <th class="text-right"Qté</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="movement in product_stock.movements | orderBy:'-date_mvt'" ng-class="movement.qty > 0 ? 'bg-success' : 'bg-danger'">
-                        <td>{{movement.label}}</td>
-                        <td>{{movement.date_mvt}}</td>
-                        <td class="text-right">{{movement.qty}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <ul class="nav nav-tabs">
+        <li ng-class="navigationState === 'chart' ? 'active' : ''">
+            <a href="#" ng-click="navigationState = 'chart'">Graphique</a>
+        </li>
+        <li ng-class="navigationState === 'history' ? 'active' : ''">
+            <a href="#" ng-click="navigationState = 'history'">Historique</a>
+        </li>
+    </ul>
 
+    <div ng-include="'/com_zeapps_crm/stock/' + navigationState"></div>
 </div>
