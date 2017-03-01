@@ -5,42 +5,37 @@ class Orders extends ZeCtrl
 {
     public function view()
     {
-        $data = array() ;
-
-        $this->load->view('orders/view', $data);
+        $this->load->view('orders/view');
     }
 
     public function form()
     {
-        $data = array() ;
-
-        $this->load->view('orders/form', $data);
+        $this->load->view('orders/form');
     }
 
     public function lists()
     {
-        $data = array() ;
-
-        $this->load->view('orders/lists', $data);
+        $this->load->view('orders/lists');
     }
 
     public function lists_partial()
     {
-        $data = array() ;
+        $this->load->view('orders/lists_partial');
+    }
 
-        $this->load->view('orders/lists_partial', $data);
+    public function finalize_modal()
+    {
+        $this->load->view('orders/finalize_modal');
     }
 
     public function config()
     {
-        $data = array() ;
-
-        $this->load->view('orders/config', $data);
+        $this->load->view('orders/config');
     }
 
 
 
-    public function makePDF($id){
+    public function makePDF($id, $echo = true){
 
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_companies", "order_companies");
@@ -86,7 +81,10 @@ class Orders extends ZeCtrl
         //download it.
         $this->M_pdf->pdf->Output($pdfFilePath, "F");
 
-        echo json_encode($nomPDF);
+        if($echo)
+            echo json_encode($nomPDF);
+
+        return $nomPDF;
     }
 
     public function getPDF($nomPDF){
@@ -118,8 +116,45 @@ class Orders extends ZeCtrl
         echo json_encode($result);
     }
 
+    public function finalize($id) {
+        if($id) {
+            $this->load->model("Zeapps_orders", "orders");
+
+            // constitution du tableau
+            $data = array() ;
+
+            if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+                // POST is actually in json format, do an internal translation
+                $data = json_decode(file_get_contents('php://input'), true);
+            }
+
+            $return = [];
+
+            if($data){
+                foreach($data as $document => $value){
+                    if($value == 'true'){
+                        $createFrom = 'create'.ucfirst($document).'From';
+                        $return[$document] = $this->$createFrom($id);
+                    }
+                }
+            }
+
+            $nomPDF = $this->makePDF($id, false);
+
+            $this->orders->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
+
+            $return['nomPDF'] = $nomPDF;
+
+            echo json_encode($return);
+        }
+        else{
+            echo json_encode(false);
+        }
+    }
+
     public function createInvoiceFrom($id){
         if($id){
+            $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_orders", "orders");
             $this->load->model("Zeapps_order_companies", "order_companies");
             $this->load->model("Zeapps_order_contacts", "order_contacts");
@@ -135,6 +170,11 @@ class Orders extends ZeCtrl
             unset($order->numerotation);
             unset($order->created_at);
             unset($order->updated_at);
+
+            $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
+            $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
+            $num = $this->invoices->get_numerotation($frequency);
+            $order->numerotation = $this->parseFormat($format, $num);
 
             $id_invoice = $this->invoices->insert($order);
 
@@ -179,7 +219,77 @@ class Orders extends ZeCtrl
 
         }
 
-        echo json_encode($id_invoice);
+        return $id_invoice;
+    }
+
+    public function createDeliveryFrom($id){
+        if($id){
+            $this->load->model("Zeapps_configs", "configs");
+            $this->load->model("Zeapps_orders", "orders");
+            $this->load->model("Zeapps_order_companies", "order_companies");
+            $this->load->model("Zeapps_order_contacts", "order_contacts");
+            $this->load->model("Zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_deliveries", "deliveries");
+            $this->load->model("Zeapps_delivery_companies", "delivery_companies");
+            $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
+            $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+
+            $order = $this->orders->get($id);
+
+            unset($order->id);
+            unset($order->numerotation);
+            unset($order->created_at);
+            unset($order->updated_at);
+
+            $format = $this->configs->get(array('id'=>'crm_delivery_format'))->value;
+            $frequency = $this->configs->get(array('id'=>'crm_delivery_frequency'))->value;
+            $num = $this->deliveries->get_numerotation($frequency);
+            $order->numerotation = $this->parseFormat($format, $num);
+
+            $id_delivery = $this->deliveries->insert($order);
+
+            if($companies = $this->order_companies->all(array('id_order'=>$id))){
+                foreach($companies as $company){
+                    unset($company->id);
+                    unset($company->id_order);
+                    unset($company->created_at);
+                    unset($company->updated_at);
+
+                    $company->id_delivery = $id_delivery;
+
+                    $this->delivery_companies->insert($company);
+                }
+            }
+
+            if($contacts = $this->order_contacts->all(array('id_order'=>$id))){
+                foreach($contacts as $contact){
+                    unset($contact->id);
+                    unset($contact->id_order);
+                    unset($contact->created_at);
+                    unset($contact->updated_at);
+
+                    $contact->id_delivery = $id_delivery;
+
+                    $this->delivery_contacts->insert($contact);
+                }
+            }
+
+            if($lines = $this->order_lines->all(array('id_order'=>$id))){
+                foreach($lines as $line){
+                    unset($line->id);
+                    unset($line->id_order);
+                    unset($line->created_at);
+                    unset($line->updated_at);
+
+                    $line->id_delivery = $id_delivery;
+
+                    $this->delivery_lines->insert($line);
+                }
+            }
+
+        }
+
+        return $id_delivery;
     }
 
 

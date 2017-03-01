@@ -1,5 +1,5 @@
-app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal',
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal) {
+app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal',
+    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal) {
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
@@ -9,24 +9,35 @@ app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams',
 
         getStocks();
 
-        $scope.updateWarehouse = function(){
-            getStocks($rootScope.selectedWarehouse);
-        };
+        $scope.updateWarehouse = updateWarehouse;
+        $scope.success = success;
+        $scope.delete = del;
 
-        $scope.success = function(){
+
+
+
+
+        function updateWarehouse(){
+            getStocks($rootScope.selectedWarehouse);
+        }
+
+        function success(){
             var formatted_data = angular.toJson($scope.form);
 
             zhttp.crm.product_stock.save(formatted_data, $rootScope.selectedWarehouse).then(function(response){
                 if(response.data && response.data != false){
                     var product_stock = response.data.product_stock;
+                    product_stock.value_ht = parseFloat(product_stock.value_ht);
                     calcTimeLeft(product_stock);
                     $scope.product_stocks.push(product_stock);
-                    $scope.cancel();
+
+                    $scope.form = {};
+                    $scope.shownForm = false;
                 }
             });
-        };
+        }
 
-        $scope.delete = function(product_stock){
+        function del(product_stock){
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -65,8 +76,7 @@ app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams',
             }, function () {
                 //console.log("rien");
             });
-        };
-
+        }
 
         function getStocks(id){
             zhttp.crm.product_stock.get_all(id).then(function(response){
@@ -74,6 +84,7 @@ app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams',
                     $scope.warehouses = response.data.warehouses;
                     $scope.product_stocks = response.data.product_stocks;
                     angular.forEach($scope.product_stocks, function(product_stock){
+                        product_stock.value_ht = parseFloat(product_stock.value_ht);
                         calcTimeLeft(product_stock);
                     });
                 }

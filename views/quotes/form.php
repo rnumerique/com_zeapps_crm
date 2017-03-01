@@ -51,6 +51,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </option>
                         </select>
                     </div>
+
+
+                    <div class="form-group">
+                        <label>Entrepôts</label>
+                        <select ng-model="form.id_warehouse" class="form-control" ng-required="true">
+                            <option ng-repeat="warehouse in warehouses" ng-value="warehouse.id">
+                                {{ warehouse.label }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
 
 

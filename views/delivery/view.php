@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div id="breadcrumb">Devis</div>
+<div id="breadcrumb">Livraisons</div>
 <div id="content">
 
 
@@ -10,12 +10,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                     <div class="titleWell">
-                        Devis :
-                        <span ng-hide="edit">{{ quote.libelle }}</span>
-                        <input type="text" class="form-control" ng-model="quote.libelle" ng-show="edit">
+                        Livraison :
+                        <span ng-hide="edit">{{ delivery.libelle }}</span>
+                        <input type="text" class="form-control" ng-model="delivery.libelle" ng-show="edit">
                     </div>
                     <div>
-                        n° : {{ quote.numerotation }}
+                        n° : {{ delivery.numerotation }}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -23,16 +23,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
                         <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="quote.finalized !== '0'">
+                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="delivery.finalized !== '0'">
                             <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
                         </button>
 
-                        <div class="btn-group btn-group-xs" role="group" ng-if="nb_quotes > 0">
-                            <button type="button" class="btn btn-default" ng-class="quote_first == 0 ? 'disabled' :''" ng-click="first_quote()"><span class="fa fa-fw fa-fast-backward"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="quote_previous == 0 ? 'disabled' :''" ng-click="previous_quote()"><span class="fa fa-fw fa-chevron-left"></span></button>
-                            <button type="button" class="btn btn-default disabled">{{quote_order}}/{{nb_quotes}}</button>
-                            <button type="button" class="btn btn-default" ng-class="quote_next == 0 ? 'disabled' :''" ng-click="next_quote()"><span class="fa fa-fw fa-chevron-right"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="quote_last == 0 ? 'disabled' :''" ng-click="last_quote()"><span class="fa fa-fw fa-fast-forward"></span></button>
+                        <div class="btn-group btn-group-xs" role="group" ng-if="nb_deliveries > 0">
+                            <button type="button" class="btn btn-default" ng-class="delivery_first == 0 ? 'disabled' :''" ng-click="first_delivery()"><span class="fa fa-fw fa-fast-backward"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_previous == 0 ? 'disabled' :''" ng-click="previous_delivery()"><span class="fa fa-fw fa-chevron-left"></span></button>
+                            <button type="button" class="btn btn-default disabled">{{delivery_order}}/{{nb_deliveries}}</button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_next == 0 ? 'disabled' :''" ng-click="next_delivery()"><span class="fa fa-fw fa-chevron-right"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_last == 0 ? 'disabled' :''" ng-click="last_delivery()"><span class="fa fa-fw fa-fast-forward"></span></button>
                         </div>
                     </div>
                 </div>
@@ -103,15 +103,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de facturation :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit">{{ quote.billing_address_1 }} <span ng-show="quote.billing_address_1"></span></span><br ng-if="quote.billing_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_address_2 }} <span ng-show="quote.billing_address_2"></span></span><br ng-if="quote.billing_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_address_3 }} <span ng-show="quote.billing_address_3"></span></span><br ng-if="quote.billing_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_zipcode + ' ' + quote.billing_city }}</span>
-                    <input type="text" class="form-control" ng-model="quote.billing_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_city" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.billing_address_1 }} <span ng-show="delivery.billing_address_1"></span></span><br ng-if="delivery.billing_address_1 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.billing_address_1" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.billing_address_2 }} <span ng-show="delivery.billing_address_2"></span></span><br ng-if="delivery.billing_address_2 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.billing_address_2" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.billing_address_3 }} <span ng-show="delivery.billing_address_3"></span></span><br ng-if="delivery.billing_address_3 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.billing_address_3" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.billing_zipcode + ' ' + delivery.billing_city }}</span>
+                    <input type="text" class="form-control" ng-model="delivery.billing_zipcode" ng-show="edit">
+                    <input type="text" class="form-control" ng-model="delivery.billing_city" ng-show="edit">
                 </div>
             </div>
 
@@ -120,15 +120,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de livraison :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit">{{ quote.delivery_address_1 }} <span ng-show="quote.delivery_address_1"></span></span><br ng-if="quote.delivery_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_address_2 }} <span ng-show="quote.delivery_address_2"></span></span><br ng-if="quote.delivery_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_address_3 }} <span ng-show="quote.delivery_address_3"></span></span><br ng-if="quote.delivery_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_zipcode + ' ' + quote.delivery_city }}</span>
-                    <input type="text" class="form-control" ng-model="quote.delivery_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_city" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.delivery_address_1 }} <span ng-show="delivery.delivery_address_1"></span></span><br ng-if="delivery.delivery_address_1 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.delivery_address_1" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.delivery_address_2 }} <span ng-show="delivery.delivery_address_2"></span></span><br ng-if="delivery.delivery_address_2 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.delivery_address_2" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.delivery_address_3 }} <span ng-show="delivery.delivery_address_3"></span></span><br ng-if="delivery.delivery_address_3 && !edit">
+                    <input type="text" class="form-control" ng-model="delivery.delivery_address_3" ng-show="edit">
+                    <span ng-hide="edit">{{ delivery.delivery_zipcode + ' ' + delivery.delivery_city }}</span>
+                    <input type="text" class="form-control" ng-model="delivery.delivery_zipcode" ng-show="edit">
+                    <input type="text" class="form-control" ng-model="delivery.delivery_city" ng-show="edit">
                 </div>
             </div>
         </div>
@@ -153,6 +153,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <button type="button" class="btn btn-success btn-xs" ng-click="addLine()">
                         <span class="fa fa-fw fa-tags"></span> produit
                     </button>
+
+                    <!-- HOOK comZeappsCrm_DeliveryHook -->
+                    <span ng-repeat="hook in hooks | orderBy:'sort'" ng-include="hook.template"></span>
+
                     <button type="button" class="btn btn-info btn-xs" ng-click="addSubTotal()">
                         <span class="fa fa-fw fa-euro"></span> sous-total
                     </button>
@@ -269,7 +273,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total HT av remise
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ quote.total_prediscount_ht | currency:'€':2 }}
+                                {{ delivery.total_prediscount_ht | currency:'€':2 }}
                             </div>
                         </div>
                         <div class="row">
@@ -277,7 +281,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TTC av remise
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ quote.total_prediscount_ttc | currency:'€':2 }}
+                                {{ delivery.total_prediscount_ttc | currency:'€':2 }}
                             </div>
                         </div>
                         <hr>
@@ -287,9 +291,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Remise Globale
                             </div>
                             <div class="col-md-6 text-right">
-                                <span ng-hide="edit">-{{ quote.global_discount | number:2 }}%</span>
+                                <span ng-hide="edit">-{{ delivery.global_discount | number:2 }}%</span>
                                 <div class="input-group" ng-show="edit">
-                                    <input type="text" class="form-control" ng-model="quote.global_discount">
+                                    <input type="text" class="form-control" ng-model="delivery.global_discount">
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
@@ -300,7 +304,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Remise (avant Taxes)
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ quote.total_discount | currency:'€':2 }}
+                                {{ delivery.total_discount | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -311,7 +315,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total HT
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ quote.total_ht | currency:'€':2 }}
+                                {{ delivery.total_ht | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -320,7 +324,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TTC
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ quote.total_ttc | currency:'€':2 }}
+                                {{ delivery.total_ttc | currency:'€':2 }}
                             </div>
                         </div>
                     </div>
@@ -331,23 +335,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            <div ng-hide="edit">{{ quote.reference_client }}</div>
-            <input type="text" class="form-control" ng-model="quote.reference_client" ng-show="edit">
+            <div ng-hide="edit">{{ delivery.reference_client }}</span></div>
+            <input type="text" class="form-control" ng-model="delivery.reference_client" ng-show="edit">
             <br/>
-            <strong>Date de création du devis :</strong>
-            <div ng-hide="edit">{{ quote.date_creation | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="quote.date_creation" ng-show="edit">
+            <strong>Date de création du bon de livraison :</strong>
+            <div ng-hide="edit">{{ delivery.date_creation | date:'dd/MM/yyyy' }}</div>
+            <input type="date" class="form-control" ng-model="delivery.date_creation" ng-show="edit">
             <br/>
-            <strong>Date de validité du devis :</strong>
-            <div ng-hide="edit">{{ quote.date_limit | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="quote.date_limit" ng-show="edit">
+            <strong>Date de validité du bon de livraison :</strong>
+            <div ng-hide="edit">{{ delivery.date_limit | date:'dd/MM/yyyy' }}</div>
+            <input type="date" class="form-control" ng-model="delivery.date_limit" ng-show="edit">
             <br/>
         </div>
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            <div ng-hide="edit">{{ quote.modalities }}</div>
-            <select ng-model="quote.modalities" class="form-control" ng-show="edit">
+            <div ng-hide="edit">{{ delivery.modalities }}</div>
+            <select ng-model="delivery.modalities" class="form-control" ng-show="edit">
                 <option ng-repeat="modality in modalities">
                     {{ modality.label }}
                 </option>
@@ -393,7 +397,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <button type="button" class="btn btn-info btn-xs" ng-click="editActivity(activity)">
                                 <span class="fa fa-fw fa-pencil"></span>
                             </button>
-                            <button type="button" class="btn btn-danger btn-xs" ng-click="deleteActivity(activity)">
+                            <button type="button" class="btn btn-danger btn-xs" ng-click="deleteActivity()">
                                 <span class="fa fa-fw fa-trash"></span>
                             </button>
                         </strong>

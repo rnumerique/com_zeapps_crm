@@ -25,6 +25,7 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
 
             data['libelle'] = $scope.form.libelle;
             data['id_user'] = $scope.form.id_user_account_manager;
+            data['id_warehouse'] = $scope.form.id_warehouse;
             data['id_company'] = $scope.form.company ? ($scope.form.company.id || 0) : 0;
             data['id_contact'] = $scope.form.contact ? ($scope.form.contact.id || 0) : 0;
             data['accounting_number'] = $scope.form.accounting_number;
@@ -71,6 +72,11 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
                 }
             });
         }
+        zhttp.crm.warehouse.get_all().then(function(response){
+            if(response.data && response.data != 'false'){
+                $scope.warehouses = response.data;
+            }
+        });
 
 
         $scope.loadAccountManager = function () {

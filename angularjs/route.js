@@ -65,6 +65,32 @@ app.config(['$routeProvider',
                 controller: 'ComZeappsCrmOrderConfigCtrl'
             })
 
+            // DELIVERY
+            .when('/ng/com_zeapps_crm/delivery', {
+                templateUrl: '/com_zeapps_crm/delivery/lists',
+                controller: 'ComZeappsCrmDeliveryListsCtrl'
+            })
+
+            .when('/ng/com_zeapps_crm/delivery/new', {
+                templateUrl: '/com_zeapps_crm/delivery/form',
+                controller: 'ComZeappsCrmDeliveryFormCtrl'
+            })
+
+            .when('/ng/com_zeapps_crm/delivery/new/:id_company', {
+                templateUrl: '/com_zeapps_crm/delivery/form',
+                controller: 'ComZeappsCrmDeliveryFormCtrl'
+            })
+
+            .when('/ng/com_zeapps_crm/delivery/:id', {
+                templateUrl: '/com_zeapps_crm/delivery/view',
+                controller: 'ComZeappsCrmDeliveryViewCtrl'
+            })
+
+            .when('/ng/com_zeapps/delivery', {
+                templateUrl: '/com_zeapps_crm/delivery/config',
+                controller: 'ComZeappsCrmDeliveryConfigCtrl'
+            })
+
             // INVOICE
             .when('/ng/com_zeapps_crm/invoice', {
                 templateUrl: '/com_zeapps_crm/invoices/lists',

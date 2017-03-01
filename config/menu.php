@@ -42,12 +42,21 @@ $tabMenu["order"] = 46 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
+$tabMenu["id"] = "com_ze_apps_delivery" ;
+$tabMenu["space"] = "com_ze_apps_config" ;
+$tabMenu["label"] = "Livraisons" ;
+$tabMenu["fa-icon"] = "truck" ;
+$tabMenu["url"] = "/ng/com_zeapps/delivery" ;
+$tabMenu["order"] = 47 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
 $tabMenu["id"] = "com_ze_apps_invoices" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Factures" ;
 $tabMenu["fa-icon"] = "credit-card" ;
 $tabMenu["url"] = "/ng/com_zeapps/invoice" ;
-$tabMenu["order"] = 47 ;
+$tabMenu["order"] = 48 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -91,12 +100,21 @@ $tabMenu["order"] = 4 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_delivery" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Livraisons" ;
+$tabMenu["fa-icon"] = "truck" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/delivery" ;
+$tabMenu["order"] = 5 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_invoice" ;
 $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Factures" ;
 $tabMenu["fa-icon"] = "credit-card" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/invoice" ;
-$tabMenu["order"] = 5 ;
+$tabMenu["order"] = 6 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -105,7 +123,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Contrats" ;
 $tabMenu["fa-icon"] = "handshake-o" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/contract" ;
-$tabMenu["order"] = 6 ;
+$tabMenu["order"] = 7 ;
 //$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -114,7 +132,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Opportunités" ;
 $tabMenu["fa-icon"] = "search" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/opportunity" ;
-$tabMenu["order"] = 7 ;
+$tabMenu["order"] = 8 ;
 //$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -123,7 +141,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Produits" ;
 $tabMenu["fa-icon"] = "tags" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/product" ;
-$tabMenu["order"] = 8 ;
+$tabMenu["order"] = 9 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -132,7 +150,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Grille tarifaire" ;
 $tabMenu["fa-icon"] = "tags" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/product_price" ;
-$tabMenu["order"] = 9 ;
+$tabMenu["order"] = 10 ;
 //$menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
@@ -141,7 +159,7 @@ $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Stocks" ;
 $tabMenu["fa-icon"] = "cubes" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/stock" ;
-$tabMenu["order"] = 10 ;
+$tabMenu["order"] = 11 ;
 $menuLeft[] = $tabMenu ;
 
 

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div id="breadcrumb">Entreprises</div>
+<div id="breadcrumb">Livraisons</div>
 <div id="content">
 
 
@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
                     <div class="form-group">
-                        <label>Libellé de la facture</label>
+                        <label>Libellé de la livraisons</label>
                         <input type="text" ng-model="form.libelle" class="form-control">
                     </div>
 
@@ -67,7 +67,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-6">
 
                     <div class="form-group">
-                        <label>Gestionnaire de la facture</label>
+                        <label>Gestionnaire de la livraison</label>
                         <div class="input-group">
                             <input type="text" ng-model="form.name_user_account_manager" class="form-control" disabled ng-required="true">
 

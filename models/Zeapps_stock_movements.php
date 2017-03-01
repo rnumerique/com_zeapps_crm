@@ -52,10 +52,23 @@ class Zeapps_stock_movements extends ZeModel{
         return $this->database()->customQuery($query)->result();
     }
 
+    public function last_months($where = array()){
+        $query = "select * 
+                  from zeapps_stock_movements 
+                  where date_mvt > date_sub(CURDATE(),INTERVAL 90 DAY) 
+                  and deleted_at is null 
+                  and id_stock = " . $where['id_stock'];
+        if(isset($where['id_warehouse'])){
+            $query .= ' and id_warehouse = '.$where['id_warehouse'];
+        }
+
+        return $this->database()->customQuery($query)->result();
+    }
+
     public function last_month($where = array()){
         $query = "select * 
                   from zeapps_stock_movements 
-                  where date_mvt > date_sub(CURDATE(),INTERVAL 1 MONTH) 
+                  where date_mvt > date_sub(CURDATE(),INTERVAL 30 DAY) 
                   and deleted_at is null 
                   and id_stock = " . $where['id_stock'];
         if(isset($where['id_warehouse'])){
