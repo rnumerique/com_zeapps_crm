@@ -23,7 +23,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
                         <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="createInvoice()" i8n="Creer une facture a partir de la commande"></button>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="order.finalized !== '0'">
+                            <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
+                        </button>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_orders > 0">
                             <button type="button" class="btn btn-default" ng-class="order_first == 0 ? 'disabled' :''" ng-click="first_order()"><span class="fa fa-fw fa-fast-backward"></span></button>

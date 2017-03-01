@@ -1,7 +1,7 @@
-app.controller('ComZeappsCrmInvoiceFormCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal',
+app.controller('ComZeappsCrmDeliveryFormCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', 'zeapps_modal',
     function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
 
-        $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_invoice");
+        $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_delivery");
 
         $scope.form = {};
 
@@ -53,15 +53,15 @@ app.controller('ComZeappsCrmInvoiceFormCtrl', ['$scope', '$route', '$routeParams
 
             var formatted_data = angular.toJson(data);
 
-            zhttp.crm.invoice.save(formatted_data).then(function(response){
+            zhttp.crm.delivery.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
-                    $location.url('/ng/com_zeapps_crm/invoice/' + angular.fromJson(response.data));
+                    $location.url('/ng/com_zeapps_crm/delivery/' + angular.fromJson(response.data));
                 }
             });
         };
 
         $scope.cancel = function(){
-            $location.url('/ng/com_zeapps_crm/invoice/');
+            $location.url('/ng/com_zeapps_crm/delivery/');
         };
 
         if($routeParams.id_company && $routeParams.id_company != 0){

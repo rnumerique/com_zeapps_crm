@@ -64,6 +64,23 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
             });
         }
 
+        $scope.loadProductStock = function () {
+            zeapps_modal.loadModule("com_zeapps_crm", "search_product_stock", {}, function(objReturn) {
+                if (objReturn) {
+                    $scope.form.id_stock = objReturn.id;
+                    $scope.form.name_stock = objReturn.ref ? objReturn.ref + ' - ' + objReturn.label : objReturn.label;
+                } else {
+                    $scope.form.id_stock = 0;
+                    $scope.form.name_stock = '';
+                }
+            });
+        };
+
+        $scope.removeProductStock = function() {
+            $scope.form.id_stock = 0;
+            $scope.form.name_stock = '';
+        };
+
         $scope.updateTaxe = function(){
             angular.forEach($rootScope.taxes, function(taxe){
                 if(taxe.id === $scope.form.id_taxe){

@@ -1,84 +1,66 @@
-app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload', 'crmTotal',
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal) {
+app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams', '$location', '$rootScope', 'zeHttp', '$uibModal', 'zeapps_modal', 'Upload', 'crmTotal', 'zeHooks',
+    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks) {
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
+
+        $scope.$on('comZeappsCrm_triggerOrderHook', broadcast);
+        $scope.hooks = zeHooks.get('comZeappsCrm_OrderHook');
 
         $scope.progress = 0;
         $scope.activities = [];
         $scope.documents = [];
 
-        var initNavigation = function() {
+        $scope.edit = false;
+        $scope.showCommentInput = false;
+        $scope.showActivityInput = false;
+        $scope.comment = '';
 
-            // calcul le nombre de résultat
-            $scope.nb_quotes = $rootScope.quotes.length;
+        $scope.lines = [];
 
-            // calcul la position du résultat actuel
-            $scope.quote_order = 0;
-            $scope.quote_first = 0;
-            $scope.quote_previous = 0;
-            $scope.quote_next = 0;
-            $scope.quote_last = 0;
+        $scope.first_quote = first_quote;
+        $scope.previous_quote = previous_quote;
+        $scope.next_quote = next_quote;
+        $scope.last_quote = last_quote;
 
-            for (var i = 0; i < $rootScope.quotes.length; i++) {
-                if ($rootScope.quotes[i].id == $routeParams.id) {
-                    $scope.quote_order = i + 1;
-                    if (i > 0) {
-                        $scope.quote_previous = $rootScope.quotes[i - 1].id;
-                    }
+        $scope.success = success;
+        $scope.cancel = cancel;
+        $scope.finalize = finalize;
 
-                    if ((i + 1) < $rootScope.quotes.length) {
-                        $scope.quote_next = $rootScope.quotes[i + 1].id;
-                    }
-                }
-            }
+        $scope.toggleEdit = toggleEdit;
+        $scope.toggleComment = toggleComment;
 
-            // recherche le premier devis de la liste
-            if($rootScope.quotes[0] != undefined) {
-                if ($rootScope.quotes[0].id != $routeParams.id) {
-                    $scope.quote_first = $rootScope.quotes[0].id;
-                }
-            }
-            else
-                $scope.quote_first = 0;
+        $scope.addLine = addLine;
+        $scope.addSubTotal = addSubTotal;
+        $scope.addComment = addComment;
+        $scope.editLine = editLine;
 
-            // recherche le dernier devis de la liste
-            if($rootScope.quotes[$rootScope.quotes.length - 1] != undefined) {
-                if ($rootScope.quotes[$rootScope.quotes.length - 1].id != $routeParams.id) {
-                    $scope.quote_last = $rootScope.quotes[$rootScope.quotes.length - 1].id;
-                }
-            }
-            else
-                $scope.quote_last = 0;
+        $scope.updateSums = updateSums;
+
+        $scope.submitLine = submitLine;
+        $scope.deleteLine = deleteLine;
+
+        $scope.subtotalHT = subtotalHT;
+        $scope.subtotalTTC = subtotalTTC;
+
+        $scope.toggleActivity = toggleActivity;
+        $scope.closeActivity = closeActivity;
+        $scope.addActivity = addActivity;
+        $scope.editActivity = editActivity;
+        $scope.deleteActivity = deleteActivity;
+
+        $scope.upload = upload;
+        $scope.deleteDocument = deleteDocument;
+
+        $scope.print = print;
 
 
-            $scope.first_quote = function () {
-                if ($scope.quote_first != 0) {
-                    $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_first);
-                }
-            };
-            $scope.previous_quote = function () {
-                if ($scope.quote_previous != 0) {
-                    $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_previous);
-                }
-            };
-            $scope.next_quote = function () {
-                if ($scope.quote_next) {
-                    $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_next);
-                }
-            };
-            $scope.last_quote = function () {
-                if ($scope.quote_last) {
-                    $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_last);
-                }
-            };
+        //////////////////// INIT ////////////////////
 
-        };
 
         if($rootScope.quotes == undefined || $rootScope.quotes[0] == undefined) {
             zhttp.crm.quote.get_all().then(function (response) {
                 if (response.status == 200) {
                     $rootScope.quotes = response.data;
-
                     initNavigation();
                 }
             });
@@ -93,23 +75,12 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             $scope.navigationState = $rootScope.comZeappsCrmLastShowTabQuote ;
         }
 
-        // pour détecter les changements sur le models
-        $scope.$watch('navigationState', function(){
-            $rootScope.comZeappsCrmLastShowTabQuote = $scope.navigationState ;
-        }, true);
-        /******* FIN : gestion de la tabs *********/
-
-        $scope.edit = false;
-        $scope.showCommentInput = false;
-        $scope.showActivityInput = false;
-        $scope.comment = '';
-
-        $scope.lines = [];
 
         if($routeParams.id && $routeParams.id > 0){
             zhttp.crm.quote.get($routeParams.id).then(function(response){
                 if(response.data && response.data != 'false'){
                     $scope.quote = response.data.quote;
+                    $scope.sortable.disabled = !!parseInt($scope.quote.finalized);
                     $scope.company = response.data.company;
                     $scope.contact = response.data.contact;
                     $scope.lines = response.data.lines || [];
@@ -119,49 +90,22 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     $scope.quote.date_creation = new Date($scope.quote.date_creation);
                     $scope.quote.date_limit = new Date($scope.quote.date_limit);
 
-                    for(var i=0;i<$scope.activities.length;i++){
+                    var i;
+
+                    for(i=0;i<$scope.activities.length;i++){
                         $scope.activities[i].reminder = new Date($scope.activities[i].reminder);
                     }
 
-                    for(var i=0;i<$scope.documents.length;i++){
+                    for(i=0;i<$scope.documents.length;i++){
                         $scope.documents[i].created_at = new Date($scope.documents[i].created_at);
                     }
                 }
             });
         }
 
-        $scope.success = function(){
-
-            $scope.edit = false;
-
-            var data = $scope.quote;
-
-            var formatted_data = angular.toJson(data);
-
-            zhttp.crm.quote.save(formatted_data).then(function(response){
-                if(response.data && response.data != 'false'){
-                    $rootScope.toasts.push({success:'Les informations du devis ont bien été mises a jour'});
-                }
-                else{
-                    $rootScope.toasts.push({danger:'Il y a eu une erreur lors de la mise a jour des informations du devis'});
-                }
-            });
-        };
-
-        $scope.cancel = function(){
-            $scope.edit = false;
-        };
-
-        $scope.createOrder = function(){
-            zhttp.get('/com_zeapps_crm/quotes/createOrderFrom/' + $scope.quote.id).then(function(response){
-                if(response.data && response.data != 'false'){
-                    $location.url('/ng/com_zeapps_crm/order/' + response.data);
-                }
-            })
-        };
-
         $scope.sortable = {
             connectWith: ".sortableContainer",
+            disabled: false,
             axis: 'y',
             stop: function( event, ui ) {
 
@@ -186,15 +130,117 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             }
         };
 
-        $scope.toggleEdit = function(){
+
+        //////////////////// WATCHERS ////////////////////
+
+
+        $scope.$watch('lines', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        }, true);
+        $scope.$watch('quote.global_discount', function(value, oldValue){
+            if(value != oldValue && oldValue != undefined)
+                updateTotals();
+        });
+        $scope.$watch('navigationState', function(){
+            $rootScope.comZeappsCrmLastShowTabQuote = $scope.navigationState ;
+        }, true);
+
+
+        //////////////////// FUNCTIONS ////////////////////
+
+        function broadcast(){
+            $rootScope.$broadcast('comZeappsCrm_dataQuoteHook',
+                {
+                    quote: $scope.quote
+                }
+            );
+        }
+
+        function first_quote() {
+            if ($scope.quote_first != 0) {
+                $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_first);
+            }
+        }
+
+        function previous_quote() {
+            if ($scope.quote_previous != 0) {
+                $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_previous);
+            }
+        }
+
+        function next_quote() {
+            if ($scope.quote_next) {
+                $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_next);
+            }
+        }
+
+        function last_quote() {
+            if ($scope.quote_last) {
+                $location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_last);
+            }
+        }
+
+        function success(){
+            if($scope.quote.finalized !== '0')
+                return;
+
+            var data = $scope.quote;
+
+            var formatted_data = angular.toJson(data);
+
+            zhttp.crm.quote.save(formatted_data).then(function(response){
+                if(response.data && response.data != 'false'){
+                    $rootScope.toasts.push({success:'Les informations de la commande ont bien été mises a jour'});
+                    $scope.edit = false;
+                }
+                else{
+                    $rootScope.toasts.push({danger:'Il y a eu une erreur lors de la mise a jour des informations de la commande'});
+                }
+            });
+        }
+
+        function cancel(){
+            $scope.edit = false;
+        }
+
+        function finalize(){
+            zeapps_modal.loadModule("com_zeapps_crm", "finalize_quote", {}, function(objReturn) {
+                if (objReturn) {
+                    var formatted_data = angular.toJson(objReturn);
+                    zhttp.crm.quote.finalize($scope.quote.id, formatted_data).then(function(response){
+                        if(response.data && response.data != 'false'){
+                            $scope.quote.final_pdf = response.data.nomPDF;
+                            $scope.quote.finalized = '1';
+                            $scope.sortable.disabled = true;
+
+                            if(objReturn.order){
+                                $location.url('/ng/com_zeapps_crm/order/' + response.data.order);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        function toggleEdit(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             $scope.edit = !$scope.edit;
-        };
+        }
 
-        $scope.toggleComment = function(){
+        function toggleComment(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             $scope.showCommentInput = !$scope.showCommentInput;
-        };
+        }
 
-        $scope.addLine = function(){
+        function addLine(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             // charge la modal de la liste de produit
             zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
                 //console.log(objReturn);
@@ -202,13 +248,14 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     var line = {
                         id_quote: $routeParams.id,
                         type: 'product',
+                        id_product: objReturn.id,
                         ref: objReturn.ref,
                         designation_title: objReturn.name,
                         designation_desc: objReturn.description,
                         qty: '1',
                         discount: 0.00,
                         price_unit: objReturn.price_ht,
-                        taxe: objReturn.value_taxe,
+                        taxe: objReturn.tva,
                         sort: $scope.lines.length,
                         total_ht: objReturn.price_ht,
                         total_ttc: (parseFloat(objReturn.price_ht) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
@@ -223,9 +270,12 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     });
                 }
             });
-        };
+        }
 
-        $scope.addSubTotal = function(){
+        function addSubTotal(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             var subTotal = {
                 id_quote: $routeParams.id,
                 type: 'subTotal',
@@ -239,9 +289,12 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     $scope.lines.push(subTotal);
                 }
             });
-        };
+        }
 
-        $scope.addComment = function(){
+        function addComment(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             if($scope.comment != ''){
                 var comment = {
                     id_quote: $routeParams.id,
@@ -261,51 +314,67 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     }
                 });
             }
-        };
+        }
 
-        $scope.editLine = function(line){
-            line.edit = true;
-        };
+        function editLine(line){
+            if($scope.quote.finalized !== '0')
+                return;
 
-        $scope.updateSums = function(line){
+            if(line.type === 'product')
+                line.edit = true;
+            else{
+                $rootScope.$broadcast('comZeappsCrm_quoteEditTrigger',
+                    {
+                        line : line
+                    }
+                );
+            }
+        }
+
+        function updateSums(line){
             line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) );
             line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 + (parseFloat(line.taxe) / 100) );
-        };
+        }
 
-        $scope.submitLine = function(line){
+        function submitLine(line){
+            if($scope.quote.finalized !== '0')
+                return;
+
             var formatted_data = angular.toJson(line);
             zhttp.crm.quote.line.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
                     line.edit = false;
                 }
             });
-        };
+        }
 
-        $scope.deleteLine = function(line){
+        function deleteLine(line){
+            if($scope.quote.finalized !== '0')
+                return;
+
             if($scope.lines.indexOf(line) > -1){
                 zhttp.crm.quote.line.del(line.id).then(function(response){
                     if(response.data && response.data != 'false'){
                         $scope.lines.splice($scope.lines.indexOf(line), 1);
+
+                        $rootScope.$broadcast('comZeappsCrm_quoteDeleteTrigger',
+                            {
+                                id_line : line.id
+                            }
+                        );
                     }
                 });
             }
-        };
+        }
 
-        $scope.subtotalHT = function(index){
+        function subtotalHT(index){
             return crmTotal.sub.HT($scope.lines, index);
-        };
+        }
 
-        $scope.subtotalTTC = function(index){
+        function subtotalTTC(index){
             return crmTotal.sub.TTC($scope.lines, index);
-        };
-        $scope.$watch('lines', function(value, oldValue){
-            if(value != oldValue && oldValue != undefined)
-                updateTotals();
-        }, true);
-        $scope.$watch('quote.global_discount', function(value, oldValue){
-            if(value != oldValue && oldValue != undefined)
-                updateTotals();
-        });
+        }
+
         function updateTotals(){
             if($scope.quote) {
                 $scope.quote.total_prediscount_ht = crmTotal.preDiscount.HT($scope.lines);
@@ -322,17 +391,23 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             }
         }
 
-        $scope.toggleActivity = function(){
+        function toggleActivity(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             $scope.activity = {};
             $scope.activity.reminder = new Date();
             $scope.showActivityInput = !$scope.showActivityInput;
-        };
+        }
 
-        $scope.closeActivity = function(){
+        function closeActivity(){
             $scope.showActivityInput = false;
-        };
+        }
 
-        $scope.addActivity = function(){
+        function addActivity(){
+            if($scope.quote.finalized !== '0')
+                return;
+
             if($scope.activity != undefined) {
                 var data = {};
 
@@ -363,14 +438,20 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     }
                 });
             }
-        };
+        }
 
-        $scope.editActivity = function(activity){
+        function editActivity(activity){
+            if($scope.quote.finalized !== '0')
+                return;
+
             $scope.activity = activity;
             $scope.showActivityInput = true;
-        };
+        }
 
-        $scope.deleteActivity = function(activity){
+        function deleteActivity(activity){
+            if($scope.quote.finalized !== '0')
+                return;
+
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -409,10 +490,11 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             }, function () {
                 //console.log("rien");
             });
-        };
+        }
 
-
-        $scope.upload = function (files) {
+        function upload(files) {
+            if($scope.quote.finalized !== '0')
+                return;
 
             $scope.files = files;
             $scope.progress = 0;
@@ -442,9 +524,12 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                     }
                 );
             }
-        };
+        }
 
-        $scope.deleteDocument = function(document){
+        function deleteDocument(document){
+            if($scope.quote.finalized !== '0')
+                return;
+
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -483,15 +568,64 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             }, function () {
                 //console.log("rien");
             });
-        };
-
-        $scope.print = function(){
-            zhttp.crm.quote.pdf.make($scope.quote.id).then(function(response){
-                if(response.data && response.data != 'false'){
-                    window.document.location.href = zhttp.crm.quote.pdf.get() + angular.fromJson(response.data);
-                }
-            });
         }
 
+        function print(){
+            if($scope.quote.finalized !== '0'){
+                window.document.location.href = zhttp.crm.quote.pdf.get() + $scope.quote.final_pdf;
+            }
+            else{
+                zhttp.crm.quote.pdf.make($scope.quote.id).then(function(response){
+                    if(response.data && response.data != 'false'){
+                        window.document.location.href = zhttp.crm.quote.pdf.get() + angular.fromJson(response.data);
+                    }
+                });
+            }
+        }
+
+        function initNavigation() {
+
+            // calcul le nombre de résultat
+            $scope.nb_quotes = $rootScope.quotes.length;
+
+
+            // calcul la position du résultat actuel
+            $scope.quote_order = 0;
+            $scope.quote_first = 0;
+            $scope.quote_previous = 0;
+            $scope.quote_next = 0;
+            $scope.quote_last = 0;
+
+            for (var i = 0; i < $rootScope.quotes.length; i++) {
+                if ($rootScope.quotes[i].id == $routeParams.id) {
+                    $scope.quote_order = i + 1;
+                    if (i > 0) {
+                        $scope.quote_previous = $rootScope.quotes[i - 1].id;
+                    }
+
+                    if ((i + 1) < $rootScope.quotes.length) {
+                        $scope.quote_next = $rootScope.quotes[i + 1].id;
+                    }
+                }
+            }
+
+            // recherche la première facture de la liste
+            if($rootScope.quotes[0] != undefined) {
+                if ($rootScope.quotes[0].id != $routeParams.id) {
+                    $scope.quote_first = $rootScope.quotes[0].id;
+                }
+            }
+            else
+                $scope.quote_first = 0;
+
+            // recherche la dernière facture de la liste
+            if($rootScope.quotes[$rootScope.quotes.length - 1] != undefined) {
+                if ($rootScope.quotes[$rootScope.quotes.length - 1].id != $routeParams.id) {
+                    $scope.quote_last = $rootScope.quotes[$rootScope.quotes.length - 1].id;
+                }
+            }
+            else
+                $scope.quote_last = 0;
+        }
 
     }]);

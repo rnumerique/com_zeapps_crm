@@ -3,11 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div class="row">
     <div class="col-md-12 text-right">
-        <button type="button" class="btn btn-xs" ng-click="changeScaleTo('months')" ng-class="selectedScale === 'months' ? 'btn-success' : 'btn-info';">
+        <button type="button" class="btn btn-xs" ng-click="changeScaleTo('month')" ng-class="selectedScale === 'month' ? 'btn-success' : 'btn-info';">
             Année
         </button>
-        <button type="button" class="btn btn-xs btn-info" ng-click="changeScaleTo('weeks')" ng-class="selectedScale === 'weeks' ? 'btn-success' : 'btn-info';">
-            Mois
+        <button type="button" class="btn btn-xs btn-info" ng-click="changeScaleTo('dates')" ng-class="selectedScale === 'dates' ? 'btn-success' : 'btn-info';">
+            3 Mois
+        </button>
+        <button type="button" class="btn btn-xs btn-info" ng-click="changeScaleTo('date')" ng-class="selectedScale === 'date' ? 'btn-success' : 'btn-info';">
+            1 Mois
         </button>
         <button type="button" class="btn btn-xs btn-info" ng-click="changeScaleTo('days')" ng-class="selectedScale === 'days' ? 'btn-success' : 'btn-info';">
             Semaine

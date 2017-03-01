@@ -108,7 +108,7 @@
         </td>
         <td class="border">
             <strong>Date d'échéance</strong><br>
-            <?php if($quote->date_limit) echo date('d/m/Y', $invoice->date_limit); ?>
+            <?php if($invoice->date_limit) echo date('d/m/Y', $invoice->date_limit); ?>
         </td>
     </tr>
     <tr>

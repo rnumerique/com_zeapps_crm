@@ -23,7 +23,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
                         <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()" ng-hide="invoice.finalized !== '0'"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="finalizeInvoice()" ng-hide="invoice.finalized !== '0'" i8n="Clôturer la facture"></button>
+                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="invoice.finalized !== '0'">
+                            <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
+                        </button>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_invoices > 0">
                             <button type="button" class="btn btn-default" ng-class="invoice_first == 0 ? 'disabled' :''" ng-click="first_invoice()"><span class="fa fa-fw fa-fast-backward"></span></button>

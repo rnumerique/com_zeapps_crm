@@ -24,6 +24,11 @@ class Stock extends ZeCtrl
         $this->load->view('stock/history');
     }
 
+    public function modal()
+    {
+        $this->load->view('stock/modal');
+    }
+
 
 
     public function get($id_stock, $id_warehouse = null){
@@ -47,12 +52,19 @@ class Stock extends ZeCtrl
             if($product_stock->movements = $this->stock_movements->all($w)){
                 $product_stock->last = [];
                 $product_stock->last['month'] = $this->stock_movements->last_year($w);
-                $product_stock->last['weeks'] = $this->stock_movements->last_month($w);
+                $product_stock->last['dates'] = $this->stock_movements->last_months($w);
+                $product_stock->last['date'] = $this->stock_movements->last_month($w);
                 $product_stock->last['days'] = $this->stock_movements->last_week($w);
             }
             else {
                 $product_stock->movements = array();
                 $product_stock->recent_mvmts = array();
+                $product_stock->last = array(
+                    'month' => [],
+                    'dates' => [],
+                    'date' => [],
+                    'days' => []
+                );
             }
         }
         else{
@@ -113,6 +125,23 @@ class Stock extends ZeCtrl
         $this->product_stocks->delete($id);
 
         echo json_encode('OK');
+    }
+
+
+    public function add_mvt() {
+        $this->load->model('zeapps_stock_movements', 'stock_movements');
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        $id = $this->stock_movements->insert($data);
+
+        echo $id;
     }
 
     public function ignore_mvt($id, $value, $id_stock, $id_warehouse){

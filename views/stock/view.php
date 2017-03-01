@@ -28,16 +28,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label>Référence</label>
                     <input class="form-control" type="text" ng-model="form.ref">
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div class="form-group">
                     <label>Libellé</label>
                     <input class="form-control" type="text" ng-model="form.label">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Valeur unitaire</label>
+                    <input class="form-control" type="number" ng-model="form.value_ht">
                 </div>
             </div>
         </div>
@@ -79,6 +85,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>Ref</th>
                     <th>Libellé</th>
                     <th>Qté</th>
+                    <th>Valeur Unitaire</th>
+                    <th>Valeur du Stock</th>
                     <th>Date Rupture</th>
                     <th ng-if="selectedWarehouse > 0">Date Réapprovisionnement estimée</th>
                     <th></th>
@@ -88,7 +96,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr ng-repeat="product_stock in product_stocks">
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.ref}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.label}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.total || 0}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.total || 0 | number:2}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.value_ht | currency}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.value_ht * product_stock.total | currency}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}</a></td>
                     <td ng-if="selectedWarehouse > 0"><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}</a></td>
                     <td class="text-right">

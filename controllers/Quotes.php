@@ -5,42 +5,37 @@ class Quotes extends ZeCtrl
 {
     public function view()
     {
-        $data = array() ;
-
-        $this->load->view('quotes/view', $data);
+        $this->load->view('quotes/view');
     }
 
     public function form()
     {
-        $data = array() ;
-
-        $this->load->view('quotes/form', $data);
+        $this->load->view('quotes/form');
     }
 
     public function lists()
     {
-        $data = array() ;
-
-        $this->load->view('quotes/lists', $data);
+        $this->load->view('quotes/lists');
     }
 
     public function lists_partial()
     {
-        $data = array() ;
+        $this->load->view('quotes/lists_partial');
+    }
 
-        $this->load->view('quotes/lists_partial', $data);
+    public function finalize_modal()
+    {
+        $this->load->view('quotes/finalize_modal');
     }
 
     public function config()
     {
-        $data = array() ;
-
-        $this->load->view('quotes/config', $data);
+        $this->load->view('quotes/config');
     }
 
 
 
-    public function makePDF($id){
+    public function makePDF($id, $echo = true){
 
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
@@ -85,7 +80,10 @@ class Quotes extends ZeCtrl
         //download it.
         $this->M_pdf->pdf->Output($pdfFilePath, "F");
 
-        echo json_encode($nomPDF);
+        if($echo)
+            echo json_encode($nomPDF);
+
+        return $nomPDF;
     }
 
     public function getPDF($nomPDF){
@@ -115,6 +113,42 @@ class Quotes extends ZeCtrl
         $result = $this->parseFormat($format, $num);
 
         echo json_encode($result);
+    }
+
+    public function finalize($id) {
+        if($id) {
+            $this->load->model("Zeapps_quotes", "quotes");
+
+            // constitution du tableau
+            $data = array() ;
+
+            if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+                // POST is actually in json format, do an internal translation
+                $data = json_decode(file_get_contents('php://input'), true);
+            }
+
+            $return = [];
+
+            if($data){
+                foreach($data as $document => $value){
+                    if($value == 'true'){
+                        $createFrom = 'create'.ucfirst($document).'From';
+                        $return[$document] = $this->$createFrom($id);
+                    }
+                }
+            }
+
+            $nomPDF = $this->makePDF($id, false);
+
+            $this->quotes->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
+
+            $return['nomPDF'] = $nomPDF;
+
+            echo json_encode($return);
+        }
+        else{
+            echo json_encode(false);
+        }
     }
 
     public function createOrderFrom($id){
@@ -185,7 +219,7 @@ class Quotes extends ZeCtrl
 
         }
 
-        echo json_encode($id_order);
+        return $id_order;
     }
 
     public function getAll($id_company = '0', $type = 'company') {

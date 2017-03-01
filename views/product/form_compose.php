@@ -16,20 +16,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <form name="newProduct" class="col-md-9">
             <div class="well">
                 <div class="row">
-
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label>Reference</label>
                             <input type="text" ng-model="form.ref" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="form-group">
                             <label>Nom du produit <span class="required">*</span></label>
                             <input type="text" ng-model="form.name" class="form-control" ng-required="true">
                         </div>
                     </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Produit stocké</label>
+                            <div class="input-group">
+                                <input type="text" ng-model="form.name_stock" class="form-control" disabled>
 
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="removeProductStock()"
+                                            ng-show="form.id_stock != 0 && form.name_stock != undefined">x
+                                    </button>
+                                    <button class="btn btn-default" type="button" ng-click="loadProductStock()">...</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Prix Cumulé HT <span class="required">*</span></label>
@@ -48,7 +64,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <input type="text" ng-model="form.accounting_number" class="form-control" ng-required="true">
                         </div>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>
@@ -57,14 +75,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </label>
                         </div>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Description</label>
                             <input type="text" ng-model="form.description" class="form-control">
                         </div>
                     </div>
-
                 </div>
             </div>
 

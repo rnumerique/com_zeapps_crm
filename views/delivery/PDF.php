@@ -70,13 +70,13 @@
                 echo $company->company_name . '<br>';
             if($contact)
                 echo $contact->last_name . ' ' . $contact->first_name . '<br>';
-            echo $order->delivery_address_1;
-            echo $order->delivery_address_2 ? '<br>' : '';
-            echo $order->delivery_address_2;
-            echo $order->delivery_address_3 ? '<br>' : '';
-            echo $order->delivery_address_3;
+            echo $delivery->delivery_address_1;
+            echo $delivery->delivery_address_2 ? '<br>' : '';
+            echo $delivery->delivery_address_2;
+            echo $delivery->delivery_address_3 ? '<br>' : '';
+            echo $delivery->delivery_address_3;
             echo '<br>';
-            echo $order->delivery_zipcode . ' ' . $order->delivery_city;
+            echo $delivery->delivery_zipcode . ' ' . $delivery->delivery_city;
             ?>
         </td>
         <td id="billing_address">
@@ -86,29 +86,29 @@
                 echo $company->company_name . '<br>';
             if($contact)
                 echo $contact->last_name . ' ' . $contact->first_name . '<br>';
-            echo $order->billing_address_1;
-            echo $order->billing_address_2 ? '<br>' : '';
-            echo $order->billing_address_2;
-            echo $order->billing_address_3 ? '<br>' : '';
-            echo $order->billing_address_3;
+            echo $delivery->billing_address_1;
+            echo $delivery->billing_address_2 ? '<br>' : '';
+            echo $delivery->billing_address_2;
+            echo $delivery->billing_address_3 ? '<br>' : '';
+            echo $delivery->billing_address_3;
             echo '<br>';
-            echo $order->billing_zipcode . ' ' . $order->billing_city;
+            echo $delivery->billing_zipcode . ' ' . $delivery->billing_city;
             ?>
         </td>
     </tr>
     <tr>
         <td colspan="2" class="object">
-            <strong>Objet : <?php echo $order->libelle; ?></strong>
+            <strong>Objet : <?php echo $delivery->libelle; ?></strong>
         </td>
     </tr>
     <tr>
         <td class="border">
             <strong>Mode de reglement</strong><br>
-            <?php echo $order->modalities; ?>
+            <?php echo $delivery->modalities; ?>
         </td>
         <td class="border">
             <strong>Date d'échéance</strong><br>
-            <?php if($order->date_limit) echo date('d/m/Y', $order->date_limit); ?>
+            <?php if($delivery->date_limit) echo date('d/m/Y', $delivery->date_limit); ?>
         </td>
     </tr>
     <tr>
@@ -211,13 +211,13 @@
         </td>
         <td class="text-right">
             <table class="total">
-                <?php if(floatval($order->global_discount) > 0){ ?>
+                <?php if(floatval($delivery->global_discount) > 0){ ?>
                     <tr>
                         <td class="text-left">
                             <strong>Total HT av remise</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($order->total_prediscount_ht), 2, ',', ' '); ?>
+                            <?php echo number_format(floatval($delivery->total_prediscount_ht), 2, ',', ' '); ?>
                         </td>
                     </tr>
                     <tr>
@@ -225,7 +225,7 @@
                             <strong>Total TTC av remise</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($order->total_prediscount_ttc), 2, ',', ' '); ?>
+                            <?php echo number_format(floatval($delivery->total_prediscount_ttc), 2, ',', ' '); ?>
                         </td>
                     </tr>
                     <tr>
@@ -233,7 +233,7 @@
                             <strong>Remise Globable</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($order->global_discount), 2, ',', ' ') . '%'; ?>
+                            <?php echo number_format(floatval($delivery->global_discount), 2, ',', ' ') . '%'; ?>
                         </td>
                     </tr>
                     <tr>
@@ -241,7 +241,7 @@
                             <strong>Remise (avant taxes)</strong>
                         </td>
                         <td class="text-right">
-                            <?php echo number_format(floatval($order->total_discount), 2, ',', ' ') ? : '0,00'; ?>
+                            <?php echo number_format(floatval($delivery->total_discount), 2, ',', ' ') ? : '0,00'; ?>
                         </td>
                     </tr>
                 <?php }?>
@@ -250,7 +250,7 @@
                         <strong>Total HT</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format(floatval($order->total_ht), 2, ',', ' '); ?>
+                        <?php echo number_format(floatval($delivery->total_ht), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>
@@ -258,7 +258,7 @@
                         <strong>TVA</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format((floatval($order->total_ttc)-floatval($order->total_ht)), 2, ',', ' '); ?>
+                        <?php echo number_format((floatval($delivery->total_ttc)-floatval($delivery->total_ht)), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>
@@ -266,7 +266,7 @@
                         <strong>Total TTC</strong>
                     </td>
                     <td class="text-right">
-                        <?php echo number_format(floatval($order->total_ttc), 2, ',', ' '); ?>
+                        <?php echo number_format(floatval($delivery->total_ttc), 2, ',', ' '); ?>
                     </td>
                 </tr>
             </table>
