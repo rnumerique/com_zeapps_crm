@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12 text-right">
             <button type="button" class="btn btn-xs btn-success" ng-click="showForm = !showForm">
-                <i class="fa fa-fw fa-plus"></i> Sprint
+                <i class="fa fa-fw fa-plus"></i> Produit stocké
             </button>
         </div>
     </div>

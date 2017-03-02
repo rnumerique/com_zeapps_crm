@@ -72,12 +72,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>Date prévu de rupture de stocks : </strong>{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <strong>Date prévu de rupture de stocks : </strong>{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
+            <strong>Date prévisionnelle de rupture : </strong>{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
         </div>
     </div>
     <div class="row" ng-if="selectedWarehouse > 0">
