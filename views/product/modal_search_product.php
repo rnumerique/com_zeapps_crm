@@ -23,7 +23,7 @@
                 </thead>
                 <tbody>
 
-                <tr ng-repeat="produit in produits | filter:{compose : 0}">
+                <tr ng-repeat="produit in produits"> <!-- | filter:{compose : 0}-->
                     <td>
                         <i class="fa fa-tag" ng-if="produit.compose == 0"></i>
                     </td>

@@ -67,7 +67,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
         $scope.loadProductStock = function () {
             zeapps_modal.loadModule("com_zeapps_crm", "search_product_stock", {}, function(objReturn) {
                 if (objReturn) {
-                    $scope.form.id_stock = objReturn.id;
+                    $scope.form.id_stock = objReturn.id_stock;
                     $scope.form.name_stock = objReturn.ref ? objReturn.ref + ' - ' + objReturn.label : objReturn.label;
                 } else {
                     $scope.form.id_stock = 0;
@@ -172,6 +172,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
 
             data.name = $scope.form.name;
             data.id_cat = $scope.form.id_cat;
+            data.id_stock = $scope.form.id_stock;
             data.description = $scope.form.description;
             data.price_ht = $scope.form.price_ht;
             data.price_ttc = $scope.form.price_ttc;
