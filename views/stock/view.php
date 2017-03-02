@@ -93,7 +93,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="product_stock in product_stocks">
+                <tr ng-repeat="product_stock in product_stocks | orderBy:'dateRupture'">
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.ref}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.label}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.total || 0 | number:2}}</a></td>
