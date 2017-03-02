@@ -65,9 +65,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <table class="table table-condensed table-responsive">
             <thead>
             <tr>
-                <th>Libellé</th>
                 <th>Date</th>
-                <th class="text-right"Qté</th>
+                <th>Libellé</th>
+                <th class="text-right">Qté</th>
                 <th></th>
             </tr>
             </thead>
@@ -75,8 +75,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <tr ng-repeat="movement in product_stock.movements | orderBy:'-date_mvt' | startFrom:(page - 1)*pageSize | limitTo:pageSize"
                 ng-class="backgroundOf(movement)"
             >
-                <td>{{movement.label}}</td>
                 <td>{{movement.date_mvt | date:'dd/MM/yyyy'}}</td>
+                <td>{{movement.label}}</td>
                 <td class="text-right">{{movement.qty}}</td>
                 <td class="text-right">
                     <button type="button" class="btn btn-xs btn-success" ng-show="movement.ignored === '0'" ng-click="setIgnoredTo(movement, '1')">

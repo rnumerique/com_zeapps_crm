@@ -118,6 +118,10 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
 
                     $scope.warehouses = response.data.warehouses;
 
+                    angular.forEach($scope.product_stock.movements, function(mvt){
+                        mvt.date_mvt = new Date(mvt.date_mvt);
+                    });
+
                     calcTimeLeft($scope.product_stock.total, $scope.product_stock.avg);
                     parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
                 }
