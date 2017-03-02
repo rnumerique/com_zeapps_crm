@@ -77,7 +77,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
     <div class="row" ng-if="selectedWarehouse > 0">
         <div class="col-md-12">
-            <strong>Date limite de réapprivisionnement estimée pour cet entrepôt : </strong>{{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}
+            <strong>Commande fournisseur avant le : </strong>{{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}
         </div>
     </div>
 
