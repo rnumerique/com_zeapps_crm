@@ -155,7 +155,7 @@ class Delivery extends ZeCtrl
                                                     $company_name = $company ? $company->company_name . ' - ' : '';
                                                     $contact_name = $contact ? $contact->last_name . ' ' . $contact->first_name : '';
 
-                                                    $name = 'BL n°' . $delivery->numerotation . ' ('.$company_name..')';
+                                                    $name = 'BL n°' . $delivery->numerotation . ' ('.$company_name.$contact_name.')';
 
                                                     $now = date('Y-m-d H:i:s');
                                                     $data = [
