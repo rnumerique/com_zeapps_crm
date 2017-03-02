@@ -123,6 +123,9 @@ class Delivery extends ZeCtrl
 
             if($delivery = $this->deliveries->get($id)) {
 
+                $company = $this->delivery_companies->get(array('id_delivery'=>$id));
+                $contact = $this->delivery_contacts->get(array('id_delivery'=>$id));
+
                 $this->stock_movements->delete(array('name_table' => 'zeapps_deliveries','id_table' => $id));
 
                 if ($lines = $this->delivery_lines->all(array('id_delivery' => $id))) {
@@ -148,11 +151,17 @@ class Delivery extends ZeCtrl
                                         foreach($product_lines as $product_line){
                                             if($part = $this->products->get($product_line->id_part)){
                                                 if($part->id_stock > 0){
+
+                                                    $company_name = $company ? $company->company_name . ' - ' : '';
+                                                    $contact_name = $contact ? $contact->last_name . ' ' . $contact->first_name : '';
+
+                                                    $name = 'BL n°' . $delivery->numerotation . ' ('.$company_name..')';
+
                                                     $now = date('Y-m-d H:i:s');
                                                     $data = [
                                                         'id_warehouse' => $delivery->id_warehouse,
                                                         'id_stock' => $part->id_stock,
-                                                        'label' => 'Bon de livraison n°' . $delivery->numerotation,
+                                                        'label' => $name,
                                                         'qty' => -1 * floatval($line->qty) * floatval($product_line->quantite),
                                                         'id_table' => $id,
                                                         'name_table' => 'zeapps_deliveries',
