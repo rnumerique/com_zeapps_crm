@@ -8,7 +8,7 @@ class Zeapps_stock_movements extends ZeModel{
                   and deleted_at is null 
                   and qty < 0
                   and ignored = '0'
-                  and date_mvt BETWEEN CURDATE() - INTERVAL 90 DAY AND CURDATE()
+                  and date_mvt BETWEEN CURDATE() - INTERVAL 90 DAY AND CURDATE() + INTERVAL 1 DAY
                   and id_stock = " . $where['id_stock'];
 
         if(isset($where['id_warehouse'])){
@@ -19,7 +19,7 @@ class Zeapps_stock_movements extends ZeModel{
             $res = $ret->result();
 
         if($res){
-            $w = array('deleted_at' => null, 'id_stock' => $where['id_stock']);
+            $w = array('deleted_at' => null, 'id_stock' => $where['id_stock'], 'qty <' => 0);
             if(isset($where['id_warehouse'])){
                 $w['id_warehouse'] = $where['id_warehouse'];
             }
@@ -27,7 +27,8 @@ class Zeapps_stock_movements extends ZeModel{
                 $first = $ret[0]->date_mvt;
                 $now = time();
                 $first = strtotime($first);
-                $diff = (($now - $first) / 60 / 24 ) < 90 ? (($now - $first) / 60 / 24 ) : 90;
+                $diff = (($now - $first) / 86400 ) < 90 ? (($now - $first) / 86400 ) : 90; // 86400 = 60*60*24
+                $diff = $diff < 1 ? 1 : $diff;
             }
             else{
                 $diff = 90;

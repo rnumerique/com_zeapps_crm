@@ -115,12 +115,15 @@ class Delivery extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_deliveries", "deliveries");
             $this->load->model("Zeapps_delivery_lines", "delivery_lines");
-            $this->load->model("Zeapps_product_products", "products");
             $this->load->model("Zeapps_stock_movements", "stock_movements");
+            $this->load->model("Zeapps_product_products", "products");
+            $this->load->model("Zeapps_product_lines", "product_lines");
 
             $nomPDF = $this->makePDF($id, false);
 
             if($delivery = $this->deliveries->get($id)) {
+
+                $this->stock_movements->delete(array('name_table' => 'zeapps_deliveries','id_table' => $id));
 
                 if ($lines = $this->delivery_lines->all(array('id_delivery' => $id))) {
                     foreach ($lines as $line) {
@@ -132,13 +135,35 @@ class Delivery extends ZeCtrl
                                         'id_warehouse' => $delivery->id_warehouse,
                                         'id_stock' => $product->id_stock,
                                         'label' => 'Bon de livraison n°' . $delivery->numerotation,
-                                        'qty' => $line->qty,
+                                        'qty' => -1 * floatval($line->qty),
                                         'id_table' => $id,
                                         'name_table' => 'zeapps_deliveries',
                                         'date_mvt' => $now
                                     ];
 
                                     $this->stock_movements->insert($data);
+                                }
+                                elseif($product->compose > 0){
+                                    if($product_lines = $this->product_lines->all(array('id_product' => $product->id))){
+                                        foreach($product_lines as $product_line){
+                                            if($part = $this->products->get($product_line->id_part)){
+                                                if($part->id_stock > 0){
+                                                    $now = date('Y-m-d H:i:s');
+                                                    $data = [
+                                                        'id_warehouse' => $delivery->id_warehouse,
+                                                        'id_stock' => $part->id_stock,
+                                                        'label' => 'Bon de livraison n°' . $delivery->numerotation,
+                                                        'qty' => -1 * floatval($line->qty) * floatval($product_line->quantite),
+                                                        'id_table' => $id,
+                                                        'name_table' => 'zeapps_deliveries',
+                                                        'date_mvt' => $now
+                                                    ];
+
+                                                    $this->stock_movements->insert($data);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
