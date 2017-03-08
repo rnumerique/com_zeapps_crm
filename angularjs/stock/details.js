@@ -16,6 +16,7 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
         $scope.data = [
             []
         ];
+        $scope.form = {};
         $scope.navigationState = 'chart';
         $scope.page = 1;
         $scope.pageSize = 30;
@@ -28,6 +29,8 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
         }
 
         $scope.success = success;
+        $scope.edit = edit;
+        $scope.cancel = cancel;
         $scope.updateWarehouse = updateWarehouse;
         $scope.changeScaleTo = changeScaleTo;
         $scope.backgroundOf = backgroundOf;
@@ -100,11 +103,27 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
             getStocks($routeParams.id, $rootScope.selectedWarehouse);
         }
 
+        function edit(){
+            $scope.form.ref = $scope.product_stock.ref;
+            $scope.form.label = $scope.product_stock.label;
+            $scope.form.value_ht = $scope.product_stock.value_ht;
+
+            $scope.shownForm = true;
+        }
+
+        function cancel(){
+            $scope.shownForm = false;
+        }
+
         function success(){
-            var formatted_data = angular.toJson($scope.product_stock);
+            var formatted_data = angular.toJson($scope.form);
 
             zhttp.crm.product_stock.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false')
+                    $scope.product_stock.ref = $scope.form.ref;
+                    $scope.product_stock.label = $scope.form.label;
+                    $scope.product_stock.value_ht = $scope.form.value_ht;
+
                     $scope.shownForm = false;
             });
         }
@@ -135,22 +154,27 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
                 if(timeleft > 0) {
                     $scope.product_stock.timeleft = moment().to(moment().add(timeleft, 'days'));
                     $scope.product_stock.dateRupture = moment().add(timeleft, 'days').format('DD/MM/YYYY');
+                    $scope.product_stock.classRupture = 'text-success';
                 }
                 else{
                     $scope.product_stock.timeleft = 'En rupture';
                     $scope.product_stock.dateRupture = moment().add(timeleft, 'days').format('DD/MM/YYYY');
+                    $scope.product_stock.classRupture = 'text-danger';
                 }
 
                 if($rootScope.selectedWarehouse > 0) {
                     $scope.product_stock.timeResupply = moment().to(moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit));
                     $scope.product_stock.dateResupply = moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit).format('DD/MM/YYYY');
+                    $scope.product_stock.classResupply = moment().isBefore(moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), 'day') ? 'text-success' : 'text-danger';
                 }
             }
             else{
-                $scope.product_stock.timeleft = 'Indeterminée';
+                $scope.product_stock.timeleft = '-';
                 $scope.product_stock.dateRupture = '';
-                $scope.product_stock.timeResupply = 'Indeterminée';
+                $scope.product_stock.timeResupply = '-';
                 $scope.product_stock.dateResupply = '';
+                $scope.product_stock.classRupture = 'text-info';
+                $scope.product_stock.classResupply = 'text-info';
             }
         }
 

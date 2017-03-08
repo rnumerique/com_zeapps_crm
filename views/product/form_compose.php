@@ -46,19 +46,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Prix Cumulé HT <span class="required">*</span></label>
-                            <input type="number" ng-model="form.price_ht" ng-change="updatePrice('ttc')" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Prix Cumulé TTC <span class="required">*</span></label>
-                            <input type="number" ng-model="form.price_ttc" ng-change="updatePrice('ht')" class="form-control">
+                            <input type="number" ng-model="form.price_ttc" ng-change="updatePrice()" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Compte Comptable <span class="required">*</span></label>
                             <input type="text" ng-model="form.accounting_number" class="form-control" ng-required="true">

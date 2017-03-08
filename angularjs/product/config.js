@@ -5,7 +5,6 @@ app.controller('ComZeappsCrmProductConfigCtrl', ['$scope', '$route', '$routePara
 
         $scope.attributes = [];
         $scope.form = {};
-
         $scope.types = {
             'text': 'Texte',
             'number': 'Numérique',
@@ -13,44 +12,54 @@ app.controller('ComZeappsCrmProductConfigCtrl', ['$scope', '$route', '$routePara
             'checkbox': 'Booléen'
         };
 
+        $scope.addAttribute = addAttribute;
+        $scope.edit = edit;
+        $scope.validate = validate;
+        $scope.cancel = cancel;
+        $scope.del = del;
+        $scope.success = success;
+
+
         zhttp.config.product.get.attr().then(function(response){
             if(response.data && response.data != 'false'){
                 $scope.attributes = angular.fromJson(response.data.value);
             }
         });
 
-        $scope.addAttribute = function(){
+
+
+        function addAttribute(){
             var attribute = {
                 name: 'Nouvel Attribut',
                 type: 'Texte',
                 required: false
             };
             $scope.attributes.push(attribute);
-        };
+        }
 
-        $scope.edit = function(attribute){
+        function edit(attribute){
             $scope.form.name = attribute.name;
             $scope.form.type = attribute.type;
             $scope.form.required = attribute.required;
             $scope.form.index = $scope.attributes.indexOf(attribute);
-        };
+        }
 
-        $scope.validate = function(attribute){
+        function validate(attribute){
             attribute.name = $scope.form.name;
             attribute.type = $scope.form.type;
             attribute.required = $scope.form.required;
             $scope.form = {};
-        };
+        }
 
-        $scope.cancel = function(){
+        function cancel(){
             $scope.form = {};
-        };
+        }
 
-        $scope.del = function(index){
+        function del(index){
             $scope.attributes.splice(index, 1);
-        };
+        }
 
-        $scope.success = function(){
+        function success(){
 
             var data = {};
 
@@ -63,6 +72,6 @@ app.controller('ComZeappsCrmProductConfigCtrl', ['$scope', '$route', '$routePara
                     $rootScope.toasts.push({'success':'Les attributs ont bien été sauvegardés'})
                 }
             })
-        };
+        }
 
     }]);

@@ -6,16 +6,44 @@ app.controller('ComZeappsCrmProductFormCategoryCtrl', ['$scope', '$route', '$rou
         $scope.activeCategory = {
             data: ''
         };
-
         $scope.tree = {
             branches: []
         };
-
         $scope.form = [];
-
         $scope.error = '';
 
+        $scope.success = success;
+        $scope.cancel = cancel;
+
         if ($routeParams.id && $routeParams.id > 0) {
+            loadCtxtEdit();
+        }
+
+        if($routeParams.id_parent && $routeParams.id_parent >= 0){
+            loadCtxtNew();
+        }
+
+        $scope.$watch('activeCategory.data', function(value, old, scope){
+            if(typeof(value.id) !== 'undefined'){
+                scope.form.id_parent = value.id;
+            }
+        });
+
+
+        function loadCtxtNew(){
+            zhttp.crm.category.tree().then(function (response) {
+                if (response.status == 200) {
+                    $scope.tree.branches = response.data;
+                    zhttp.crm.category.openTree($scope.tree, $routeParams.id_parent);
+                    zhttp.crm.category.get($routeParams.id_parent).then(function (response) {
+                        if (response.status == 200) {
+                            $scope.activeCategory.data = response.data;
+                        }
+                    });
+                }
+            });
+        }
+        function loadCtxtEdit(){
             zhttp.crm.category.tree().then(function (response) {
                 if (response.status == 200) {
                     $scope.tree.branches = response.data;
@@ -34,47 +62,7 @@ app.controller('ComZeappsCrmProductFormCategoryCtrl', ['$scope', '$route', '$rou
             });
         }
 
-        if($routeParams.id_parent && $routeParams.id_parent >= 0){
-            zhttp.crm.category.tree().then(function (response) {
-                if (response.status == 200) {
-                    $scope.tree.branches = response.data;
-                    zhttp.crm.category.openTree($scope.tree, $routeParams.id_parent);
-                    zhttp.crm.category.get($routeParams.id_parent).then(function (response) {
-                        if (response.status == 200) {
-                            $scope.activeCategory.data = response.data;
-                        }
-                    });
-                }
-            });
-        }
-
-        if ($routeParams.id_delete && $routeParams.id_delete > 0) {
-            zhttp.crm.category.tree().then(function (response) {
-                if (response.status == 200) {
-                    $scope.tree.branches = response.data;
-                    zhttp.crm.category.get($routeParams.id_delete).then(function (response) {
-                        if (response.status == 200) {
-                            $scope.form = response.data;
-                            zhttp.crm.category.get($scope.form.id_parent).then(function (response) {
-                                if (response.status == 200) {
-                                    $scope.activeCategory.data = response.data;
-                                    zhttp.crm.category.openTree($scope.tree, $scope.activeCategory.data.id);
-                                    $scope.delete($routeParams.id_delete);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        $scope.$watch('activeCategory.data', function(value, old, scope){
-            if(typeof(value.id) !== 'undefined'){
-                scope.form.id_parent = value.id;
-            }
-        });
-
-        $scope.success = function () {
+        function success() {
             var data = {};
 
             if ($routeParams.id != 0) {
@@ -99,14 +87,14 @@ app.controller('ComZeappsCrmProductFormCategoryCtrl', ['$scope', '$route', '$rou
                     $scope.error = response.data.error;
                 }
             });
-        };
+        }
 
-        $scope.cancel = function () {
+        function cancel() {
             if ($routeParams.url_retour) {
                 $location.path($routeParams.url_retour.replace(charSepUrlSlashRegExp,"/"));
             } else {
                 $location.path("/ng/com_zeapps_crm/product/category/" + $scope.form.id_parent);
             }
-        };
+        }
 
     }]);

@@ -16,7 +16,7 @@ class Zeapps_invoices extends ZeModel {
                 default:
                     $query .= ' 0';
             }
-            return sizeof($this->database()->query($query)->result()) + 1;
+            return sizeof($this->database()->customQuery($query)->result()) + 1;
         }
         else{
             return false;

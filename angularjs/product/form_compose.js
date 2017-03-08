@@ -6,13 +6,25 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
         $scope.activeCategory = {
             data: ''
         };
-
         $scope.tree = {
             branches: []
         };
-
         $scope.form = [];
+        $scope.form.lines = [];
         $scope.lineForm = {};
+
+        $scope.loadProductStock = loadProductStock;
+        $scope.removeProductStock = removeProductStock;
+        $scope.updatePrice = updatePrice;
+        $scope.ajouter_ligne = ajouter_ligne;
+        $scope.success = success;
+        $scope.edit = edit;
+        $scope.validate = validate;
+        $scope.cancel = cancel;
+        $scope.cancelEdit = cancelEdit;
+
+
+
 
         zhttp.config.product.get.attr().then(function(response){
             if(response.data && response.data != 'false'){
@@ -21,6 +33,24 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
         });
 
         if ($routeParams.id && $routeParams.id > 0) {
+            loadCtxtEdit();
+        }
+
+        if ($routeParams.category) {
+            loadCtxtNew();
+        }
+
+        $scope.$watch('activeCategory.data', function(value, old, scope){
+            if(typeof(value.id) !== 'undefined'){
+                scope.form.id_cat = value.id;
+            }
+        });
+
+
+
+
+
+        function loadCtxtEdit(){
             zhttp.crm.category.tree().then(function (response) {
                 if (response.status == 200) {
                     $scope.tree.branches = response.data;
@@ -28,7 +58,6 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                         if (response.status == 200) {
                             $scope.form = response.data;
                             $scope.form.auto = !!parseInt($scope.form.auto);
-                            $scope.form.price_ht = parseFloat($scope.form.price_ht);
                             $scope.form.value_taxe = parseFloat($scope.form.value_taxe);
                             $scope.form.price_ttc = parseFloat($scope.form.price_ttc);
                             angular.forEach($scope.form.lines, function(line){
@@ -46,8 +75,7 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
             });
         }
 
-        if ($routeParams.category) {
-            $scope.form.lines = [];
+        function loadCtxtNew(){
             zhttp.crm.category.tree().then(function (response) {
                 if (response.status == 200) {
                     $scope.tree.branches = response.data;
@@ -61,7 +89,7 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
             });
         }
 
-        $scope.loadProductStock = function () {
+        function loadProductStock() {
             zeapps_modal.loadModule("com_zeapps_crm", "search_product_stock", {}, function(objReturn) {
                 if (objReturn) {
                     $scope.form.id_stock = objReturn.id_stock;
@@ -71,44 +99,31 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                     $scope.form.name_stock = '';
                 }
             });
-        };
+        }
 
-        $scope.removeProductStock = function() {
+        function removeProductStock(){
             $scope.form.id_stock = 0;
             $scope.form.name_stock = '';
-        };
+        }
 
-        $scope.updatePrice = function(price){
-            if($scope.form.value_taxe && $scope.form.value_taxe > 0) {
-                if (price === 'ht') {
-                    $scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.value_taxe / 100).toFixed(2));
-                }
-                if (price === 'ttc') {
-                    $scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.value_taxe / 100).toFixed(2));
-                }
-            }
-        };
+        function updatePrice(){
+            var total = 0;
 
-        $scope.$watch('activeCategory.data', function(value, old, scope){
-            if(typeof(value.id) !== 'undefined'){
-                scope.form.id_cat = value.id;
-            }
-        });
+            angular.forEach($scope.form.lines, function(line){
+                total += parseFloat(line.product.price_ttc) * parseFloat(line.quantite);
+            });
 
-        $scope.$watch('form.lines', function(value, old, scope){
-            if(value){
-                scope.form.price_ht = 0;
-                scope.form.price_ttc = 0;
-                angular.forEach(value, function(line){
-                    scope.form.price_ht += parseInt(line.quantite) * parseFloat(line.product.price_ht);
-                    scope.form.price_ttc += parseInt(line.quantite) * parseFloat(line.product.price_ttc);
-                });
-                scope.form.price_ht = parseFloat(scope.form.price_ht.toFixed(2));
-                scope.form.price_ttc = parseFloat(scope.form.price_ttc.toFixed(2));
-            }
-        }, true);
+            if(!$scope.form.price_ttc)
+                $scope.form.price_ttc = 0;
 
-        $scope.ajouter_ligne = function() {
+            var prorata = (parseFloat($scope.form.price_ttc) * 100 / total).toFixed(2);
+
+            angular.forEach($scope.form.lines, function(line){
+                line.prorata = prorata;
+            });
+        }
+
+        function ajouter_ligne() {
             // charge la modal de la liste de produit
             zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
                 //console.log(objReturn);
@@ -120,11 +135,13 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                     data.product = objReturn;
 
                     $scope.form.lines.push(data) ;
+
+                    $scope.updatePrice();
                 }
             });
-        };
+        }
 
-        $scope.success = function () {
+        function success() {
             var data = {};
 
             if ($routeParams.id != 0) {
@@ -137,7 +154,6 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
             data.id_cat = $scope.form.id_cat;
             data.id_stock = $scope.form.id_stock;
             data.description = $scope.form.description;
-            data.price_ht = $scope.form.price_ht;
             data.price_ttc = $scope.form.price_ttc;
             data.accounting_number = $scope.form.accounting_number;
             data.auto = $scope.form.auto;
@@ -159,27 +175,27 @@ app.controller('ComZeappsCrmProductComposeFormCtrl', ['$scope', '$route', '$rout
                     $scope.error = response.data.error;
                 }
             });
-        };
+        }
 
-        $scope.edit = function(line){
+        function edit(line){
             $scope.lineForm.quantite = line.quantite;
             $scope.lineForm.index = $scope.form.lines.indexOf(line);
-        };
+        }
 
-        $scope.validate = function(line){
+        function validate(line){
             line.quantite = $scope.lineForm.quantite;
             $scope.lineForm = {};
-        };
+        }
 
-        $scope.cancelEdit = function(){
+        function cancelEdit(){
             $scope.lineForm = {};
-        };
+        }
 
-        $scope.cancel = function () {
+        function cancel() {
             if ($routeParams.url_retour) {
                 $location.path($routeParams.url_retour.replace(charSepUrlSlashRegExp,"/"));
             } else {
                 $location.path("/ng/com_zeapps_crm/product/category/" + $scope.form.id_cat);
             }
-        };
+        }
     }]);

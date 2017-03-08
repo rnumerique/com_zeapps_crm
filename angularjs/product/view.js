@@ -6,47 +6,21 @@ app.controller('ComZeappsCrmProductViewCtrl', ['$scope', '$route', '$routeParams
         $scope.activeCategory = {
             data: ''
         };
-
         $scope.tree = {
             branches: []
         };
-
         $scope.quicksearch = "";
 
-        $scope.products;
-
-        var getTree = function() {
-            zhttp.crm.category.tree().then(function (response) {
-                if (response.status == 200) {
-                    var id = $scope.activeCategory.data.id || $routeParams.id || 0;
-                    $scope.tree.branches = response.data;
-                    zhttp.crm.category.openTree($scope.tree, id);
-                    zhttp.crm.category.get(id).then(function (response) {
-                        if (response.status == 200) {
-                            $scope.activeCategory.data = response.data;
-                        }
-                    });
-                }
-            });
-        };
-        getTree();
+        $scope.delete = del;
+        $scope.delete_category = delete_category;
+        $scope.force_delete_category = force_delete_category;
 
         $scope.sortableOptions = {
-            stop: function(event, ui){
-                var data = {
-                    categories: []
-                };
-                for(var i=0; i < $scope.activeCategory.data.branches.length; i++){
-                    $scope.activeCategory.data.branches[i].sort = i;
-                    data.categories[i] = $scope.activeCategory.data.branches[i];
-                }
-                zhttp.crm.category.update_order(data).then(function(response){
-                    if (response.status != 200) {
-                        $rootScope.toasts.push({'danger':'There was an error when trying to access the Server, please try again ! If the problem persists contact the administrator of this website.'});
-                    }
-                });
-            }
+            stop: sortableStop
         };
+
+        getTree();
+
 
         $scope.$watch('activeCategory.data', function(value, old, scope){
             if(typeof(value.id) !== 'undefined'){
@@ -67,9 +41,36 @@ app.controller('ComZeappsCrmProductViewCtrl', ['$scope', '$route', '$routeParams
             }
         });
 
+        function getTree() {
+            zhttp.crm.category.tree().then(function (response) {
+                if (response.status == 200) {
+                    var id = $scope.activeCategory.data.id || $routeParams.id || 0;
+                    $scope.tree.branches = response.data;
+                    zhttp.crm.category.openTree($scope.tree, id);
+                    zhttp.crm.category.get(id).then(function (response) {
+                        if (response.status == 200) {
+                            $scope.activeCategory.data = response.data;
+                        }
+                    });
+                }
+            });
+        }
 
-
-        $scope.delete = function (product) {
+        function sortableStop(){
+            var data = {
+                categories: []
+            };
+            for(var i=0; i < $scope.activeCategory.data.branches.length; i++){
+                $scope.activeCategory.data.branches[i].sort = i;
+                data.categories[i] = $scope.activeCategory.data.branches[i];
+            }
+            zhttp.crm.category.update_order(data).then(function(response){
+                if (response.status != 200) {
+                    $rootScope.toasts.push({'danger':'There was an error when trying to access the Server, please try again ! If the problem persists contact the administrator of this website.'});
+                }
+            });
+        }
+        function del(product){
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -109,9 +110,9 @@ app.controller('ComZeappsCrmProductViewCtrl', ['$scope', '$route', '$routeParams
                 //console.log("rien");
             });
 
-        };
+        }
 
-        $scope.delete_category = function (id) {
+        function delete_category(id) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -162,9 +163,9 @@ app.controller('ComZeappsCrmProductViewCtrl', ['$scope', '$route', '$routeParams
                 //console.log("rien");
             });
 
-        };
+        }
 
-        $scope.force_delete_category = function (id) {
+        function force_delete_category(id) {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',
@@ -212,5 +213,5 @@ app.controller('ComZeappsCrmProductViewCtrl', ['$scope', '$route', '$routeParams
                 //console.log("rien");
             });
 
-        };
+        }
     }]);

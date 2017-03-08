@@ -21,7 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-6">
                     <div class="pull-right">
                         <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
-                        <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
+                        <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()" ng-hide="order.finalized !== '0'"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="order.finalized !== '0'">
                             <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
@@ -103,11 +103,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de facturation :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit">{{ order.billing_address_1 }} <span ng-show="order.billing_address_1"></span></span><br ng-if="order.billing_address_1 && !edit">
+                    <span ng-hide="edit">{{ order.billing_address_1 }}</span><br ng-if="order.billing_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ order.billing_address_2 }} <span ng-show="order.billing_address_2"></span></span><br ng-if="order.billing_address_2 && !edit">
+                    <span ng-hide="edit">{{ order.billing_address_2 }}</span><br ng-if="order.billing_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ order.billing_address_3 }} <span ng-show="order.billing_address_3"></span></span><br ng-if="order.billing_address_3 && !edit">
+                    <span ng-hide="edit">{{ order.billing_address_3 }}</span><br ng-if="order.billing_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="order.billing_address_3" ng-show="edit">
                     <span ng-hide="edit">{{ order.billing_zipcode + ' ' + order.billing_city }}</span>
                     <input type="text" class="form-control" ng-model="order.billing_zipcode" ng-show="edit">
@@ -120,11 +120,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de livraison :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit">{{ order.delivery_address_1 }} <span ng-show="order.delivery_address_1"></span></span><br ng-if="order.delivery_address_1 && !edit">
+                    <span ng-hide="edit">{{ order.delivery_address_1 }}</span><br ng-if="order.delivery_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ order.delivery_address_2 }} <span ng-show="order.delivery_address_2"></span></span><br ng-if="order.delivery_address_2 && !edit">
+                    <span ng-hide="edit">{{ order.delivery_address_2 }}</span><br ng-if="order.delivery_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ order.delivery_address_3 }} <span ng-show="order.delivery_address_3"></span></span><br ng-if="order.delivery_address_3 && !edit">
+                    <span ng-hide="edit">{{ order.delivery_address_3 }}</span><br ng-if="order.delivery_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="order.delivery_address_3" ng-show="edit">
                     <span ng-hide="edit">{{ order.delivery_zipcode + ' ' + order.delivery_city }}</span>
                     <input type="text" class="form-control" ng-model="order.delivery_zipcode" ng-show="edit">
@@ -149,7 +149,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='body'">
             <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="col-md-12 text-right"  ng-hide="order.finalized !== '0'">
                     <button type="button" class="btn btn-success btn-xs" ng-click="addLine()">
                         <span class="fa fa-fw fa-tags"></span> produit
                     </button>
@@ -187,7 +187,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th class="text-right">Remise</th>
                                 <th class="text-right">Montant HT</th>
                                 <th class="text-right">Montant TTC</th>
-                                <th></th>
+                                <th ng-hide="order.finalized !== '0'"></th>
                             </tr>
                         </thead>
                         <tbody ui-sortable="sortable" class="sortableContainer" ng-model="lines">
@@ -198,17 +198,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <strong>{{ line.designation_title }} :</strong><br>
-                                    {{ line.designation_desc }}
+                                    <span ng-hide="line.edit">
+                                        <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
+                                        {{ line.designation_desc }}
+                                    </span>
+                                    <input type="text" class="form-control" ng-model="line.designation_title" ng-show="line.edit">
+                                    <textarea class="form-control" ng-model="line.designation_desc" ng-show="line.edit"></textarea>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.qty | number }}</span>
-                                    <input type="text" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
+                                    <input type="number" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.price_unit | currency:'€':2 }}
+                                    <span ng-hide="line.edit">{{ line.price_unit | currency }}</span>
+                                    <div class="input-group" ng-show="line.edit">
+                                        <input type="number" class="form-control" ng-model="line.price_unit" ng-change="updateSums(line)">
+                                        <div class="input-group-addon">€</div>
+                                    </div>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -218,7 +226,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}</span>
                                     <div class="input-group" ng-show="line.edit">
-                                        <input type="text" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
+                                        <input type="number" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
                                         <div class="input-group-addon">%</div>
                                     </div>
                                 </td>
@@ -246,7 +254,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {{ line.designation_desc }}
                                 </td>
 
-                                <td class="text-right">
+                                <td class="text-right" ng-hide="order.finalized !== '0'">
                                     <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.type == 'abonnement' || line.edit">
                                         <span class="fa fa-fw fa-pencil"></span>
                                     </button>
@@ -293,7 +301,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="col-md-6 text-right">
                                 <span ng-hide="edit">-{{ order.global_discount | number:2 }}%</span>
                                 <div class="input-group" ng-show="edit">
-                                    <input type="text" class="form-control" ng-model="order.global_discount">
+                                    <input type="text" class="form-control" ng-model="order.global_discount" ng-change="updateTotals()">
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
@@ -361,7 +369,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='activity'">
             <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="col-md-12 text-right" ng-hide="order.finalized !== '0'">
                     <button type="button" class="btn btn-success btn-xs" ng-click="toggleActivity()">
                         <span class="fa fa-fw fa-plus"></span> activité
                     </button>
@@ -414,7 +422,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='document'">
             <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="col-md-12 text-right" ng-hide="order.finalized !== '0'">
                     <button type="button" class="btn btn-xs btn-success" ngf-select="upload($files)" multiple ng-if="!progress">
                         <span class="fa fa-fw fa-plus"></span> document
                     </button>
@@ -432,7 +440,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <strong>
                             {{ document.name }}
                         </strong>
-                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)">
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)" ng-hide="order.finalized !== '0'">
                             <span class="fa fa-fw fa-trash"></span>
                         </button>
                     </div>
