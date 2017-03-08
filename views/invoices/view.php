@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-6">
                     <div class="titleWell">
                         Facture :
-                        <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.libelle }}</span>
+                        <span ng-hide="edit">{{ invoice.libelle }}</span>
                         <input type="text" class="form-control" ng-model="invoice.libelle" ng-show="edit">
                     </div>
                     <div>
@@ -103,13 +103,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de facturation :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.billing_address_1 }} <span ng-show="invoice.billing_address_1 && invoice.finalized === '0'"></span></span><br ng-if="invoice.billing_address_1 && !edit">
+                    <span ng-hide="edit">{{ invoice.billing_address_1 }}</span><br ng-if="invoice.billing_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.billing_address_2 }} <span ng-show="invoice.billing_address_2 && invoice.finalized === '0'"></span></span><br ng-if="invoice.billing_address_2 && !edit">
+                    <span ng-hide="edit">{{ invoice.billing_address_2 }}</span><br ng-if="invoice.billing_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.billing_address_3 }} <span ng-show="invoice.billing_address_3 && invoice.finalized === '0'"></span></span><br ng-if="invoice.billing_address_3 && !edit">
+                    <span ng-hide="edit">{{ invoice.billing_address_3 }}</span><br ng-if="invoice.billing_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.billing_address_3" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.billing_zipcode + ' ' + invoice.billing_city }}</span>
+                    <span ng-hide="edit">{{ invoice.billing_zipcode + ' ' + invoice.billing_city }}</span>
                     <input type="text" class="form-control" ng-model="invoice.billing_zipcode" ng-show="edit">
                     <input type="text" class="form-control" ng-model="invoice.billing_city" ng-show="edit">
                 </div>
@@ -120,13 +120,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <strong>Adresse de livraison :</strong><br>
                     {{ company.company_name }}<br ng-if="company.company_name">
                     {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.delivery_address_1 }} <span ng-show="invoice.delivery_address_1 && invoice.finalized === '0'"></span></span><br ng-if="invoice.delivery_address_1 && !edit">
+                    <span ng-hide="edit">{{ invoice.delivery_address_1 }}</span><br ng-if="invoice.delivery_address_1 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.delivery_address_2 }} <span ng-show="invoice.delivery_address_2 && invoice.finalized === '0'"></span></span><br ng-if="invoice.delivery_address_2 && !edit">
+                    <span ng-hide="edit">{{ invoice.delivery_address_2 }}</span><br ng-if="invoice.delivery_address_2 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.delivery_address_3 }} <span ng-show="invoice.delivery_address_3 && invoice.finalized === '0'"></span></span><br ng-if="invoice.delivery_address_3 && !edit">
+                    <span ng-hide="edit">{{ invoice.delivery_address_3 }}</span><br ng-if="invoice.delivery_address_3 && !edit">
                     <input type="text" class="form-control" ng-model="invoice.delivery_address_3" ng-show="edit">
-                    <span ng-hide="edit" ng-click="toggleEdit()">{{ invoice.delivery_zipcode + ' ' + invoice.delivery_city }}</span>
+                    <span ng-hide="edit">{{ invoice.delivery_zipcode + ' ' + invoice.delivery_city }}</span>
                     <input type="text" class="form-control" ng-model="invoice.delivery_zipcode" ng-show="edit">
                     <input type="text" class="form-control" ng-model="invoice.delivery_city" ng-show="edit">
                 </div>
@@ -194,17 +194,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <strong>{{ line.designation_title }} :</strong><br>
-                                    {{ line.designation_desc }}
+                                    <span ng-hide="line.edit">
+                                        <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
+                                        {{ line.designation_desc }}
+                                    </span>
+                                    <input type="text" class="form-control" ng-model="line.designation_title" ng-show="line.edit">
+                                    <textarea class="form-control" ng-model="line.designation_desc" ng-show="line.edit"></textarea>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.qty | number }}</span>
-                                    <input type="text" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
+                                    <input type="number" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.price_unit | currency:'€':2 }}
+                                    <span ng-hide="line.edit">{{ line.price_unit | currency }}</span>
+                                    <div class="input-group" ng-show="line.edit">
+                                        <input type="number" class="form-control" ng-model="line.price_unit" ng-change="updateSums(line)">
+                                        <div class="input-group-addon">€</div>
+                                    </div>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -214,7 +222,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <span ng-hide="line.edit">{{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}</span>
                                     <div class="input-group" ng-show="line.edit">
-                                        <input type="text" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
+                                        <input type="number" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
                                         <div class="input-group-addon">%</div>
                                     </div>
                                 </td>
@@ -287,9 +295,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Remise Globale
                             </div>
                             <div class="col-md-6 text-right">
-                                <span ng-hide="edit" ng-click="toggleEdit()">-{{ invoice.global_discount | number:2 }}%</span>
+                                <span ng-hide="edit">-{{ invoice.global_discount | number:2 }}%</span>
                                 <div class="input-group" ng-show="edit">
-                                    <input type="text" class="form-control" ng-model="invoice.global_discount">
+                                    <input type="text" class="form-control" ng-model="invoice.global_discount" ng-change="updateTotals()">
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
@@ -331,22 +339,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()">{{ invoice.reference_client }}</div>
+            <div ng-hide="edit">{{ invoice.reference_client }}</div>
             <input type="text" class="form-control" ng-model="invoice.reference_client" ng-show="edit">
             <br/>
             <strong>Date de création de la facture :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()">{{ invoice.date_creation | date:'dd/MM/yyyy' }}</div>
+            <div ng-hide="edit">{{ invoice.date_creation | date:'dd/MM/yyyy' }}</div>
             <input type="date" class="form-control" ng-model="invoice.date_creation" ng-show="edit">
             <br/>
             <strong>Date de validité de la facture :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()">{{ invoice.date_limit | date:'dd/MM/yyyy' }}</div>
+            <div ng-hide="edit">{{ invoice.date_limit | date:'dd/MM/yyyy' }}</div>
             <input type="date" class="form-control" ng-model="invoice.date_limit" ng-show="edit">
             <br/>
         </div>
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            <div ng-hide="edit" ng-click="toggleEdit()">{{ invoice.modalities }}</div>
+            <div ng-hide="edit">{{ invoice.modalities }}</div>
             <select ng-model="invoice.modalities" class="form-control" ng-show="edit">
                 <option ng-repeat="modality in modalities">
                     {{ modality.label }}

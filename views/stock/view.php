@@ -93,14 +93,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="product_stock in product_stocks | orderBy:'dateRupture'">
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.ref}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.label}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.total || 0 | number:2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.value_ht | currency}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{product_stock.value_ht * product_stock.total | currency}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}</a></td>
-                    <td ng-if="selectedWarehouse > 0"><a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">{{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}</a></td>
+                <tr ng-repeat="product_stock in product_stocks | orderBy:'-dateRupture'">
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
+                            {{product_stock.ref}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
+                            {{product_stock.label}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.total < 0 ? 'text-danger' : (product_stock.total > 0 ? 'text-success' : 'text-info')">
+                            {{product_stock.total || 0 | number:2}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
+                            {{product_stock.value_ht | currency}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
+                            {{product_stock.value_ht * product_stock.total | currency}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.classRupture">
+                            {{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
+                        </a>
+                    </td>
+                    <td ng-if="selectedWarehouse > 0">
+                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.classResupply">
+                            {{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}
+                        </a>
+                    </td>
                     <td class="text-right">
                         <button type="button" class="btn btn-danger btn-xs" ng-click="delete(product_stock)">
                             <i class="fa fa-fw fa-trash"></i>

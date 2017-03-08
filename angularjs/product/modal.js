@@ -19,9 +19,18 @@ app.controller('ComZeappsCrmModalSearchProductCtrl', function($scope, $uibModalI
     $scope.produits_loaded = [];
     $scope.produits = [];
 
+    $scope.updateList = updateList;
+    $scope.cancel = cancel;
+    $scope.returnProduct = returnProduct;
 
+    zeHttp.crm.product.get_all().then(function (response) {
+        if (response.status == 200) {
+            $scope.produits = response.data ;
+            $scope.produits_loaded = response.data ;
+        }
+    });
 
-    $scope.updateList = function () {
+    function updateList() {
         var tabCodeProduit = [];
         var tabLibelleProduit = [];
 
@@ -62,28 +71,13 @@ app.controller('ComZeappsCrmModalSearchProductCtrl', function($scope, $uibModalI
                 $scope.produits.push($scope.produits_loaded[i]) ;
             }
         }
-    };
+    }
 
-
-
-    $scope.cancel = function () {
+    function cancel() {
         $uibModalInstance.dismiss('cancel');
-    };
+    }
 
-
-
-    var loadList = function () {
-        zeHttp.crm.product.get_all().then(function (response) {
-            if (response.status == 200) {
-                $scope.produits = response.data ;
-                $scope.produits_loaded = response.data ;
-            }
-        });
-    };
-    loadList() ;
-
-
-    $scope.returnProduct = function (id_produit) {
+    function returnProduct(id_produit) {
         var produit = false ;
         for (var i = 0 ; i < $scope.produits.length ; i++) {
             if ($scope.produits[i].id == id_produit) {

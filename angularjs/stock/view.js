@@ -97,20 +97,26 @@ app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams',
                 if(timeleft > 0) {
                     product_stock.timeleft = moment().to(moment().add(timeleft, 'days'));
                     product_stock.dateRupture = moment().add(timeleft, 'days').format('DD/MM/YYYY');
+                    product_stock.classRupture = 'text-success';
                 }
                 else{
                     product_stock.timeleft = 'En rupture';
                     product_stock.dateRupture = moment().add(timeleft, 'days').format('DD/MM/YYYY');
+                    product_stock.classRupture = 'text-danger';
                 }
 
                 if($rootScope.selectedWarehouse > 0) {
                     product_stock.timeResupply = moment().to(moment().add(timeleft, 'days').subtract(product_stock.resupply_delay, product_stock.resupply_unit));
                     product_stock.dateResupply = moment().add(timeleft, 'days').subtract(product_stock.resupply_delay, product_stock.resupply_unit).format('DD/MM/YYYY');
+                    product_stock.classResupply = moment().isBefore(moment().add(timeleft, 'days').subtract(product_stock.resupply_delay, product_stock.resupply_unit), 'day') ? 'text-success' : 'text-danger';
                 }
             }
             else{
-                product_stock.timeleft = 'Indeterminée';
+                product_stock.timeleft = '-';
                 product_stock.dateRupture = '';
+                product_stock.timeResupply = '-';
+                product_stock.dateResupply = '';
+                product_stock.classRupture = 'text-info';
             }
         }
     }]);

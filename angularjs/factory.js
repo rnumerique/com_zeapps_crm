@@ -121,6 +121,7 @@ app.config(['$provide',
                     get_all : getAll_product,
                     getOf : get_products_of,
                     save : save_product,
+                    updateRatio : updateRatio,
                     del : delete_product
                 },
                 category : {
@@ -423,6 +424,9 @@ app.config(['$provide',
             }
             function save_product(data){
                 return zeHttp.post('/com_zeapps_crm/product/save', data);
+            }
+            function updateRatio(data){
+                return zeHttp.get('/com_zeapps_crm/product/updateRatio', data);
             }
             function delete_product(id){
                 return zeHttp.post('/com_zeapps_crm/product/delete/'+id);

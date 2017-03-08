@@ -23,10 +23,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <h3 class="text-capitalize active-category-title">
                     {{ activeCategory.data.name }}
-                    <a class="no-deco faded" ng-href="/ng/com_zeapps_crm/product/category/{{ activeCategory.data.id }}/edit" ng-show="activeCategory.data.id > 0">
-                        <span class="fa fa-pencil text-primary"></span>
+                    <a class="btn btn-info btn-xs" ng-href="/ng/com_zeapps_crm/product/category/{{ activeCategory.data.id }}/edit" ng-show="activeCategory.data.id > 0">
+                        <span class="fa fa-fw fa-pencil"></span>
                     </a>
-                    <span class="fa fa-trash text-danger pointer faded" ng-click="delete_category(activeCategory.data.id)" ng-show="activeCategory.data.id > 0"></span>
+                    <button type="button" class="btn btn-xs btn-danger" ng-click="delete_category(activeCategory.data.id)" ng-show="activeCategory.data.id > 0">
+                        <span class="fa fa-fw fa-trash"></span>
+                    </button>
                 </h3>
                 <div class="row" ng-show="activeCategory.data.branches">
                     <h5>Sous-Categories</h5>
@@ -49,6 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th i8n="Nom du produit"></th>
                             <th i8n="Prix HT"></th>
                             <th>TVA (%)</th>
+                            <th i8n="Prix TTC"></th>
                             <th>Compte comptable</th>
                             <th class="text-right">Actions</th>
                         </tr>
@@ -59,8 +62,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.ref }}</a></td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.name }}</a></td>
-                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.price_ht | currency }}</a></td>
-                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.value_taxe }}</a></td>
+                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.compose == 0 ? ( product.price_ht | currency ) : '-' }}</a></td>
+                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.compose == 0 ? ( product.value_taxe | currency ) : '-' }}</a></td>
+                            <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.price_ttc | currency }}</a></td>
                             <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.accounting_number }}</a></td>
                             <td class="text-right">
                                 <button type="button" class="btn btn-xs btn-danger" ng-click="delete(product)">

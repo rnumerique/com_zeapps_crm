@@ -114,3 +114,29 @@ p.indented{
     opacity: .5;
     font-size: .75em;
 }
+
+.postits{
+    margin: 15px 0;
+    table-layout: fixed;
+}
+.postits td{
+    min-height: 1px;
+    height: 1px;
+}
+.postit{
+    margin: 15px 10px;
+    background: #373737;
+    border-radius: 5px;
+    height: 100%;
+    color: #fff;
+    position: relative;
+}
+.postit h3{
+    padding-top: 15px;
+}
+.postit h5{
+    color: #ccc;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
