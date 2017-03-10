@@ -5,39 +5,6 @@ app.controller('ComZeappsCrmModalityConfigCtrl', ['$scope', '$route', '$routePar
 
         $scope.form = {};
 
-        $scope.success = function(){
-
-            var formatted_data = angular.toJson($scope.form);
-            zhttp.crm.modality.save(formatted_data).then(function(response){
-                if(response.data && response.data != 'false'){
-                    if($scope.form.id){
-                        angular.forEach($rootScope.modalities, function(modality){
-                            if(modality.id == $scope.form.id){
-                                modality.label = $scope.form.label;
-                            }
-                        })
-                    }
-                    else{
-                        var modality = {};
-                        modality.id = response.data;
-                        modality.label = $scope.form.label;
-                        $rootScope.modalities.push(modality);
-                    }
-                    $scope.form = {};
-                }
-            });
-
-        };
-
-        $scope.cancel = function(){
-            $scope.form = {};
-        };
-
-        $scope.edit = function(modality){
-            $scope.form.id = modality.id;
-            $scope.form.label = modality.label;
-        };
-
         $scope.delete = function(modality){
             var modalInstance = $uibModal.open({
                 animation: true,

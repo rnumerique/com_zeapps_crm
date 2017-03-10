@@ -153,6 +153,9 @@ app.config(['$provide',
                 product : {
                     get : {
                         attr : get_product_attr
+                    },
+                    save : {
+                        attr : save_product_attr
                     }
                 },
                 invoice : {
@@ -538,6 +541,9 @@ app.config(['$provide',
             }
             function get_product_attr(){
                 return zeHttp.get('/zeapps/config/get/crm_product_attributes');
+            }
+            function save_product_attr(data){
+                return zeHttp.config.save(angular.toJson({id: 'crm_product_attributes', value: data}));
             }
         });
     }]);

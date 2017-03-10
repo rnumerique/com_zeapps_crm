@@ -7,6 +7,16 @@ app.config(['$routeProvider',
                 controller: 'ComZeappsCrmModalityConfigCtrl'
             })
 
+            .when('/ng/com_zeapps/modalities/new', {
+                templateUrl: '/com_zeapps_crm/modalities/config_form',
+                controller: 'ComZeappsCrmModalityConfigFormCtrl'
+            })
+
+            .when('/ng/com_zeapps/modalities/edit/:id', {
+                templateUrl: '/com_zeapps_crm/modalities/config_form',
+                controller: 'ComZeappsCrmModalityConfigFormCtrl'
+            })
+
             // TAXES
             .when('/ng/com_zeapps/taxes', {
                 templateUrl: '/com_zeapps_crm/taxes/config',

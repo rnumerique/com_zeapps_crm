@@ -5,9 +5,12 @@ class Modalities extends ZeCtrl
 {
     public function config()
     {
-        $data = array() ;
+        $this->load->view('modalities/config');
+    }
 
-        $this->load->view('modalities/config', $data);
+    public function config_form()
+    {
+        $this->load->view('modalities/config_form');
     }
 
 

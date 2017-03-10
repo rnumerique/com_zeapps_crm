@@ -60,8 +60,8 @@ class Warehouse extends ZeCtrl
         }
 
         if($data && is_array($data)){
-            foreach($data as $publication){
-                $this->warehouses->update($publication, $publication['id']);
+            foreach($data as $warehouse){
+                $this->warehouses->update($warehouse, $warehouse['id']);
             }
             echo json_encode('OK');
         }

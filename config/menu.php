@@ -65,7 +65,7 @@ $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Produits" ;
 $tabMenu["fa-icon"] = "tags" ;
 $tabMenu["url"] = "/ng/com_zeapps/produits" ;
-$tabMenu["order"] = 50 ;
+$tabMenu["order"] = 49 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;

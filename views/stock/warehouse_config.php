@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </th>
                         <td class="text-right">
                             <button type="button" class="btn btn-success btn-xs" ng-click="createLine()">
-                                <i class="fa fa-fw fa-check"></i>
+                                <i class="fa fa-fw fa-plus"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-xs" ng-click="cancelLine()">
                                 <i class="fa fa-fw fa-times"></i>
