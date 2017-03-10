@@ -3,9 +3,16 @@ app.controller('ComZeappsCrmWarehouseConfigCtrl', ['$scope', '$route', '$routePa
 
         $scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_warehouses");
 
+        var warehouses = [];
+
         $scope.form = {};
         $scope.newLine = {};
-        var warehouses = [];
+
+        $scope.createLine = createLine;
+        $scope.cancelLine = cancelLine;
+        $scope.delete = del;
+        $scope.cancel = cancel;
+        $scope.success = success;
 
         zhttp.crm.warehouse.get_all().then(function(response){
             if(response.data && response.data != 'false'){
@@ -19,15 +26,10 @@ app.controller('ComZeappsCrmWarehouseConfigCtrl', ['$scope', '$route', '$routePa
             }
         });
 
-        $scope.minus = function(index, field){
-            $scope.form.warehouses[index][field] = parseInt($scope.form.warehouses[index][field]) - 1;
-        };
 
-        $scope.plus = function(index, field){
-            $scope.form.warehouses[index][field] = parseInt($scope.form.warehouses[index][field]) + 1;
-        };
 
-        $scope.createLine = function(){
+
+        function createLine(){
             var formatted_data = angular.toJson($scope.newLine);
             zhttp.crm.warehouse.save(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
@@ -37,13 +39,13 @@ app.controller('ComZeappsCrmWarehouseConfigCtrl', ['$scope', '$route', '$routePa
                     $scope.newLine = {};
                 }
             });
-        };
+        }
 
-        $scope.cancelLine = function(){
+        function cancelLine(){
             $scope.newLine = {};
-        };
+        }
 
-        $scope.delete = function(index){
+        function del(index){
             var id = $scope.form.warehouses[index].id;
             zhttp.crm.warehouse.del(id).then(function(response){
                 if(response.data && response.data != 'false'){
@@ -51,18 +53,18 @@ app.controller('ComZeappsCrmWarehouseConfigCtrl', ['$scope', '$route', '$routePa
                     warehouses.splice(index, 1);
                 }
             });
-        };
+        }
 
-        $scope.cancel = function(){
+        function cancel(){
             $scope.form.warehouses = angular.fromJson(angular.toJson(warehouses));
-        };
+        }
 
-        $scope.success = function(){
+        function success(){
             var formatted_data = angular.toJson($scope.form.warehouses);
             zhttp.crm.warehouse.save_all(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
                     warehouses = angular.fromJson(angular.toJson($scope.form.warehouses));
                 }
             });
-        };
+        }
     }]);

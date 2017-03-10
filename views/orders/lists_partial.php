@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-12">
             <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/order/new/{{ id_company || ""}}''><span class='fa fa-plus' aria-hidden='true'></span> Commande</a>
+                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/order/new/{{ id_company || ""}}''><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Commande</a>
             </div>
             <span ng-click="shownFilter = !shownFilter">
                 <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>

@@ -62,7 +62,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <tr>
             <td>
                 <div class="postit">
-                    <h3 ng-class="product_stock.total < 0 ? 'text-danger' : (product_stock.total > 0 ? 'text-success' : 'text-info')">
+                    <h3 ng-class="product_stock.total < 0 ? 'text-danger' : ''">
                         {{ product_stock.total || 0 | number:2 }}
                     </h3>
                     <h5>Stock</h5>
@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </td>
             <td>
                 <div class="postit">
-                    <h3 class="text-info">
+                    <h3>
                         {{ product_stock.value_ht | currency }}
                     </h3>
                     <h5>Valeur Unitaire</h5>
@@ -78,7 +78,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </td>
             <td>
                 <div class="postit">
-                    <h3 class="text-info">
+                    <h3>
                         {{ product_stock.value_ht * product_stock.total | currency }}
                     </h3>
                     <h5>Valeur totale du stock</h5>

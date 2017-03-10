@@ -154,7 +154,7 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
                 if(timeleft > 0) {
                     $scope.product_stock.timeleft = moment().to(moment().add(timeleft, 'days'));
                     $scope.product_stock.dateRupture = moment().add(timeleft, 'days').format('DD/MM/YYYY');
-                    $scope.product_stock.classRupture = 'text-success';
+                    $scope.product_stock.classRupture = '';
                 }
                 else{
                     $scope.product_stock.timeleft = 'En rupture';
@@ -165,7 +165,7 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
                 if($rootScope.selectedWarehouse > 0) {
                     $scope.product_stock.timeResupply = moment().to(moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit));
                     $scope.product_stock.dateResupply = moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit).format('DD/MM/YYYY');
-                    $scope.product_stock.classResupply = moment().isBefore(moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), 'day') ? 'text-success' : 'text-danger';
+                    $scope.product_stock.classResupply = moment().isBefore(moment().add(timeleft, 'days').subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), 'day') ? '' : 'text-danger';
                 }
             }
             else{
@@ -173,8 +173,8 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
                 $scope.product_stock.dateRupture = '';
                 $scope.product_stock.timeResupply = '-';
                 $scope.product_stock.dateResupply = '';
-                $scope.product_stock.classRupture = 'text-info';
-                $scope.product_stock.classResupply = 'text-info';
+                $scope.product_stock.classRupture = '';
+                $scope.product_stock.classResupply = '';
             }
         }
 

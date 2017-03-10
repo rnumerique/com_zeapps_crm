@@ -3,8 +3,10 @@ app.controller('ComZeappsCrmProductConfigCtrl', ['$scope', '$route', '$routePara
 
         $scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_products");
 
-        $scope.attributes = [];
+        var attributes = [];
+
         $scope.form = {};
+        $scope.newLine = {};
         $scope.types = {
             'text': 'Texte',
             'number': 'Numérique',
@@ -12,66 +14,70 @@ app.controller('ComZeappsCrmProductConfigCtrl', ['$scope', '$route', '$routePara
             'checkbox': 'Booléen'
         };
 
-        $scope.addAttribute = addAttribute;
-        $scope.edit = edit;
-        $scope.validate = validate;
+        $scope.createLine = createLine;
+        $scope.cancelLine = cancelLine;
         $scope.cancel = cancel;
-        $scope.del = del;
+        $scope.delete = del;
         $scope.success = success;
 
 
         zhttp.config.product.get.attr().then(function(response){
             if(response.data && response.data != 'false'){
-                $scope.attributes = angular.fromJson(response.data.value);
+                attributes = angular.fromJson(response.data.value);
+
+                angular.forEach(attributes, function(attribute){
+                    attribute.required = attribute.required == "true";
+                });
+
+                $scope.form.attributes = angular.fromJson(response.data.value);
             }
         });
 
+        function createLine(){
+            var tmp = angular.fromJson(angular.toJson(attributes));
 
+            tmp.push($scope.newLine);
 
-        function addAttribute(){
-            var attribute = {
-                name: 'Nouvel Attribut',
-                type: 'Texte',
-                required: false
-            };
-            $scope.attributes.push(attribute);
+            var formatted_data = angular.toJson(tmp);
+            zhttp.config.product.save.attr(formatted_data).then(function(response){
+                if(response.data && response.data != 'false'){
+                    $scope.newLine.id = response.data;
+                    $scope.form.attributes.push(angular.fromJson(angular.toJson($scope.newLine)));
+                    attributes.push($scope.newLine);
+                    $scope.newLine = {};
+                }
+            });
         }
 
-        function edit(attribute){
-            $scope.form.name = attribute.name;
-            $scope.form.type = attribute.type;
-            $scope.form.required = attribute.required;
-            $scope.form.index = $scope.attributes.indexOf(attribute);
-        }
-
-        function validate(attribute){
-            attribute.name = $scope.form.name;
-            attribute.type = $scope.form.type;
-            attribute.required = $scope.form.required;
-            $scope.form = {};
+        function cancelLine(){
+            $scope.newLine = {};
         }
 
         function cancel(){
-            $scope.form = {};
+            $scope.form.attributes = angular.fromJson(angular.toJson(attributes));
         }
 
         function del(index){
-            $scope.attributes.splice(index, 1);
+            var tmp = angular.fromJson(angular.toJson(attributes));
+
+            tmp.splice(index, 1);
+
+            var formatted_data = angular.toJson(tmp);
+            zhttp.config.product.save.attr(formatted_data).then(function(response){
+                if(response.data && response.data != 'false'){
+                    $scope.form.attributes.splice(index, 1);
+                    attributes.splice(index, 1);
+                }
+            });
         }
 
         function success(){
-
-            var data = {};
-
-            data['id'] = 'crm_product_attributes';
-            data['value'] = angular.toJson($scope.attributes);
-
-            var formatted_data = angular.toJson(data);
-            zhttp.config.save(formatted_data).then(function(response){
+            var formatted_data = angular.toJson($scope.form.attributes);
+            zhttp.config.product.save.attr(formatted_data).then(function(response){
                 if(response.data && response.data != 'false'){
-                    $rootScope.toasts.push({'success':'Les attributs ont bien été sauvegardés'})
+                    attributes = angular.fromJson(angular.toJson($scope.form.attributes));
                 }
-            })
+            });
         }
 
     }]);
