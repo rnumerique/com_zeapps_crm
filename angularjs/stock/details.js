@@ -18,8 +18,6 @@ app.controller('ComZeappsCrmStockDetailsCtrl', ['$scope', '$route', '$routeParam
         ];
         $scope.form = {};
         $scope.navigationState = 'chart';
-        $scope.page = 1;
-        $scope.pageSize = 30;
         
         if($rootScope.selectedWarehouse === undefined)
             $rootScope.selectedWarehouse = '0';

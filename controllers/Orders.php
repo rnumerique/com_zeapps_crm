@@ -119,6 +119,7 @@ class Orders extends ZeCtrl
     public function finalize($id) {
         if($id) {
             $this->load->model("Zeapps_orders", "orders");
+            $this->load->library('Statistiques', 'stats', 'com_quiltmania_stats');
 
             // constitution du tableau
             $data = array() ;
@@ -142,6 +143,8 @@ class Orders extends ZeCtrl
             $nomPDF = $this->makePDF($id, false);
 
             $this->orders->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
+
+            $this->stats->fromOrder($id);
 
             $return['nomPDF'] = $nomPDF;
 
