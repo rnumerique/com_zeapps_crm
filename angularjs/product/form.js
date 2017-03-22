@@ -79,6 +79,12 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
                                     $scope.activeCategory.data = response.data;
                                 }
                             });
+                            zhttp.crm.product_stock.get($scope.form.id_stock).then(function (response) {
+                                if (response.status == 200) {
+                                    var stock = response.data.product_stock;
+                                    $scope.form.name_stock = stock.ref ? stock.ref + ' - ' + stock.label : stock.label;
+                                }
+                            });
                         }
                     });
                 }

@@ -116,6 +116,7 @@ class Invoices extends ZeCtrl
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_invoices", "invoices");
             $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $this->load->library('Statistiques', 'stats', 'com_quiltmania_stats');
 
             $invoice = $this->invoices->get($id);
             $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
@@ -136,6 +137,8 @@ class Invoices extends ZeCtrl
             $nomPDF = $this->makePDF($id, false);
 
             $this->invoices->update(array('numerotation' => $numerotation, 'finalized' => true, 'due' => $total, 'final_pdf' => $nomPDF), $id);
+
+            $this->stats->fromInvoice($id);
 
             echo json_encode(array('nomPDF'=>$nomPDF, 'numerotation'=>$numerotation));
         }

@@ -129,7 +129,7 @@ app.controller('ComZeappsCrmOrderViewCtrl', ['$scope', '$route', '$routeParams',
 
 
         function broadcast(){
-            $rootScope.$broadcast('comZeappsCrm_dataorderHook',
+            $rootScope.$broadcast('comZeappsCrm_dataOrderHook',
                 {
                     order: $scope.order
                 }
