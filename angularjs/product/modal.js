@@ -16,76 +16,58 @@ listModuleModalFunction.push({
 app.controller('ComZeappsCrmModalSearchProductCtrl', function($scope, $uibModalInstance, zeHttp, titre, option) {
     $scope.titre = titre ;
 
-    $scope.produits_loaded = [];
-    $scope.produits = [];
+    $scope.activeCategory = {
+        data: ''
+    };
+    $scope.tree = {
+        branches: []
+    };
+    $scope.quicksearch = "";
 
-    $scope.updateList = updateList;
     $scope.cancel = cancel;
-    $scope.returnProduct = returnProduct;
+    $scope.select_product = select_product;
 
-    zeHttp.crm.product.get_all().then(function (response) {
-        if (response.status == 200) {
-            $scope.produits = response.data ;
-            $scope.produits_loaded = response.data ;
+    getTree();
+
+    $scope.$watch('activeCategory.data', function(value, old, scope){
+        if(typeof(value.id) !== 'undefined'){
+            zeHttp.crm.product.getOf(value.id).then(function (response) {
+                if (response.status == 200) {
+                    if(!angular.isArray(response.data)){
+                        if(response.data != "false") {
+                            scope.products = new Array(response.data);
+                        }
+                        else
+                            scope.products = new Array();
+                    }
+                    else{
+                        scope.products = response.data;
+                    }
+                }
+            });
         }
     });
 
-    function updateList() {
-        var tabCodeProduit = [];
-        var tabLibelleProduit = [];
-
-
-        if ($scope.filtre_code_produit && $scope.filtre_code_produit != "") {
-            var filtre_code_produit = $scope.filtre_code_produit + "";
-            tabCodeProduit = filtre_code_produit.toLowerCase().split(" ") ;
-        }
-
-
-        if ($scope.filtre_libelle && $scope.filtre_libelle != '') {
-            var filtre_libelle = $scope.filtre_libelle + "" ;
-            tabLibelleProduit = filtre_libelle.toLowerCase().split(" ");
-        }
-
-
-        $scope.produits = [];
-        for (var i = 0 ; i < $scope.produits_loaded.length ; i++) {
-            var produit_correspond = true ;
-
-            if (tabCodeProduit.length > 0) {
-                for (var j = 0 ; j < tabCodeProduit.length ; j++) {
-                    if ($scope.produits_loaded[i].reference.toLowerCase().indexOf(tabCodeProduit[j]) < 0) {
-                        produit_correspond = false ;
+    function getTree() {
+        zeHttp.crm.category.tree().then(function (response) {
+            if (response.status == 200) {
+                var id = $scope.activeCategory.data.id || 0;
+                $scope.tree.branches = response.data;
+                zeHttp.crm.category.openTree($scope.tree, id);
+                zeHttp.crm.category.get(id).then(function (response) {
+                    if (response.status == 200) {
+                        $scope.activeCategory.data = response.data;
                     }
-                }
+                });
             }
-
-            if (tabLibelleProduit.length > 0) {
-                for (var j = 0 ; j < tabLibelleProduit.length ; j++) {
-                    if ($scope.produits_loaded[i].libelle.toLowerCase().indexOf(tabLibelleProduit[j]) < 0) {
-                        produit_correspond = false ;
-                    }
-                }
-            }
-
-            if (produit_correspond) {
-                $scope.produits.push($scope.produits_loaded[i]) ;
-            }
-        }
+        });
     }
 
     function cancel() {
         $uibModalInstance.dismiss('cancel');
     }
 
-    function returnProduct(id_produit) {
-        var produit = false ;
-        for (var i = 0 ; i < $scope.produits.length ; i++) {
-            if ($scope.produits[i].id == id_produit) {
-                produit = $scope.produits[i] ;
-                break;
-            }
-        }
-
+    function select_product(produit) {
         $uibModalInstance.close(produit);
     }
 

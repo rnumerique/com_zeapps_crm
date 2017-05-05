@@ -5,33 +5,39 @@
 
 <div class="modal-body">
     <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered table-striped table-condensed table-responsive">
-                <thead>
+
+        <div class="col-md-3">
+            <div class="root modal-root">
+                <zeapps-happylittletree
+                    data-tree="tree.branches"
+                    data-active-branch="activeCategory"
+                </zeapps-happylittletree>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="col-md-5 pull-right">
+                <input class="form-control" type="text" ng-model="quicksearch" placeholder="Recherche rapide">
+            </div>
+            <h3 class="text-capitalize active-category-title">
+                {{ activeCategory.data.name }}
+            </h3>
+            <table class="table table-striped">
                 <tr>
                     <th></th>
-                    <th>
-                        Code produit<br>
-                        <input type="text" class="form-control" ng-model="filtre_code_produit" ng-change="updateList()">
-                    </th>
-                    <th>
-                        Libellé<br>
-                        <input type="text" class="form-control" ng-model="filtre_libelle" ng-change="updateList()">
-                    </th>
-                    <th>Tarif HT</th>
+                    <th i8n="Référence"></th>
+                    <th i8n="Nom du produit"></th>
+                    <th i8n="Prix HT"></th>
                 </tr>
-                </thead>
-                <tbody>
-
-                <tr ng-repeat="produit in produits"> <!-- | filter:{compose : 0}-->
+                <tr class="leaf" ng-repeat="product in products | filter:quicksearch | orderBy: 'name'" ng-click="select_product(product)">
                     <td>
-                        <i class="fa fa-tag" ng-if="produit.compose == 0"></i>
+                        <i class="fa fa-tag" ng-if="product.compose == 0"></i>
+                        <i class="fa fa-tags" ng-if="product.compose != 0"></i>
                     </td>
-                    <td><a href="#" ng-click="returnProduct(produit.id)">{{produit.ref}}</a></td>
-                    <td><a href="#" ng-click="returnProduct(produit.id)">{{produit.name}}</a></td>
-                    <td class="text-right"><a href="#" ng-click="returnProduct(produit.id)">{{produit.price_ht | number:2}}</a></td>
+                    <td>{{ product.ref }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.compose == 0 ? ( product.price_ht | currency ) : '-' }}</td>
                 </tr>
-                </tbody>
             </table>
         </div>
     </div>
