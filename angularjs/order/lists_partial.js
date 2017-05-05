@@ -44,7 +44,9 @@ app.controller('ComZeappsCrmOrderListsPartialCtrl', ['$scope', '$route', '$route
         });
         $scope.$emit('comZeappsContact_triggerContactHook', {});
 
-        $scope.filters = {};
+        $scope.filters = {
+            finalized: true
+        };
 
         $scope.delete = function(order){
             zhttp.crm.order.del(order.id).then(function(response){
