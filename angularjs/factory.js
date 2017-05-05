@@ -118,6 +118,7 @@ app.config(['$provide',
                 },
                 product : {
                     get : get_product,
+                    get_code : getCode_product,
                     get_all : getAll_product,
                     getOf : get_products_of,
                     save : save_product,
@@ -418,6 +419,9 @@ app.config(['$provide',
             // PRODUCT
             function get_product(id){
                 return zeHttp.get('/com_zeapps_crm/product/get/'+id);
+            }
+            function getCode_product(code){
+                return zeHttp.get('/com_zeapps_crm/product/get_code/'+code);
             }
             function getAll_product(){
                 return zeHttp.get('/com_zeapps_crm/product/getAll');

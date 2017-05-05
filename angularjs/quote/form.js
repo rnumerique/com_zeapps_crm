@@ -72,6 +72,15 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
                 }
             });
         }
+        if($routeParams.id_contact && $routeParams.id_contact != 0){
+            zhttp.contact.contact.get($routeParams.id_contact).then(function(response){
+                if(response.data && response.data != 'false'){
+                    $scope.form.contact = response.data;
+                    $scope.form.contact.name = $scope.form.contact.last_name + ' ' + $scope.form.contact.first_name;
+                    $scope.form.accounting_number = $scope.form.accounting_number || $scope.form.contact.accounting_number;
+                }
+            });
+        }
         zhttp.crm.warehouse.get_all().then(function(response){
             if(response.data && response.data != 'false'){
                 $scope.warehouses = response.data;
@@ -117,7 +126,7 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
         };
 
         $scope.loadContact = function () {
-            zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {}, function(objReturn) {
+            zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {id_company: $scope.form.company.id}, function(objReturn) {
                 if (objReturn) {
                     $scope.form.contact = objReturn;
                     $scope.form.contact.name = $scope.form.contact.last_name + ' ' + $scope.form.contact.first_name;

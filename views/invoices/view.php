@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
                         <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()" ng-hide="invoice.finalized !== '0'"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
                         <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="invoice.finalized !== '0'">
+                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="invoice.finalized !== '0' || edit">
                             <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
                         </button>
 
@@ -150,6 +150,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='body'">
             <div class="row">
                 <div class="col-md-12 text-right"  ng-hide="invoice.finalized !== '0'">
+                    <span class="form-inline">
+                        <label>Code produit :</label>
+                        <span class="input-group">
+                            <input type="text" class="form-control input-sm" ng-model="codeProduct">
+                            <span class="input-group-addon" ng-click="addFromCode()">
+                                <i class="fa fa-fw fa-plus text-success"></i>
+                            </span>
+                        </span>
+                    </span>
                     <button type="button" class="btn btn-success btn-xs" ng-click="addLine()">
                         <span class="fa fa-fw fa-tags"></span> produit
                     </button>
@@ -216,7 +225,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}
+                                    <span ng-hide="line.edit">{{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}</span>
+                                    <select ng-model="line.taxe" ng-change="updateSums(line)" class="form-control"  ng-show="line.edit">
+                                        <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.value}}">
+                                            {{ taxe.label }}
+                                        </option>
+                                    </select>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -447,7 +461,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
 
-        <form-buttons ng-show="edit"></form-buttons>
+        <form-buttons ng-if="edit"></form-buttons>
 
     </form>
 

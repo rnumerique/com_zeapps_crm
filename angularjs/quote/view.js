@@ -29,6 +29,7 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
         $scope.toggleEdit = toggleEdit;
         $scope.toggleComment = toggleComment;
 
+        $scope.addFromCode = addFromCode;
         $scope.addLine = addLine;
         $scope.addSubTotal = addSubTotal;
         $scope.addComment = addComment;
@@ -165,6 +166,18 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
 
             var data = $scope.quote;
 
+            var y = data.date_creation.getFullYear();
+            var M = data.date_creation.getMonth();
+            var d = data.date_creation.getDate();
+
+            data.date_creation = new Date(Date.UTC(y, M, d));
+
+            var y = data.date_limit.getFullYear();
+            var M = data.date_limit.getMonth();
+            var d = data.date_limit.getDate();
+
+            data.date_limit = new Date(Date.UTC(y, M, d));
+
             var formatted_data = angular.toJson(data);
 
             zhttp.crm.quote.save(formatted_data).then(function(response){
@@ -215,6 +228,41 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
             $scope.showCommentInput = !$scope.showCommentInput;
         }
 
+        function addFromCode(){
+            var code = $scope.codeProduct;
+            zhttp.crm.product.get_code(code).then(function(response){
+                if(response.data && response.data != 'false'){
+                    var line = {
+                        id_order: $routeParams.id,
+                        type: 'product',
+                        id_product: response.data.id,
+                        ref: response.data.ref,
+                        designation_title: response.data.name,
+                        designation_desc: response.data.description,
+                        qty: '1',
+                        discount: 0.00,
+                        price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
+                        taxe: ""+parseFloat(response.data.value_taxe),
+                        sort: $scope.lines.length,
+                        total_ht: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
+                        total_ttc: ((parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc)) * (1 + (parseFloat(response.data.value_taxe) / 100)))
+                    };
+
+                    var formatted_data = angular.toJson(line);
+                    zhttp.crm.order.line.save(formatted_data).then(function(response){
+                        if(response.data && response.data != 'false'){
+                            line.id = response.data;
+                            $scope.lines.push(line);
+                            updateTotals();
+                        }
+                    });
+                }
+                else{
+                    $rootScope.toasts.push({'danger' : 'Aucun produit avec le code ' + code + ' trouvé dans la base de donnée.'})
+                }
+            })
+        }
+
         function addLine(){
             if($scope.quote.finalized !== '0')
                 return;
@@ -232,11 +280,11 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
                         designation_desc: objReturn.description,
                         qty: '1',
                         discount: 0.00,
-                        price_unit: parseFloat(objReturn.price_ht),
-                        taxe: parseFloat(objReturn.tva),
+                        price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
+                        taxe: parseFloat(objReturn.value_taxe),
                         sort: $scope.lines.length,
-                        total_ht: objReturn.price_ht,
-                        total_ttc: (parseFloat(objReturn.price_ht) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
+                        total_ht: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
+                        total_ttc: ((parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc)) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
                     };
 
                     var formatted_data = angular.toJson(line);
@@ -569,46 +617,51 @@ app.controller('ComZeappsCrmQuoteViewCtrl', ['$scope', '$route', '$routeParams',
         function initNavigation() {
 
             // calcul le nombre de résultat
-            $scope.nb_quotes = $rootScope.quotes.length;
+            if($rootScope.quotes) {
+                $scope.nb_quotes = $rootScope.quotes.length;
 
 
-            // calcul la position du résultat actuel
-            $scope.quote_order = 0;
-            $scope.quote_first = 0;
-            $scope.quote_previous = 0;
-            $scope.quote_next = 0;
-            $scope.quote_last = 0;
-
-            for (var i = 0; i < $rootScope.quotes.length; i++) {
-                if ($rootScope.quotes[i].id == $routeParams.id) {
-                    $scope.quote_order = i + 1;
-                    if (i > 0) {
-                        $scope.quote_previous = $rootScope.quotes[i - 1].id;
-                    }
-
-                    if ((i + 1) < $rootScope.quotes.length) {
-                        $scope.quote_next = $rootScope.quotes[i + 1].id;
-                    }
-                }
-            }
-
-            // recherche la première facture de la liste
-            if($rootScope.quotes[0] != undefined) {
-                if ($rootScope.quotes[0].id != $routeParams.id) {
-                    $scope.quote_first = $rootScope.quotes[0].id;
-                }
-            }
-            else
+                // calcul la position du résultat actuel
+                $scope.quote_order = 0;
                 $scope.quote_first = 0;
-
-            // recherche la dernière facture de la liste
-            if($rootScope.quotes[$rootScope.quotes.length - 1] != undefined) {
-                if ($rootScope.quotes[$rootScope.quotes.length - 1].id != $routeParams.id) {
-                    $scope.quote_last = $rootScope.quotes[$rootScope.quotes.length - 1].id;
-                }
-            }
-            else
+                $scope.quote_previous = 0;
+                $scope.quote_next = 0;
                 $scope.quote_last = 0;
+
+                for (var i = 0; i < $rootScope.quotes.length; i++) {
+                    if ($rootScope.quotes[i].id == $routeParams.id) {
+                        $scope.quote_order = i + 1;
+                        if (i > 0) {
+                            $scope.quote_previous = $rootScope.quotes[i - 1].id;
+                        }
+
+                        if ((i + 1) < $rootScope.quotes.length) {
+                            $scope.quote_next = $rootScope.quotes[i + 1].id;
+                        }
+                    }
+                }
+
+                // recherche la première facture de la liste
+                if ($rootScope.quotes[0] != undefined) {
+                    if ($rootScope.quotes[0].id != $routeParams.id) {
+                        $scope.quote_first = $rootScope.quotes[0].id;
+                    }
+                }
+                else
+                    $scope.quote_first = 0;
+
+                // recherche la dernière facture de la liste
+                if ($rootScope.quotes[$rootScope.quotes.length - 1] != undefined) {
+                    if ($rootScope.quotes[$rootScope.quotes.length - 1].id != $routeParams.id) {
+                        $scope.quote_last = $rootScope.quotes[$rootScope.quotes.length - 1].id;
+                    }
+                }
+                else
+                    $scope.quote_last = 0;
+            }
+            else{
+                $scope.nb_quotes = 0;
+            }
         }
 
         function sortableStop( event, ui ) {

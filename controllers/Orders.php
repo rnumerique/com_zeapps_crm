@@ -174,11 +174,6 @@ class Orders extends ZeCtrl
             unset($order->created_at);
             unset($order->updated_at);
 
-            $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
-            $num = $this->invoices->get_numerotation($frequency);
-            $order->numerotation = $this->parseFormat($format, $num);
-
             $id_invoice = $this->invoices->insert($order);
 
             if($companies = $this->order_companies->all(array('id_order'=>$id))){

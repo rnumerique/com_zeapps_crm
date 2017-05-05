@@ -191,6 +191,7 @@ app.controller('ComZeappsCrmProductFormCtrl', ['$scope', '$route', '$routeParams
                 data.id = $routeParams.id;
             }
 
+            data.ref = $scope.form.ref;
             data.name = $scope.form.name;
             data.id_cat = $scope.form.id_cat;
             data.id_stock = $scope.form.id_stock;

@@ -2,6 +2,12 @@ app.filter('com_zeapps_crmFilter', function($filter){
     return function(list, filters){
         if(filters){
             return $filter("filter")(list, function(listItem){
+                if(filters.finalized){
+                    console.log(!!listItem.finalized);
+                    if(listItem.finalized == '1')
+                        return false;
+                }
+
                 if(filters.numerotation != undefined && filters.numerotation != '') {
                     var regex = new RegExp(filters.numerotation, 'i');
                     if(listItem.numerotation.search(regex) == -1)
