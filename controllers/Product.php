@@ -72,6 +72,33 @@ class Product extends ZeCtrl
         return;
     }
 
+    public function get_code($code = NULL){
+        if(isset($code)){
+            $this->load->model("Zeapps_product_products", "products");
+            $this->load->model("Zeapps_product_lines", "lines");
+
+            $product = $this->products->get(array('ref' => $code));
+
+            if($product && $product->compose == 1){
+                $lines = $this->lines->all(array('id_product'=>$product->id));
+                $product->lines = [];
+                if($lines && is_array($lines)){
+                    foreach ($lines as $line){
+                        if($part = $this->products->get($line->id_part)){
+                            $line->product = $part;
+                        }
+                        array_push($product->lines, $line);
+                    }
+                }
+            }
+
+            echo json_encode($product);
+        }
+        else {
+            echo json_encode(false);
+        }
+    }
+
     public function getAll(){
         $this->load->model("Zeapps_product_products", "products");
 

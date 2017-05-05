@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-12">
             <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/invoice/new/{{ id_company || ""}}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Facture</a>
+                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/invoice/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Facture</a>
             </div>
             <span ng-click="shownFilter = !shownFilter">
                 <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>
@@ -89,6 +89,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="filters.finalized">
+                        Afficher uniquement les factures en cours
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -105,6 +116,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -131,6 +143,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.date_creation | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.date_limit | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.user_name}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.finalized === '1' ? 'cloturée' : ''}}</a></td>
                     <td class="text-right">
                         <button type="button" class="btn btn-xs btn-danger" ng-click="delete(invoice)">
                             <i class="fa fa-trash fa-fw"></i>

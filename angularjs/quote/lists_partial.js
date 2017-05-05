@@ -28,6 +28,7 @@ app.controller('ComZeappsCrmQuoteListsPartialCtrl', ['$scope', '$route', '$route
         $scope.$on('comZeappsContact_dataContactHook', function(event, data) {
             if ($scope.id_contact !== data.id_contact){
                 $scope.id_contact = data.id_contact;
+                $scope.id_company = data.id_company;
                 zhttp.crm.quote.get_all($scope.id_contact, 'contact').then(function (response) {
                     if (response.data && response.data != 'false') {
                         $rootScope.quotes = response.data;
