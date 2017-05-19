@@ -5,7 +5,9 @@ app.controller('ComZeappsCrmModalityConfigCtrl', ['$scope', '$route', '$routePar
 
         $scope.form = {};
 
-        $scope.delete = function(modality){
+        $scope.delete = del;
+
+        function del(modality){
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',

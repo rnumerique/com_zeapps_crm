@@ -5,7 +5,12 @@ app.controller('ComZeappsCrmTaxeConfigCtrl', ['$scope', '$route', '$routeParams'
 
         $scope.form = {};
 
-        $scope.success = function(){
+        $scope.success = success;
+        $scope.cancel = cancel;
+        $scope.edit = edit;
+        $scope.delete = del;
+        
+        function success(){
 
             $scope.form.active = $scope.form.active ? 1 : 0;
 
@@ -35,22 +40,21 @@ app.controller('ComZeappsCrmTaxeConfigCtrl', ['$scope', '$route', '$routeParams'
                 }
             });
 
-        };
+        }
 
-        $scope.cancel = function(){
+        function cancel(){
             $scope.form = {};
-        };
+        }
 
-        $scope.edit = function(taxe){
+        function edit(taxe){
             $scope.form.id = taxe.id;
             $scope.form.label = taxe.label;
             $scope.form.value = taxe.value;
             $scope.form.accounting_number = taxe.accounting_number;
             $scope.form.active = !!parseInt(taxe.active);
-            console.log($scope.form.active);
-        };
+        }
 
-        $scope.delete = function(taxe){
+        function del(taxe){
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: '/assets/angular/popupModalDeBase.html',

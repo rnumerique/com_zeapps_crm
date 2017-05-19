@@ -6,6 +6,9 @@ app.controller('ComZeappsCrmQuoteConfigCtrl', ['$scope', '$route', '$routeParams
         $scope.format = '';
         $scope.frequency = '';
 
+        $scope.success = success;
+        $scope.test = test;
+
         zhttp.config.quote.get.format().then(function(response){
             if(response.data && response.data != 'false'){
                 $scope.format = response.data.value;
@@ -18,7 +21,7 @@ app.controller('ComZeappsCrmQuoteConfigCtrl', ['$scope', '$route', '$routeParams
             }
         });
 
-        $scope.success = function(){
+        function success(){
 
             var data = {};
 
@@ -34,9 +37,9 @@ app.controller('ComZeappsCrmQuoteConfigCtrl', ['$scope', '$route', '$routeParams
             var formatted_data = angular.toJson(data);
             zhttp.config.save(formatted_data);
 
-        };
+        }
 
-        $scope.test = function(){
+        function test(){
             var data = {};
 
             data['format'] = $scope.format;
