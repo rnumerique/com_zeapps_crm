@@ -4,7 +4,9 @@ app.controller('ComZeappsCrmQuoteListsPartialCtrl', ['$scope', '$route', '$route
         if(!$rootScope.quotes)
             $rootScope.quotes = [];
         $scope.id_company = 0;
+        $scope.filters = {};
 
+        $scope.delete = del;
 
         $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data) {
             if ($scope.id_company !== data.id_company){
@@ -45,9 +47,7 @@ app.controller('ComZeappsCrmQuoteListsPartialCtrl', ['$scope', '$route', '$route
         });
         $scope.$emit('comZeappsContact_triggerContactHook', {});
 
-        $scope.filters = {};
-
-        $scope.delete = function(quote){
+        function del(quote){
             zhttp.crm.quote.del(quote.id).then(function(response){
                 if(response.data && response.data != 'false'){
                     $rootScope.quotes.splice($rootScope.quotes.indexOf(quote), 1);

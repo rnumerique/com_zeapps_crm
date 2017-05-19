@@ -4,6 +4,11 @@ app.controller('ComZeappsCrmOrderListsPartialCtrl', ['$scope', '$route', '$route
         if(!$rootScope.orders)
             $rootScope.orders = [];
         $scope.id_company = 0;
+        $scope.filters = {
+            finalized: true
+        };
+
+        $scope.delete = del;
 
         $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data){
             if ($scope.id_company !== data.id_company) {
@@ -44,11 +49,7 @@ app.controller('ComZeappsCrmOrderListsPartialCtrl', ['$scope', '$route', '$route
         });
         $scope.$emit('comZeappsContact_triggerContactHook', {});
 
-        $scope.filters = {
-            finalized: true
-        };
-
-        $scope.delete = function(order){
+        function del(order){
             zhttp.crm.order.del(order.id).then(function(response){
                 if(response.data && response.data != 'false'){
                     $rootScope.orders.splice($rootScope.orders.indexOf(order), 1);

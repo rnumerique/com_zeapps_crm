@@ -4,6 +4,9 @@ app.controller('ComZeappsCrmInvoiceListsPartialCtrl', ['$scope', '$route', '$rou
         if(!$rootScope.invoices)
             $rootScope.invoices = [];
         $scope.id_company = 0;
+        $scope.filters = {};
+
+        $scope.delete = del;
 
         $scope.$on('comZeappsContact_dataEntrepriseHook', function(event, data){
             if ($scope.id_company !== data.id_company) {
@@ -46,9 +49,7 @@ app.controller('ComZeappsCrmInvoiceListsPartialCtrl', ['$scope', '$route', '$rou
 
         $scope.$emit('comZeappsContact_triggerContactHook', {});
 
-        $scope.filters = {};
-
-        $scope.delete = function(invoice){
+        function del(invoice){
             zhttp.crm.invoice.del(invoice.id).then(function(response){
                 if(response.data && response.data != 'false'){
                     $rootScope.invoices.splice($rootScope.invoices.indexOf(invoice), 1);
