@@ -40,6 +40,16 @@ class Zeapps_product_categories extends ZeModel {
         return;
     }
 
+    public function get_select(){
+        $where = array('deleted_at' => null);
+
+        return $this->database()->select('zeapps_product_categories.name as label,
+                                        zeapps_product_categories.id as value')
+            ->where($where)
+            ->table('zeapps_product_categories')
+            ->result();
+    }
+
     public function all($where = array()){
 
         $res = parent::all($where);
