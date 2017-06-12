@@ -3,7 +3,7 @@ app.controller('ComZeappsCrmOrderListsCtrl', ['$scope', '$route', '$routeParams'
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_order");
 
-        $rootScope.orders = {};
+        $rootScope.orders = [];
 
         zhttp.crm.order.get_all().then(function(response){
             if(response.data && response.data != 'false'){

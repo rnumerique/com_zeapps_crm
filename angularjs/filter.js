@@ -3,7 +3,6 @@ app.filter('com_zeapps_crmFilter', function($filter){
         if(filters){
             return $filter("filter")(list, function(listItem){
                 if(filters.finalized){
-                    console.log(!!listItem.finalized);
                     if(listItem.finalized == '1')
                         return false;
                 }

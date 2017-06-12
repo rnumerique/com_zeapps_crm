@@ -44,7 +44,6 @@ app.controller('ComZeappsCrmModalityConfigCtrl', ['$scope', '$route', '$routePar
                 }
 
             }, function () {
-                //console.log("rien");
             });
         }
     }]);

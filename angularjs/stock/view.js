@@ -74,7 +74,6 @@ app.controller('ComZeappsCrmStockViewCtrl', ['$scope', '$route', '$routeParams',
                 }
 
             }, function () {
-                //console.log("rien");
             });
         }
 

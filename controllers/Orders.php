@@ -148,6 +148,9 @@ class Orders extends ZeCtrl
 
             $return['nomPDF'] = $nomPDF;
 
+            $this->trigger->set('finalize_order');
+            $this->trigger->execute(array('id' => $id));
+
             echo json_encode($return);
         }
         else{
