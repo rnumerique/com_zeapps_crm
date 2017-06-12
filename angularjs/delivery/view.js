@@ -261,7 +261,6 @@ app.controller('ComZeappsCrmDeliveryViewCtrl', ['$scope', '$route', '$routeParam
 
             // charge la modal de la liste de produit
             zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
-                //console.log(objReturn);
                 if (objReturn) {
                     var line = {
                         id_delivery: $routeParams.id,
@@ -511,7 +510,6 @@ app.controller('ComZeappsCrmDeliveryViewCtrl', ['$scope', '$route', '$routeParam
                 }
 
             }, function () {
-                //console.log("rien");
             });
         }
 
@@ -589,7 +587,6 @@ app.controller('ComZeappsCrmDeliveryViewCtrl', ['$scope', '$route', '$routeParam
                 }
 
             }, function () {
-                //console.log("rien");
             });
         }
 

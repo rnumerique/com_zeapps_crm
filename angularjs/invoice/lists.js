@@ -3,7 +3,7 @@ app.controller('ComZeappsCrmInvoiceListsCtrl', ['$scope', '$route', '$routeParam
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_invoice");
 
-        $rootScope.invoices = {};
+        $rootScope.invoices = [];
 
         zhttp.crm.invoice.get_all().then(function(response){
             if(response.data && response.data != 'false'){

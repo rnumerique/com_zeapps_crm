@@ -135,7 +135,7 @@ app.controller('ComZeappsCrmQuoteFormCtrl', ['$scope', '$route', '$routeParams',
         }
 
         function loadContact() {
-            zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {id_company: $scope.form.company.id}, function(objReturn) {
+            zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {id_company: ($scope.form.company ? $scope.form.company.id : 0)}, function(objReturn) {
                 if (objReturn) {
                     $scope.form.contact = objReturn;
                     $scope.form.contact.name = $scope.form.contact.last_name + ' ' + $scope.form.contact.first_name;

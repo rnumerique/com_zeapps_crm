@@ -91,7 +91,6 @@ app.controller('ComZeappsCrmTaxeConfigCtrl', ['$scope', '$route', '$routeParams'
                 }
 
             }, function () {
-                //console.log("rien");
             });
         }
     }]);

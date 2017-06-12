@@ -3,7 +3,7 @@ app.controller('ComZeappsCrmQuoteListsCtrl', ['$scope', '$route', '$routeParams'
 
         $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
 
-        $rootScope.quotes = {};
+        $rootScope.quotes = [];
 
         zhttp.crm.quote.get_all().then(function(response){
             if(response.data && response.data != 'false'){

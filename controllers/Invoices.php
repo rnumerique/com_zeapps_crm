@@ -140,6 +140,9 @@ class Invoices extends ZeCtrl
 
             $this->stats->fromInvoice($id);
 
+            $this->trigger->set('finalize_invoice');
+            $this->trigger->execute(array('id' => $id));
+
             echo json_encode(array('nomPDF'=>$nomPDF, 'numerotation'=>$numerotation));
         }
         else{
