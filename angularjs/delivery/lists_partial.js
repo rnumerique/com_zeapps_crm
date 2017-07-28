@@ -4,7 +4,89 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 		if(!$rootScope.deliveries)
 			$rootScope.deliveries = [];
 		$scope.id_company = 0;
-		$scope.filters = {};
+		$scope.filter = {
+			model: {},
+			options: {
+				main: [
+					{
+						format: 'input',
+						field: 'numerotation',
+						type: 'text',
+						label: 'Numéro'
+					},
+					{
+						format: 'input',
+						field: 'libelle',
+						type: 'text',
+						label: 'Nom'
+					},
+					{
+						format: 'input',
+						field: 'client',
+						type: 'text',
+						label: 'Destinataire'
+					}
+				],
+				secondaries: [
+					{
+						format: 'input',
+						field: 'date_creation_start',
+						type: 'date',
+						label: 'Date de création : Début',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'date_creation_end',
+						type: 'date',
+						label: 'Fin',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'date_limite_start',
+						type: 'date',
+						label: 'Date limite : Début',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'date_limite_end',
+						type: 'date',
+						label: 'Fin',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'total_ht_floor',
+						type: 'text',
+						label: 'Total HT : Supérieur à',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'total_ht_ceiling',
+						type: 'text',
+						label: 'Inférieur à',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'total_ttc_floor',
+						type: 'text',
+						label: 'Total TTC : Supérieur à',
+						size: 3
+					},
+					{
+						format: 'input',
+						field: 'total_ttc_ceiling',
+						type: 'text',
+						label: 'Inférieur à',
+						size: 3
+					}
+				]
+			}
+		};
 
 		$scope.delete = del;
 
