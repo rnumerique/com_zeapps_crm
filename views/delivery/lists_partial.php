@@ -4,12 +4,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div ng-controller="ComZeappsCrmDeliveryListsPartialCtrl">
     <div class="row">
         <div class="col-md-12">
-            <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/delivery/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Livraison</a>
+            <div class="pull-right form-inline">
+                <input type="text" class="form-control input-sm" ng-model="filters.numerotation" placeholder="Numéro">
+                <input type="text" class="form-control input-sm" ng-model="filters.libelle" placeholder="Nom">
+                <input type="text" class="form-control input-sm" ng-model="filters.client" placeholder="Destinataire">
+
+                <span ng-click="shownFilter = !shownFilter">
+                    <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                </span>
             </div>
-            <span ng-click="shownFilter = !shownFilter">
-                <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>
-            </span>
             <h3>Livraisons</h3>
         </div>
     </div>
@@ -38,27 +41,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="form-group">
                     <label>Fin</label>
                     <input type="date" class="form-control" ng-model="filters.date_limite_end">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label># :</label>
-                    <input type="text" class="form-control" ng-model="filters.numerotation">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Libelle :</label>
-                    <input type="text" class="form-control" ng-model="filters.libelle">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Destinataire :</label>
-                    <input type="text" class="form-control" ng-model="filters.client">
                 </div>
             </div>
         </div>
@@ -98,6 +80,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         Afficher uniquement les livraisons en cours
                     </label>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/delivery/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Livraison</a>
             </div>
         </div>
     </div>

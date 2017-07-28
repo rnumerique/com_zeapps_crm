@@ -1,60 +1,60 @@
 // declare the modal to the app service
 listModuleModalFunction.push({
-    module_name:'com_zeapps_crm',
-    function_name:'search_product_stock',
-    templateUrl:'/com_zeapps_crm/stock/modal',
-    controller:'ZeAppsCrmModalProductStockCtrl',
-    size:'lg',
-    resolve:{
-        titre: function () {
-            return 'Recherche d\'un produit stocké';
-        }
-    }
+	module_name:"com_zeapps_crm",
+	function_name:"search_product_stock",
+	templateUrl:"/com_zeapps_crm/stock/modal",
+	controller:"ZeAppsCrmModalProductStockCtrl",
+	size:"lg",
+	resolve:{
+		titre: function () {
+			return "Recherche d'un produit stocké";
+		}
+	}
 });
 
-app.controller('ZeAppsCrmModalProductStockCtrl', function($scope, $uibModalInstance, zeHttp, titre, option) {
-    $scope.titre = titre ;
+app.controller("ZeAppsCrmModalProductStockCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
+	$scope.titre = titre ;
 
-    $scope.formCtrl = {};
+	$scope.formCtrl = {};
 
-    $scope.form = {};
-    $scope.showForm = false;
+	$scope.form = {};
+	$scope.showForm = false;
 
-    loadList() ;
+	loadList() ;
 
-    $scope.addProductStock = addProductStock;
-    $scope.cancel = cancel;
-    $scope.loadProductStock = loadProductStock;
-
-
+	$scope.addProductStock = addProductStock;
+	$scope.cancel = cancel;
+	$scope.loadProductStock = loadProductStock;
 
 
 
-    function loadList() {
-        zeHttp.crm.product_stock.get_all().then(function (response) {
-            if (response.status == 200 && response.data != 'false') {
-                $scope.product_stocks = response.data.product_stocks ;
-            }
-        });
-    }
 
-    function addProductStock(){
-        var formatted_data = angular.toJson($scope.form);
 
-        zeHttp.crm.product_stock.save(formatted_data).then(function(response){
-            if(response.data && response.data != 'false'){
-                $uibModalInstance.close(response.data.product_stock);
-            }
-        })
-    }
+	function loadList() {
+		zeHttp.crm.product_stock.get_all().then(function (response) {
+			if (response.status == 200 && response.data != "false") {
+				$scope.product_stocks = response.data.product_stocks ;
+			}
+		});
+	}
 
-    function cancel() {
-        $uibModalInstance.dismiss('cancel');
-    }
+	function addProductStock(){
+		var formatted_data = angular.toJson($scope.form);
 
-    function loadProductStock(product_stocks) {
-        product_stocks = product_stocks || false;
-        $uibModalInstance.close(product_stocks);
-    }
+		zeHttp.crm.product_stock.save(formatted_data).then(function(response){
+			if(response.data && response.data != "false"){
+				$uibModalInstance.close(response.data.product_stock);
+			}
+		});
+	}
+
+	function cancel() {
+		$uibModalInstance.dismiss("cancel");
+	}
+
+	function loadProductStock(product_stocks) {
+		product_stocks = product_stocks || false;
+		$uibModalInstance.close(product_stocks);
+	}
 
 }) ;

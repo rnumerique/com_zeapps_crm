@@ -143,6 +143,8 @@ class Invoices extends ZeCtrl
             $this->trigger->set('finalize_invoice');
             $this->trigger->execute(array('id' => $id));
 
+            $this->_write_accounting_lines($id);
+
             echo json_encode(array('nomPDF'=>$nomPDF, 'numerotation'=>$numerotation));
         }
         else{
@@ -506,7 +508,7 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_activities", "invoice_activities");
 
         // constitution du tableau
-        $data = array() ;
+        $data = array();
 
         if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
             // POST is actually in json format, do an internal translation
@@ -567,5 +569,62 @@ class Invoices extends ZeCtrl
             return $result;
         }
         return false;
+    }
+
+    private function _write_accounting_lines($id){
+        $this->load->model("Zeapps_accounting", "accounting");
+        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
+        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
+        $this->load->model("Zeapps_taxes", "taxes");
+
+        if($invoice = $this->invoices->get($id)) {
+            $label = "";
+            if($invoice->id_company != 0){
+                $company = $this->company->get($invoice->id_company);
+                $label = $company->company_name;
+            }
+            elseif($invoice->id_contact != 0){
+                $contact = $this->contacts->get($invoice->id_contact);
+                $label = $contact->first_name . ' ' . $contact->last_name;
+            }
+
+            $journal = "VE";
+
+            $accounting_lines = [];
+
+            if ($lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice' => $id))) {
+                foreach ($lines as $line) {
+                    if (isset($accounting_lines[$line->accounting_number])) {
+                        $accounting_lines[$line->accounting_number]['credit'] += intval($line->total_ht);
+                    } else {
+                        $accounting_lines[$line->accounting_number]['credit'] = intval($line->total_ht);
+                        $accounting_lines[$line->accounting_number]['debit'] = 0;
+                    }
+
+                    if($taxe = $this->taxes->get($line->id_taxe)) {
+                        if (isset($accounting_lines[$taxe->accounting_number])) {
+                            $accounting_lines[$taxe->accounting_number]['credit'] += intval($line->total_ttc - $line->total_ht);
+                        } else {
+                            $accounting_lines[$taxe->accounting_number]['credit'] = intval($line->total_ttc - $line->total_ht);
+                            $accounting_lines[$taxe->accounting_number]['debit'] = 0;
+                        }
+                    }
+                }
+            }
+
+            foreach($accounting_lines as $accounting_number => $accounting_line){
+                $this->accounting->insert(array(
+                    "accounting_number" => $accounting_number,
+                    "label" => $label,
+                    "invoice_num" => $invoice->numerotation,
+                    "debit" => $accounting_line['debit'],
+                    "credit" => $accounting_line['credit'],
+                    "journal" => $journal,
+                    "date_invoice" => $invoice->date_creation
+                ));
+            }
+        }
     }
 }
