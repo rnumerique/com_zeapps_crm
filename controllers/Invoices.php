@@ -28,6 +28,11 @@ class Invoices extends ZeCtrl
         $this->load->view('invoices/config');
     }
 
+    public function modal()
+    {
+        $this->load->view('invoices/modal');
+    }
+
 
 
     public function makePDF($id, $echo = true){

@@ -33,6 +33,11 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/config');
     }
 
+    public function modal()
+    {
+        $this->load->view('quotes/modal');
+    }
+
 
 
     public function makePDF($id, $echo = true){

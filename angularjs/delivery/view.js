@@ -112,12 +112,12 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 			});
 		}
 
-		$scope.sortable = {
-			connectWith: ".sortableContainer",
-			disabled: false,
-			axis: "y",
-			stop: sortableStop
-		};
+        $scope.sortable = {
+            connectWith: ".sortableContainer",
+            disabled: false,
+            axis: "y",
+            stop: sortableStop
+        };
 
 
 		//////////////////// WATCHERS ////////////////////
