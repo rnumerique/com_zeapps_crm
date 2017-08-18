@@ -108,9 +108,7 @@ class Product extends ZeCtrl
     }
 
     public function getProductsOf($id = null){
-        $this->load->model("Zeapps_product_products", "products");
-
-        $products = $this->products->all(array('id_cat' => $id));
+        $products = $this->_getProductsOf_r($id);
 
         echo json_encode($products);
     }
@@ -213,5 +211,24 @@ class Product extends ZeCtrl
                 $this->products->update(array('price_ht'=>$price_ht, 'price_ttc'=>$price_ttc), $id);
             }
         }
+    }
+
+    private function _getProductsOf_r($id = null){
+        $this->load->model("Zeapps_product_products", "products");
+        $this->load->model("Zeapps_product_categories", "categories");
+
+        if(!$products = $this->products->all(array('id_cat' => $id))){
+            $products = [];
+        }
+
+        if($categories = $this->categories->all(array('id_parent' => $id))){
+            foreach($categories as $category){
+                if($ret = $this->_getProductsOf_r($category->id)){
+                    $products = array_merge($products, $ret);
+                }
+            }
+        }
+
+        return $products;
     }
 }
