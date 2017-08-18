@@ -360,52 +360,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='activity'">
             <div class="row">
                 <div class="col-md-12 text-right" ng-hide="quote.finalized !== '0'">
-                    <button type="button" class="btn btn-success btn-xs" ng-click="toggleActivity()">
-                        <span class="fa fa-fw fa-plus"></span> activité
-                    </button>
-                    <div ng-show="showActivityInput" class="text-left">
-                        <div class="col-md-6 form-group">
-                            <label i8n="libelle"></label>
-                            <input type="text" class="form-control" ng-model="activity.libelle">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="">
+                            <i class="fa fa-fw fa-plus"></i> Activité
+                        </button>
+                    </div>
+                    <div class="card_document" ng-repeat="activity in activities | orderBy:['-date','-id']">
+                        <div class="card_document-head clearfix">
+                            <div class="pull-right">
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click=""></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="" ze-confirmation></ze-btn>
+                            </div>
+                            {{ activity.label }}
                         </div>
-                        <div class="col-md-6 form-group">
-                            <label i8n="deadline"></label>
-                            <input type="date" class="form-control" ng-model="activity.reminder">
+                        <div class="card_document-body" ng-if="document.description">
+                            {{ activity.description }}
                         </div>
-                        <div class='col-md-12 form-group'>
-                            <label i8n="Commentaire"></label>
-                            <textarea class="form-control" ng-model="activity.description" rows="3"></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="button" class="btn btn-default btn-xs" ng-click="closeActivity()">
-                                Annuler
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm" ng-click="addActivity()">
-                                Valider
-                            </button>
+                        <div class="card_document-footer text-muted">
+                            Envoyé par <strong>{{ activity.name_user }}</strong> le <strong>{{ activity.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ activity.date | date:'HH:mm' }}</strong>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12" ng-repeat="activity in activities">
-                    <div>
-                        <strong>
-                            {{ activity.libelle }}
-                            <button type="button" class="btn btn-info btn-xs" ng-click="editActivity(activity)">
-                                <span class="fa fa-fw fa-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-xs" ng-click="deleteActivity(activity)">
-                                <span class="fa fa-fw fa-trash"></span>
-                            </button>
-                        </strong>
-                    </div>
-                    <div class="text-muted">
-                        {{ activity.reminder | date:'dd/MM/yyyy' }}
-                    </div>
-                    <p>
-                        {{ activity.description }}
-                    </p>
                 </div>
             </div>
         </div>
@@ -413,29 +387,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div ng-show="navigationState=='document'">
             <div class="row">
                 <div class="col-md-12 text-right" ng-hide="quote.finalized !== '0'">
-                    <button type="button" class="btn btn-xs btn-success" ngf-select="upload($files)" multiple ng-if="!progress">
-                        <span class="fa fa-fw fa-plus"></span> document
-                    </button>
-                    <div class="progress" ng-if="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" ng-style="{'width': progress + '%' }">
-                            {{ progress }}%
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12" ng-repeat="document in documents">
-                    <div>
-                        <strong>
-                            {{ document.name }}
-                        </strong>
-                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)" ng-hide="quote.finalized !== '0'">
-                            <span class="fa fa-fw fa-trash"></span>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="">
+                            <i class="fa fa-fw fa-plus"></i> Document
                         </button>
                     </div>
-                    <div class="text-muted">
-                        <span i8n="Ajouté le"></span> {{ document.created_at | date:'dd/MM/yyyy' }}
+                    <div class="card_document" ng-repeat="document in documents | orderBy:['-date','-id']">
+                        <div class="card_document-head clearfix">
+                            <div class="pull-right">
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click=""></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="" ze-confirmation></ze-btn>
+                            </div>
+                            <i class="fa fa-fw fa-file"></i>
+                            <a ng-href="{{ document.path }}" class="text-primary" target="_blank">
+                                {{ document.label }}
+                            </a>
+                        </div>
+                        <div class="card_document-body" ng-if="document.description">
+                            {{ document.description }}
+                        </div>
+                        <div class="card_document-footer text-muted">
+                            Envoyé par <strong>{{ document.name_user }}</strong> le <strong>{{ document.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ document.date | date:'HH:mm' }}</strong>
+                        </div>
                     </div>
                 </div>
             </div>
