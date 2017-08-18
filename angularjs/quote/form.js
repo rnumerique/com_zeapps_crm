@@ -5,15 +5,36 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.form = {};
 
+        $scope.accountManagerHttp = zhttp.app.user.modal;
+        $scope.accountManagerFields = [
+            {label:'Prénom',key:'firstname'},
+            {label:'Nom',key:'lastname'}
+        ];
+
+        $scope.companyHttp = zhttp.contact.company.modal;
+        $scope.companyFields = [
+            {label:'Nom',key:'company_name'},
+            {label:'Téléphone',key:'phone'},
+            {label:'Ville',key:'billing_city'},
+            {label:'Gestionnaire du compte',key:'name_user_account_manager'}
+        ];
+
+        $scope.contactHttp = zhttp.contact.contact.modal;
+        $scope.contactFields = [
+            {label:'Nom',key:'last_name'},
+            {label:'Prénom',key:'first_name'},
+            {label:'Entreprise',key:'name_company'},
+            {label:'Téléphone',key:'phone'},
+            {label:'Ville',key:'city'},
+            {label:'Gestionnaire du compte',key:'name_user_account_manager'}
+        ];
+
 		$scope.updateDateLimit = updateDateLimit;
 		$scope.success = success;
 		$scope.cancel = cancel;
 		$scope.loadAccountManager = loadAccountManager;
-		$scope.removeAccountManager = removeAccountManager;
 		$scope.loadCompany = loadCompany;
-		$scope.removeCompany = removeCompany;
 		$scope.loadContact = loadContact;
-		$scope.removeContact = removeContact;
 
 		Initform();
 
@@ -97,59 +118,50 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 			$location.url("/ng/com_zeapps_crm/quote/");
 		}
 
-		function loadAccountManager() {
-			zeapps_modal.loadModule("com_zeapps_core", "search_user", {}, function(objReturn) {
-				if (objReturn) {
-					$scope.form.id_user_account_manager = objReturn.id;
-					$scope.form.name_user_account_manager = objReturn.firstname + " " + objReturn.lastname;
-				} else {
-					delete $scope.form.id_user_account_manager;
-					delete $scope.form.name_user_account_manager;
+        function loadAccountManager(user) {
+            if (user) {
+                $scope.form.id_user_account_manager = user.id;
+                $scope.form.name_user_account_manager = user.firstname + " " + user.lastname;
+            } else {
+                $scope.form.id_user_account_manager = 0;
+                $scope.form.name_user_account_manager = "";
+            }
+        }
+
+        function loadCompany(company) {
+            if (company) {
+                $scope.form.company = company;
+                $scope.form.accounting_number = company.accounting_number || $scope.form.accounting_number;
+            } else {
+                if($scope.form.accounting_number === $scope.form.company.accounting_number){
+                    if($scope.form.contact !== undefined){
+                        $scope.form.accounting_number = $scope.form.contact.accounting_number;
+                    }
+                    else
+                        delete $scope.form.accounting_number;
+                }
+                delete $scope.form.company;
+            }
+        }
+
+        function loadContact(contact) {
+            if (contact) {
+                $scope.form.contact = contact;
+                $scope.form.contact.name = contact.last_name + " " + contact.first_name;
+                $scope.form.accounting_number = $scope.form.accounting_number || contact.accounting_number;
+				if(contact.id_company !== "0" && $scope.form.company === undefined){
+					zhttp.contact.company.get(contact.id_company).then(function(response){
+						if(response.data && response.data != "false"){
+                            loadCompany(response.data.company);
+						}
+					})
 				}
-			});
-		}
-
-		function removeAccountManager() {
-			delete $scope.form.id_user_account_manager;
-			delete $scope.form.name_user_account_manager;
-		}
-
-		function loadCompany() {
-			zeapps_modal.loadModule("com_zeapps_contact", "search_company", {}, function(objReturn) {
-				if (objReturn) {
-					$scope.form.company = objReturn;
-					$scope.form.accounting_number = $scope.form.company.accounting_number || $scope.form.accounting_number;
-				}
-			});
-		}
-
-		function removeCompany() {
-			if($scope.form.accounting_number == $scope.form.company.accounting_number){
-				if($scope.form.contact != undefined){
-					$scope.form.accounting_number = $scope.form.contact.accounting_number;
-				}
-				else
-					delete $scope.form.accounting_number;
-			}
-			delete $scope.form.company;
-		}
-
-		function loadContact() {
-			zeapps_modal.loadModule("com_zeapps_contact", "search_contact", {id_company: ($scope.form.company ? $scope.form.company.id : 0)}, function(objReturn) {
-				if (objReturn) {
-					$scope.form.contact = objReturn;
-					$scope.form.contact.name = $scope.form.contact.last_name + " " + $scope.form.contact.first_name;
-					$scope.form.accounting_number = $scope.form.accounting_number || $scope.form.contact.accounting_number;
-				}
-			});
-		}
-
-		function removeContact() {
-			if($scope.form.accounting_number == $scope.form.contact.accounting_number){
-				delete $scope.form.accounting_number;
-			}
-			delete $scope.form.contact;
-		}
-
+            } else {
+                if($scope.form.accounting_number === $scope.form.contact.accounting_number){
+                    delete $scope.form.accounting_number;
+                }
+                delete $scope.form.contact;
+            }
+        }
 
 	}]);
