@@ -4,6 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div ng-controller="ComZeappsCrmQuoteListsPartialCtrl">
     <div class="row">
         <div class="col-md-12">
+            <div class="pull-right">
+                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/quote/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Devis</a>
+            </div>
             <h3>
                 Devis
             </h3>
@@ -13,9 +16,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-12">
             <ze-filters data-model="filter.model" data-options="filter.options"></ze-filters>
-            <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/quote/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Devis</a>
-            </div>
         </div>
     </div>
 
