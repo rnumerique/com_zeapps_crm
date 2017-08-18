@@ -100,9 +100,13 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 							$rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
 							$rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
 						}
+                        $rootScope.quotes.src_id = data.id_company;
+                        $rootScope.quotes.src = 'company';
 					}
 					else {
-						$rootScope.orders = {};
+						$rootScope.quotes = {};
+                        $rootScope.quotes.src_id = data.id_company;
+                        $rootScope.quotes.src = 'company';
 					}
 				});
 			}
@@ -120,9 +124,13 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 							$rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
 							$rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
 						}
+                        $rootScope.quotes.src_id = data.id_contact;
+                        $rootScope.quotes.src = 'contact';
 					}
 					else {
-						$rootScope.orders = {};
+						$rootScope.quotes = {};
+                        $rootScope.quotes.src_id = data.id_contact;
+                        $rootScope.quotes.src = 'contact';
 					}
 				});
 			}
