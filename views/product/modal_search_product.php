@@ -16,20 +16,17 @@
         </div>
 
         <div class="col-md-9">
-            <div class="col-md-5 pull-right">
-                <input class="form-control" type="text" ng-model="quicksearch" placeholder="Recherche rapide">
-            </div>
             <h3 class="text-capitalize active-category-title">
                 {{ activeCategory.data.name }}
             </h3>
-            <table class="table table-striped">
+            <table class="table table-striped table-condensed">
                 <tr>
                     <th></th>
                     <th i8n="Référence"></th>
                     <th i8n="Nom du produit"></th>
                     <th i8n="Prix HT"></th>
                 </tr>
-                <tr class="leaf" ng-repeat="product in products | filter:quicksearch | orderBy: 'name'" ng-click="select_product(product)">
+                <tr class="leaf" ng-repeat="product in products | orderBy: 'name'" ng-click="select_product(product)">
                     <td>
                         <i class="fa fa-tag" ng-if="product.compose == 0"></i>
                         <i class="fa fa-tags" ng-if="product.compose != 0"></i>
