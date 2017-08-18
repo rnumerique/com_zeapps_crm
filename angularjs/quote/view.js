@@ -17,6 +17,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.lines = [];
 
+		$scope.back = back;
 		$scope.first_quote = first_quote;
 		$scope.previous_quote = previous_quote;
 		$scope.next_quote = next_quote;
@@ -30,6 +31,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.toggleComment = toggleComment;
 
 		$scope.addFromCode = addFromCode;
+        $scope.keyEventaddFromCode = keyEventaddFromCode;
 		$scope.addLine = addLine;
 		$scope.addSubTotal = addSubTotal;
 		$scope.addComment = addComment;
@@ -136,6 +138,18 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			);
 		}
 
+		function back(){
+            if ($rootScope.quotes.src === undefined) {
+                $location.path("/ng/com_zeapps_crm/quote/");
+            }
+            else if ($rootScope.quotes.src === 'company') {
+                $location.path("/ng/com_zeapps_contact/companies/" + $rootScope.quotes.src_id);
+            }
+            else if ($rootScope.quotes.src === 'contact') {
+                $location.path("/ng/com_zeapps_contact/contacts/" + $rootScope.quotes.src_id);
+            }
+		}
+
 		function first_quote() {
 			if ($scope.quote_first != 0) {
 				$location.path("/ng/com_zeapps_crm/quote/" + $scope.quote_first);
@@ -229,39 +243,49 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function addFromCode(){
-			var code = $scope.codeProduct;
-			zhttp.crm.product.get_code(code).then(function(response){
-				if(response.data && response.data != "false"){
-					var line = {
-						id_order: $routeParams.id,
-						type: "product",
-						id_product: response.data.id,
-						ref: response.data.ref,
-						designation_title: response.data.name,
-						designation_desc: response.data.description,
-						qty: "1",
-						discount: 0.00,
-						price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
-						taxe: ""+parseFloat(response.data.value_taxe),
-						sort: $scope.lines.length,
-						total_ht: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
-						total_ttc: ((parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc)) * (1 + (parseFloat(response.data.value_taxe) / 100)))
-					};
+			if($scope.codeProduct !== "") {
+                var code = $scope.codeProduct;
+                zhttp.crm.product.get_code(code).then(function (response) {
+                    if (response.data && response.data != "false") {
+                        var line = {
+                            id_order: $routeParams.id,
+                            type: "product",
+                            id_product: response.data.id,
+                            ref: response.data.ref,
+                            designation_title: response.data.name,
+                            designation_desc: response.data.description,
+                            qty: 1,
+                            discount: 0.00,
+                            price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
+                            taxe: "" + parseFloat(response.data.value_taxe),
+                            sort: $scope.lines.length,
+                            total_ht: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
+                            total_ttc: ((parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc)) * (1 + (parseFloat(response.data.value_taxe) / 100)))
+                        };
 
-					var formatted_data = angular.toJson(line);
-					zhttp.crm.order.line.save(formatted_data).then(function(response){
-						if(response.data && response.data != "false"){
-							line.id = response.data;
-							$scope.lines.push(line);
-							updateTotals();
-						}
-					});
-				}
-				else{
-					$rootScope.toasts.push({"danger" : "Aucun produit avec le code " + code + " trouvé dans la base de donnée."});
-				}
-			});
+                        $scope.codeProduct = "";
+
+                        var formatted_data = angular.toJson(line);
+                        zhttp.crm.order.line.save(formatted_data).then(function (response) {
+                            if (response.data && response.data != "false") {
+                                line.id = response.data;
+                                $scope.lines.push(line);
+                                updateTotals();
+                            }
+                        });
+                    }
+                    else {
+                        $rootScope.toasts.push({"danger": "Aucun produit avec le code " + code + " trouvé dans la base de donnée."});
+                    }
+                });
+            }
 		}
+
+        function keyEventaddFromCode($event){
+            if($event.which === 13){
+                addFromCode();
+            }
+        }
 
 		function addLine(){
 			if($scope.quote.finalized !== "0")

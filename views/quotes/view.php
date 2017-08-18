@@ -153,7 +153,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <span class="form-inline">
                         <label>Code produit :</label>
                         <span class="input-group">
-                            <input type="text" class="form-control input-sm" ng-model="codeProduct">
+                            <input type="text" class="form-control input-sm" ng-model="codeProduct" ng-keypress="keyEventaddFromCode($event)" >
                             <span class="input-group-addon" ng-click="addFromCode()">
                                 <i class="fa fa-fw fa-plus text-success"></i>
                             </span>
