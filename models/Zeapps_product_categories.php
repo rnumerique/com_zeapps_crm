@@ -53,10 +53,13 @@ class Zeapps_product_categories extends ZeModel {
     public function all($where = array()){
 
         $res = parent::all($where);
-        if($res)
-            array_unshift($res, $this->root, $this->archive);
-        else
-            $res = array($this->root, $this->archive);
+
+        if(!isset($where['id_parent'])) {
+            if ($res)
+                array_unshift($res, $this->root, $this->archive);
+            else
+                $res = array($this->root, $this->archive);
+        }
 
         return $res;
     }
