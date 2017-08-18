@@ -27,8 +27,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>#</th>
                     <th>Libelle</th>
                     <th>Destinataire</th>
-                    <th>Total HT (€)</th>
-                    <th>Total TTC (€)</th>
+                    <th class="text-right">Total HT</th>
+                    <th class="text-right">Total TTC</th>
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
@@ -47,8 +47,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             {{quote.contact ? quote.contact.first_name[0] + '. ' + quote.contact.last_name : ''}}
                         </a>
                     </td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ht}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ttc}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ht | currency:'€':2}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ttc | currency:'€':2}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_creation | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_limit | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.user_name}}</a></td>
