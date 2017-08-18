@@ -12,10 +12,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="titleWell">
                         Devis :
                         <span ng-hide="edit">{{ quote.libelle }}</span>
+                        <small>n° {{ quote.numerotation }}</small>
                         <input type="text" class="form-control" ng-model="quote.libelle" ng-show="edit">
                     </div>
                     <div>
-                        n° : {{ quote.numerotation }}
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
+                            {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
+                        </button>
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showAddresses = !showAddresses">
+                            {{ showAddresses ? 'Masquer' : 'Voir' }} adresses
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -37,14 +43,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12" ng-if="company">
-                    <strong>Entreprise :</strong> {{ company.company_name }}<br>
-                    <strong>En cours :</strong> {{ company.due | currency:'€':2 }}
-                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
-                        {{ showDetailsEntreprise ? 'masquer' : 'détails' }}
-                    </button>
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsEntreprise">
+        </div>
+
+        <div class="row" ng-if="showDetailsEntreprise">
+            <div class="col-md-12">
+                <div class="well">
+                    <strong>En cours :</strong> {{ (company.due || contact.due) | currency:'€':2 }}
+                    <table class="table table-stripped table-condensed table-responsive" ng-if="(company.due_lines || contact.due_lines).length > 0">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -54,34 +59,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th></th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="due_line in company.due_lines">
-                            <td>{{ due_line.numerotation }}</td>
-                            <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
-                            <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
-                            <td class="text-right">
-                                <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
-                                    <i class="fa fa-fw fa-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-12" ng-if="contact && !company">
-                    <strong>Contact :</strong> {{ contact.last_name + ' ' + contact.first_name }}<br>
-                    <strong>En cours :</strong> {{ contact.due | currency:'€':2 }}
-                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsContact = !showDetailsContact">détails</button>
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsContact">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Libelle</th>
-                            <th>Date limite</th>
-                            <th class="text-right">Somme due</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="due_line in contact.due_lines">
+                        <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
                             <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
@@ -97,7 +75,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
 
-        <div class="row">
+        <div class="row" ng-if="showAddresses">
             <div class="col-md-6">
                 <div class="well">
                     <strong>Adresse de facturation :</strong><br>
