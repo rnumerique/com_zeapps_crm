@@ -264,47 +264,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <div class="col-md-6">
                     <div class="well well-sm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                Total HT av remise
-                            </div>
-                            <div class="col-md-6 text-right">
-                                {{ quote.total_prediscount_ht | currency:'€':2 }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                Total TTC av remise
-                            </div>
-                            <div class="col-md-6 text-right">
-                                {{ quote.total_prediscount_ttc | currency:'€':2 }}
-                            </div>
-                        </div>
-                        <hr>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                Remise Globale
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <span ng-hide="edit">-{{ quote.global_discount | number:2 }}%</span>
-                                <div class="input-group" ng-show="edit">
-                                    <input type="text" class="form-control" ng-model="quote.global_discount" ng-change="updateTotals()">
-                                    <div class="input-group-addon">%</div>
+                        <div ng-if="quote.total_discount > 0">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Total HT av remise
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ quote.total_prediscount_ht | currency:'€':2 }}
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                Remise (avant Taxes)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Total TTC av remise
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ quote.total_prediscount_ttc | currency:'€':2 }}
+                                </div>
                             </div>
-                            <div class="col-md-6 text-right">
-                                {{ quote.total_discount | currency:'€':2 }}
-                            </div>
-                        </div>
+                            <hr>
 
-                        <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Remise Globale
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <span ng-hide="edit">-{{ quote.global_discount | number:2 }}%</span>
+                                    <div class="input-group" ng-show="edit">
+                                        <input type="text" class="form-control" ng-model="quote.global_discount" ng-change="updateTotals()">
+                                        <div class="input-group-addon">%</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Remise (avant Taxes)
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ quote.total_discount | currency:'€':2 }}
+                                </div>
+                            </div>
+
+                            <hr>
+                        </div>
 
                         <div class="row total">
                             <div class="col-md-6">
