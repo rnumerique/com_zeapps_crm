@@ -96,7 +96,7 @@ app.config(["$provide",
 					get_all : getAll_quote,
 					save : post_quote,
 					del : del_quote,
-					finalize : finalize_quote,
+					transform : transform_quote,
 					test : test_quote,
 					line : {
 						save : save_line_quote,
@@ -120,7 +120,7 @@ app.config(["$provide",
 					get : get_product,
 					get_code : getCode_product,
 					get_all : getAll_product,
-					getOf : get_products_of,
+					modal : modal_product,
 					save : save_product,
 					updateRatio : updateRatio,
 					del : delete_product
@@ -373,10 +373,10 @@ app.config(["$provide",
 			function get_quote(id){
 				return zeHttp.get("/com_zeapps_crm/quotes/get/" + id);
 			}
-			function getAll_quote(id_project, type){
+			function getAll_quote(id_project, type, limit, offset, context, filters){
 				id_project = id_project || 0;
 				type = type || "";
-				return zeHttp.get("/com_zeapps_crm/quotes/getAll/" + id_project + "/" + type);
+				return zeHttp.post("/com_zeapps_crm/quotes/getAll/" + id_project + "/" + type + "/" + limit + "/" + offset + "/" + context, filters);
 			}
 			function post_quote(data){
 				return zeHttp.post("/com_zeapps_crm/quotes/save", data);
@@ -384,8 +384,8 @@ app.config(["$provide",
 			function del_quote(id){
 				return zeHttp.delete("/com_zeapps_crm/quotes/delete/" + id);
 			}
-			function finalize_quote(id, data){
-				return zeHttp.post("/com_zeapps_crm/quotes/finalize/" + id, data);
+			function transform_quote(id, data){
+				return zeHttp.post("/com_zeapps_crm/quotes/transform/" + id, data);
 			}
 			function save_line_quote(data){
 				return zeHttp.post("/com_zeapps_crm/quotes/saveLine", data);
@@ -397,16 +397,16 @@ app.config(["$provide",
 				return zeHttp.delete("/com_zeapps_crm/quotes/deleteLine/" + id);
 			}
 			function save_activity_quote(data){
-				return zeHttp.post("com_zeapps_crm/quotes/saveActivity", data);
+				return zeHttp.post("com_zeapps_crm/quotes/activity", data);
 			}
 			function del_activity_quote(id){
-				return zeHttp.post("com_zeapps_crm/quotes/deleteActivity/" + id);
+				return zeHttp.post("com_zeapps_crm/quotes/del_activity/" + id);
 			}
 			function url_document_quote(){
 				return "/com_zeapps_crm/quotes/uploadDocuments/";
 			}
 			function del_document_quote(id){
-				return zeHttp.post("/com_zeapps_crm/quotes/deleteDocument/" + id);
+				return zeHttp.post("/com_zeapps_crm/quotes/del_document/" + id);
 			}
 			function get_pdf_quote(){
 				return "/com_zeapps_crm/quotes/getPDF/";
@@ -426,8 +426,8 @@ app.config(["$provide",
 			function getAll_product(){
 				return zeHttp.get("/com_zeapps_crm/product/getAll");
 			}
-			function get_products_of(id){
-				return zeHttp.get("/com_zeapps_crm/product/getProductsOf/"+id);
+			function modal_product(id, limit, offset, filters){
+				return zeHttp.post("/com_zeapps_crm/product/modal/"+id + "/"+limit + "/"+offset, filters);
 			}
 			function save_product(data){
 				return zeHttp.post("/com_zeapps_crm/product/save", data);

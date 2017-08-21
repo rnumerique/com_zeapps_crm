@@ -1,17 +1,14 @@
 app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "zeapps_modal",
 	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
-
-		$scope.form = {};
-
-        $scope.accountManagerHttp = zhttp.app.user.modal;
+        $scope.accountManagerHttp = zhttp.app.user;
         $scope.accountManagerFields = [
             {label:'Prénom',key:'firstname'},
             {label:'Nom',key:'lastname'}
         ];
 
-        $scope.companyHttp = zhttp.contact.company.modal;
+        $scope.companyHttp = zhttp.contact.company;
+        $scope.companyTplNew = '/com_zeapps_contact/companies/form_modal/';
         $scope.companyFields = [
             {label:'Nom',key:'company_name'},
             {label:'Téléphone',key:'phone'},
@@ -19,7 +16,8 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
             {label:'Gestionnaire du compte',key:'name_user_account_manager'}
         ];
 
-        $scope.contactHttp = zhttp.contact.contact.modal;
+        $scope.contactHttp = zhttp.contact.contact;
+        $scope.contactTplNew = '/com_zeapps_contact/contacts/form_modal/';
         $scope.contactFields = [
             {label:'Nom',key:'last_name'},
             {label:'Prénom',key:'first_name'},
@@ -38,23 +36,6 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 
 		Initform();
 
-		if($routeParams.id_company && $routeParams.id_company != 0){
-			zhttp.contact.company.get($routeParams.id_company).then(function(response){
-				if(response.data && response.data != "false"){
-					$scope.form.company = response.data;
-					$scope.form.accounting_number = $scope.form.company.accounting_number || $scope.form.accounting_number;
-				}
-			});
-		}
-		if($routeParams.id_contact && $routeParams.id_contact != 0){
-			zhttp.contact.contact.get($routeParams.id_contact).then(function(response){
-				if(response.data && response.data != "false"){
-					$scope.form.contact = response.data;
-					$scope.form.contact.name = $scope.form.contact.last_name + " " + $scope.form.contact.first_name;
-					$scope.form.accounting_number = $scope.form.accounting_number || $scope.form.contact.accounting_number;
-				}
-			});
-		}
 		zhttp.crm.warehouse.get_all().then(function(response){
 			if(response.data && response.data != "false"){
 				$scope.warehouses = response.data;
@@ -79,9 +60,12 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 
 			data["libelle"] = $scope.form.libelle;
 			data["id_user"] = $scope.form.id_user_account_manager;
+			data["name_user"] = $scope.form.name_user_account_manager;
 			data["id_warehouse"] = $scope.form.id_warehouse;
 			data["id_company"] = $scope.form.company ? ($scope.form.company.id || 0) : 0;
+			data["name_company"] = $scope.form.company ? ($scope.form.company.company_name || 0) : 0;
 			data["id_contact"] = $scope.form.contact ? ($scope.form.contact.id || 0) : 0;
+			data["name_contact"] = $scope.form.contact ? ($scope.form.contact.name || 0) : 0;
 			data["accounting_number"] = $scope.form.accounting_number;
 			data["global_discount"] = $scope.form.global_discount;
 			if($scope.form.date_creation) {
@@ -130,26 +114,22 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 
         function loadCompany(company) {
             if (company) {
-                $scope.form.company = company;
+                $scope.form.id_company = company.id;
+                $scope.form.name_company = company.company_name;
                 $scope.form.accounting_number = company.accounting_number || $scope.form.accounting_number;
             } else {
-                if($scope.form.accounting_number === $scope.form.company.accounting_number){
-                    if($scope.form.contact !== undefined){
-                        $scope.form.accounting_number = $scope.form.contact.accounting_number;
-                    }
-                    else
-                        delete $scope.form.accounting_number;
-                }
-                delete $scope.form.company;
+                $scope.form.id_company = 0;
+                $scope.form.name_company = "";
             }
         }
 
         function loadContact(contact) {
             if (contact) {
-                $scope.form.contact = contact;
-                $scope.form.contact.name = contact.last_name + " " + contact.first_name;
+                $scope.form.id_contact = contact.id;
+                $scope.form.name_contact = contact.last_name + " " + contact.first_name;
                 $scope.form.accounting_number = $scope.form.accounting_number || contact.accounting_number;
-				if(contact.id_company !== "0" && $scope.form.company === undefined){
+
+				if(contact.id_company !== "0" && $scope.form.id_company === 0){
 					zhttp.contact.company.get(contact.id_company).then(function(response){
 						if(response.data && response.data != "false"){
                             loadCompany(response.data.company);
@@ -157,10 +137,8 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 					})
 				}
             } else {
-                if($scope.form.accounting_number === $scope.form.contact.accounting_number){
-                    delete $scope.form.accounting_number;
-                }
-                delete $scope.form.contact;
+                $scope.form.id_contact = 0;
+                $scope.form.name_contact = "";
             }
         }
 

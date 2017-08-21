@@ -10,28 +10,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                     <div class="titleWell">
-                        Devis :
-                        <span ng-hide="edit">{{ quote.libelle }}</span>
-                        <small>n° {{ quote.numerotation }}</small>
-                        <input type="text" class="form-control" ng-model="quote.libelle" ng-show="edit">
+                        Devis : {{ quote.libelle }}
                     </div>
-                    <div>
+                    <div class="small">
+                        n° {{ quote.numerotation }}
+                    </div>
+                    <div class="small">
+                        Client :
+                        {{quote.name_company}}
+                        <span ng-if="quote.name_company && quote.name_contact">-</span>
+                        {{quote.name_contact ? quote.name_contact : ""}}
                         <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
                             {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
-                        </button>
-                        <button type="button" class="btn btn-xs btn-info" ng-click="showAddresses = !showAddresses">
-                            {{ showAddresses ? 'Masquer' : 'Voir' }} adresses
                         </button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
-                        <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()" ng-hide="quote.finalized !== '0'"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="quote.finalized !== '0' || edit">
-                            <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
-                        </button>
+                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
+                        <ze-btn fa="pencil" color="info" hint="Editer"
+                                ze-modalform="edit"
+                                data-edit="quote"
+                                data-template="templateEdit"
+                                data-title="Modifier le devis"></ze-btn>
+                        <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
+                        <ze-btn fa="files-o" color="success" hint="Transformer" ng-click="transform()"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_quotes > 0">
                             <button type="button" class="btn btn-default" ng-class="quote_first == 0 ? 'disabled' :''" ng-click="first_quote()"><span class="fa fa-fw fa-fast-backward"></span></button>
@@ -75,57 +78,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
 
-        <div class="row" ng-if="showAddresses">
-            <div class="col-md-6">
-                <div class="well">
-                    <strong>Adresse de facturation :</strong><br>
-                    {{ company.company_name }}<br ng-if="company.company_name">
-                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit">{{ quote.billing_address_1 }}</span><br ng-if="quote.billing_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_address_2 }}</span><br ng-if="quote.billing_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_address_3 }}</span><br ng-if="quote.billing_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.billing_zipcode + ' ' + quote.billing_city }}</span>
-                    <input type="text" class="form-control" ng-model="quote.billing_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="quote.billing_city" ng-show="edit">
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="well">
-                    <strong>Adresse de livraison :</strong><br>
-                    {{ company.company_name }}<br ng-if="company.company_name">
-                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit">{{ quote.delivery_address_1 }}</span><br ng-if="quote.delivery_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_address_2 }}</span><br ng-if="quote.delivery_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_address_3 }}</span><br ng-if="quote.delivery_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ quote.delivery_zipcode + ' ' + quote.delivery_city }}</span>
-                    <input type="text" class="form-control" ng-model="quote.delivery_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="quote.delivery_city" ng-show="edit">
-                </div>
-            </div>
-        </div>
-
-
-        <ul df-tab-menu menu-control="{{navigationState}}" theme="bootstrap" role="tablist"
-            class="df-tab-menu nav nav-tabs">
-            <li data-menu-item="body"><a href="#" data-ng-click="navigationState = 'body'">Corps</a></li>
-            <li data-menu-item="header"><a href="#" data-ng-click="navigationState = 'header'">Entête</a></li>
-            <li data-menu-item="condition"><a href="#" data-ng-click="navigationState = 'condition'">Conditions</a></li>
-            <li data-menu-item="activity"><a href="#" data-ng-click="navigationState = 'activity'">Activité</a></li>
-            <li data-menu-item="document"><a href="#" data-ng-click="navigationState = 'document'">Documents</a></li>
-
-            <li data-more-menu-item><a class="btn btn-primary"><span class="fa fa-fw fa-menu-down"></span></a>
-            </li>
+        <ul role="tablist" class="nav nav-tabs">
+            <li ng-class="navigationState =='body' ? 'active' : ''"><a href="#" ng-click="setTab('body')">Corps</a></li>
+            <li ng-class="navigationState =='header' ? 'active' : ''"><a href="#" ng-click="setTab('header')">Entête</a></li>
+            <li ng-class="navigationState =='condition' ? 'active' : ''"><a href="#" ng-click="setTab('condition')">Conditions</a></li>
+            <li ng-class="navigationState =='addresses' ? 'active' : ''"><a href="#" ng-click="setTab('addresses')">Adresses</a></li>
+            <li ng-class="navigationState =='activity' ? 'active' : ''"><a href="#" ng-click="setTab('activity')">Activité</a></li>
+            <li ng-class="navigationState =='document' ? 'active' : ''"><a href="#" ng-click="setTab('document')">Documents</a></li>
         </ul>
 
-
-        <div ng-show="navigationState=='body'">
+        <div ng-show="navigationState =='body'">
             <div class="row">
                 <div class="col-md-12 text-right"  ng-hide="quote.finalized !== '0'">
                     <span class="form-inline">
@@ -181,42 +143,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">
-                                        <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
-                                        {{ line.designation_desc }}
-                                    </span>
-                                    <input type="text" class="form-control" ng-model="line.designation_title" ng-show="line.edit">
-                                    <textarea class="form-control" ng-model="line.designation_desc" ng-show="line.edit"></textarea>
+                                    <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
+                                    {{ line.designation_desc }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.qty | number }}</span>
-                                    <input type="number" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
+                                    {{ line.qty | number }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.price_unit | currency }}</span>
-                                    <div class="input-group" ng-show="line.edit">
-                                        <input type="number" class="form-control" ng-model="line.price_unit" ng-change="updateSums(line)">
-                                        <div class="input-group-addon">€</div>
-                                    </div>
+                                    {{ line.price_unit | currency }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}</span>
-                                    <select ng-model="line.taxe" ng-change="updateSums(line)" class="form-control"  ng-show="line.edit">
-                                        <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.value}}">
-                                            {{ taxe.label }}
-                                        </option>
-                                    </select>
+                                    {{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}</span>
-                                    <div class="input-group" ng-show="line.edit">
-                                        <input type="number" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
-                                        <div class="input-group-addon">%</div>
-                                    </div>
+                                    {{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -243,15 +187,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td class="text-right" ng-hide="quote.finalized !== '0'">
-                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.type == 'abonnement' || line.edit">
-                                        <span class="fa fa-fw fa-pencil"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || !line.edit">
-                                        <span class="fa fa-fw fa-check"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-xs" ng-click="deleteLine(line)">
-                                        <span class="fa fa-fw fa-trash"></span>
-                                    </button>
+                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer"
+                                            ze-modalform="submitLine"
+                                            data-edit="line"
+                                            data-title="Editer la ligne du devis"
+                                            data-template="quoteLineTplUrl"></ze-btn>
+                                    <ze-btn fa="trash" color="danger" direction="left" hint="Supprimer" ng-click="deleteLine(line)" ze-confirmation></ze-btn>
                                 </td>
                             </tr>
                         </tbody>
@@ -288,11 +229,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     Remise Globale
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <span ng-hide="edit">-{{ quote.global_discount | number:2 }}%</span>
-                                    <div class="input-group" ng-show="edit">
-                                        <input type="text" class="form-control" ng-model="quote.global_discount" ng-change="updateTotals()">
-                                        <div class="input-group-addon">%</div>
-                                    </div>
+                                    -{{ quote.global_discount | number:2 }}%
                                 </div>
                             </div>
 
@@ -306,6 +243,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
 
                             <hr>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                Total TVA
+                            </div>
+                            <div class="col-md-6 text-right">
+                                {{ quote.total_tva | currency:'€':2 }}
+                            </div>
                         </div>
 
                         <div class="row total">
@@ -333,49 +279,66 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            <div ng-hide="edit">{{ quote.reference_client }}</div>
-            <input type="text" class="form-control" ng-model="quote.reference_client" ng-show="edit">
+            {{ quote.reference_client }}
             <br/>
             <strong>Date de création du devis :</strong>
-            <div ng-hide="edit">{{ quote.date_creation | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="quote.date_creation" ng-show="edit">
+            {{ quote.date_creation | date:'dd/MM/yyyy' }}
             <br/>
             <strong>Date de validité du devis :</strong>
-            <div ng-hide="edit">{{ quote.date_limit | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="quote.date_limit" ng-show="edit">
+            {{ quote.date_limit | date:'dd/MM/yyyy' }}
             <br/>
+        </div>
+
+        <div ng-if="navigationState=='addresses'">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="well">
+                        <strong>Adresse de facturation :</strong><br>
+                        {{ company.company_name }}<br ng-if="company.company_name">
+                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
+                        {{ quote.billing_address_1 }}<br ng-if="quote.billing_address_1">
+                        {{ quote.billing_address_2 }}<br ng-if="quote.billing_address_2">
+                        {{ quote.billing_address_3 }}<br ng-if="quote.billing_address_3">
+                        {{ quote.billing_zipcode + ' ' + quote.billing_city }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="well">
+                        <strong>Adresse de livraison :</strong><br>
+                        {{ company.company_name }}<br ng-if="company.company_name">
+                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
+                        {{ quote.delivery_address_1 }}<br ng-if="quote.delivery_address_1">
+                        {{ quote.delivery_address_2 }}<br ng-if="quote.delivery_address_2">
+                        {{ quote.delivery_address_3 }}<br ng-if="quote.delivery_address_3">
+                        {{ quote.delivery_zipcode + ' ' + quote.delivery_city }}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            <div ng-hide="edit">{{ quote.modalities }}</div>
-            <select ng-model="quote.modalities" class="form-control" ng-show="edit">
-                <option ng-repeat="modality in modalities">
-                    {{ modality.label }}
-                </option>
-            </select>
-            <br/>
+            {{ quote.modalities }}
         </div>
 
         <div ng-show="navigationState=='activity'">
             <div class="row">
-                <div class="col-md-12 text-right" ng-hide="quote.finalized !== '0'">
-                    <div class="text-right">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="">
+                <div class="col-md-12" ng-hide="quote.finalized !== '0'">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="addActivity()">
                             <i class="fa fa-fw fa-plus"></i> Activité
                         </button>
                     </div>
                     <div class="card_document" ng-repeat="activity in activities | orderBy:['-date','-id']">
                         <div class="card_document-head clearfix">
                             <div class="pull-right">
-                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click=""></ze-btn>
-                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="" ze-confirmation></ze-btn>
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editActivity(activity)"></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteActivity(activity)" ze-confirmation></ze-btn>
                             </div>
-                            {{ activity.label }}
+                            <strong>{{ activity.libelle }}</strong>
                         </div>
-                        <div class="card_document-body" ng-if="document.description">
-                            {{ activity.description }}
-                        </div>
+                        <div class="card_document-body" ng-if="activity.description">{{ activity.description }}</div>
                         <div class="card_document-footer text-muted">
                             Envoyé par <strong>{{ activity.name_user }}</strong> le <strong>{{ activity.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ activity.date | date:'HH:mm' }}</strong>
                         </div>
@@ -386,26 +349,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='document'">
             <div class="row">
-                <div class="col-md-12 text-right" ng-hide="quote.finalized !== '0'">
-                    <div class="text-right">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="">
+                <div class="col-md-12" ng-hide="quote.finalized !== '0'">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="addDocument()">
                             <i class="fa fa-fw fa-plus"></i> Document
                         </button>
                     </div>
                     <div class="card_document" ng-repeat="document in documents | orderBy:['-date','-id']">
                         <div class="card_document-head clearfix">
                             <div class="pull-right">
-                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click=""></ze-btn>
-                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="" ze-confirmation></ze-btn>
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editDocument(document)"></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteDocument(document)" ze-confirmation></ze-btn>
                             </div>
                             <i class="fa fa-fw fa-file"></i>
                             <a ng-href="{{ document.path }}" class="text-primary" target="_blank">
-                                {{ document.label }}
+                                <strong>{{ document.label }}</strong>
                             </a>
                         </div>
-                        <div class="card_document-body" ng-if="document.description">
-                            {{ document.description }}
-                        </div>
+                        <div class="card_document-body" ng-if="document.description">{{ document.description }}</div>
                         <div class="card_document-footer text-muted">
                             Envoyé par <strong>{{ document.name_user }}</strong> le <strong>{{ document.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ document.date | date:'HH:mm' }}</strong>
                         </div>
@@ -413,8 +374,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
             </div>
         </div>
-
-        <form-buttons ng-if="edit"></form-buttons>
 
     </form>
 

@@ -6,39 +6,30 @@ class Product extends ZeCtrl
 
     public function view()
     {
-        $data = array() ;
-
-        $this->load->view('product/view', $data);
+        $this->load->view('product/view');
     }
 
     public function details()
     {
-        $data = array() ;
-
-        $this->load->view('product/details', $data);
+        $this->load->view('product/details');
     }
 
     public function form($compose = false)
     {
-        $data = array() ;
-
         if($compose)
-            $this->load->view('product/form_compose', $data);
+            $this->load->view('product/form_compose');
         else
-            $this->load->view('product/form', $data);
+            $this->load->view('product/form');
     }
 
-    public function modal_search_product(){
-        $data = array() ;
-
-        $this->load->view('product/modal_search_product', $data);
+    public function modal_search_product()
+    {
+        $this->load->view('product/modal_search_product');
     }
 
     public function config()
     {
-        $data = array() ;
-
-        $this->load->view('product/config', $data);
+        $this->load->view('product/config');
     }
 
 
@@ -107,10 +98,26 @@ class Product extends ZeCtrl
         echo json_encode($products);
     }
 
-    public function getProductsOf($id = null){
-        $products = $this->_getProductsOf_r($id);
+    public function modal($id = '0', $limit = 15, $offset = 0){
+        $this->load->model("Zeapps_product_products", "products");
 
-        echo json_encode($products);
+        $filters = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($id !== "0")
+            $filters['id_cat'] = $this->_getSubCatIds_r($id);
+
+        $total = $this->products->count($filters);
+
+        if(!$products = $this->products->limit($limit, $offset)->all($filters)){
+            $products = [];
+        }
+
+        echo json_encode(array("data" => $products, "total" => $total));
     }
 
     public function save() {
@@ -213,22 +220,20 @@ class Product extends ZeCtrl
         }
     }
 
-    private function _getProductsOf_r($id = null){
-        $this->load->model("Zeapps_product_products", "products");
+    private function _getSubCatIds_r($id = null){
         $this->load->model("Zeapps_product_categories", "categories");
 
-        if(!$products = $this->products->all(array('id_cat' => $id))){
-            $products = [];
-        }
+        $ids = [];
+        $ids[] = $id;
 
         if($categories = $this->categories->all(array('id_parent' => $id))){
             foreach($categories as $category){
-                if($ret = $this->_getProductsOf_r($category->id)){
-                    $products = array_merge($products, $ret);
+                if($tmp = $this->_getSubCatIds_r($category->id)){
+                    $ids = array_merge($ids, $tmp);
                 }
             }
         }
 
-        return $products;
+        return $ids;
     }
 }

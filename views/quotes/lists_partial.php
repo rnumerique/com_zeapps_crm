@@ -4,19 +4,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div ng-controller="ComZeappsCrmQuoteListsPartialCtrl">
     <div class="row">
         <div class="col-md-12">
-            <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/quote/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Devis</a>
-            </div>
-            <h3>
-                Devis
-            </h3>
+            <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
+
+            <ze-btn fa="plus" color="success" hint="Devis" always-on="true"
+                    ze-modalform="add"
+                    data-template="templateQuote"
+                    data-title="Créer un nouveau devis"></ze-btn>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <ze-filters data-model="filter.model" data-options="filter.options"></ze-filters>
-        </div>
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
     </div>
 
     <div class="row">
@@ -37,14 +37,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="quote in quotes | com_zeapps_crmFilter:filter.model">
+                <tr ng-repeat="quote in quotes">
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.numerotation}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.libelle}}</a></td>
                     <td>
                         <a href="/ng/com_zeapps_crm/quote/{{quote.id}}">
-                            {{quote.company.company_name}}
-                            <span ng-if="quote.company.company_name && quote.contact.last_name">-</span>
-                            {{quote.contact ? quote.contact.first_name[0] + '. ' + quote.contact.last_name : ''}}
+                            {{quote.name_company}}
+                            <span ng-if="quote.name_company && quote.name_contact">-</span>
+                            {{quote.name_contact ? quote.name_contact : ''}}
                         </a>
                     </td>
                     <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ht | currency:'€':2}}</a></td>
@@ -54,13 +54,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.user_name}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.finalized === '1' ? 'cloturé' : ''}}</a></td>
                     <td class="text-right">
-                        <button type="button" class="btn btn-xs btn-danger" ng-click="delete(quote)">
-                            <i class="fa fa-trash fa-fw"></i>
-                        </button>
+                        <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
+                                ze-modalform="edit"
+                                data-edit="quote"
+                                data-title="Editer le devis"
+                                data-template="templateQuote"></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(quote)"></ze-btn>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+    </div>
+
 </div>

@@ -22,31 +22,49 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalI
 	$scope.tree = {
 		branches: []
 	};
-	$scope.quicksearch = "";
+    $scope.filters = {
+        main: [
+        	{
+				format: 'input',
+				field: 'ref LIKE',
+				type: 'text',
+				label: 'Référence'
+        	},
+        	{
+				format: 'input',
+				field: 'name LIKE',
+				type: 'text',
+				label: 'Nom du produit'
+        	}
+        ]
+    };
+    $scope.filter_model = {};
+    $scope.page = 1;
+    $scope.pageSize = 15;
 
 	$scope.cancel = cancel;
 	$scope.select_product = select_product;
+    $scope.loadList = loadList;
 
 	getTree();
 
-	$scope.$watch("activeCategory.data", function(value, old, scope){
+	$scope.$watch("activeCategory.data", function(value){
 		if(typeof(value.id) !== "undefined"){
-			zeHttp.crm.product.getOf(value.id).then(function (response) {
-				if (response.status == 200) {
-					if(!angular.isArray(response.data)){
-						if(response.data != "false") {
-							scope.products = new Array(response.data);
-						}
-						else
-							scope.products = new Array();
-					}
-					else{
-						scope.products = response.data;
-					}
-				}
-			});
+            loadList(value.id);
 		}
 	});
+
+    function loadList(id_cat) {
+        var offset = ($scope.page - 1) * $scope.pageSize;
+        var formatted_filters = angular.toJson($scope.filter_model);
+
+        zeHttp.crm.product.modal(id_cat, $scope.pageSize, offset, formatted_filters).then(function (response) {
+            if (response.status == 200) {
+                $scope.products = response.data.data;
+                $scope.total = response.data.total;
+            }
+        });
+    }
 
 	function getTree() {
 		zeHttp.crm.category.tree().then(function (response) {

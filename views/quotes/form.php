@@ -24,6 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-http="companyHttp"
                                 data-model="form.company.company_name"
                                 data-fields="companyFields"
+                                data-template-new="companyTplNew"
                                 data-title="Choisir une entreprise"></span>
                     </div>
 
@@ -80,6 +81,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-http="contactHttp"
                                 data-model="form.contact.name"
                                 data-fields="contactFields"
+                                data-template-new="contactTplNew"
                                 data-title="Choisir un contact"></span>
                     </div>
 

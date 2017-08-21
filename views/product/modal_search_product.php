@@ -19,6 +19,23 @@
             <h3 class="text-capitalize active-category-title">
                 {{ activeCategory.data.name }}
             </h3>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center" ng-show="total > pageSize">
+                        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+                            class="pagination-sm" boundary-links="true" max-size="9"
+                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+                    </div>
+                </div>
+            </div>
+
             <table class="table table-striped table-condensed">
                 <tr>
                     <th></th>
@@ -36,6 +53,16 @@
                     <td>{{ product.compose == 0 ? ( product.price_ht | currency ) : '-' }}</td>
                 </tr>
             </table>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center" ng-show="total > pageSize">
+                        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+                            class="pagination-sm" boundary-links="true" max-size="9"
+                            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

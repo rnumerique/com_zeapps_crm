@@ -13,6 +13,15 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/form');
     }
 
+    public function form_modal()
+    {
+        $this->load->view('quotes/form_modal');
+    }
+
+    public function form_line(){
+        $this->load->view('quotes/form_line');
+    }
+
     public function lists()
     {
         $this->load->view('quotes/lists');
@@ -36,6 +45,16 @@ class Quotes extends ZeCtrl
     public function modal()
     {
         $this->load->view('quotes/modal');
+    }
+
+    public function modal_activity()
+    {
+        $this->load->view('quotes/modal_activity');
+    }
+
+    public function modal_document()
+    {
+        $this->load->view('quotes/modal_document');
     }
 
 
@@ -120,7 +139,7 @@ class Quotes extends ZeCtrl
         echo json_encode($result);
     }
 
-    public function finalize($id) {
+    public function transform($id) {
         if($id) {
             $this->load->model("Zeapps_quotes", "quotes");
 
@@ -137,17 +156,10 @@ class Quotes extends ZeCtrl
             if($data){
                 foreach($data as $document => $value){
                     if($value == 'true'){
-                        $createFrom = 'create'.ucfirst($document).'From';
-                        $return[$document] = $this->$createFrom($id);
+                        $return[$document] = $this->createFrom($document, $id);
                     }
                 }
             }
-
-            $nomPDF = $this->makePDF($id, false);
-
-            $this->quotes->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
-
-            $return['nomPDF'] = $nomPDF;
 
             echo json_encode($return);
         }
@@ -156,17 +168,21 @@ class Quotes extends ZeCtrl
         }
     }
 
-    public function createOrderFrom($id){
+    public function createFrom($type, $id){
         if($id){
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_quotes", "quotes");
             $this->load->model("Zeapps_quote_companies", "quote_companies");
             $this->load->model("Zeapps_quote_contacts", "quote_contacts");
             $this->load->model("Zeapps_quote_lines", "quote_lines");
-            $this->load->model("Zeapps_orders", "orders");
-            $this->load->model("Zeapps_order_companies", "order_companies");
-            $this->load->model("Zeapps_order_contacts", "order_contacts");
-            $this->load->model("Zeapps_order_lines", "order_lines");
+            $type_model = $type."_model";
+            $this->load->model("Zeapps_".$type."s", $type_model);
+            $type_companies = $type."_companies";
+            $this->load->model("Zeapps_".$type."_companies", $type_companies);
+            $type_contacts = $type."_contacts";
+            $this->load->model("Zeapps_".$type."_contacts", $type_contacts);
+            $type_lines = $type."_lines";
+            $this->load->model("Zeapps_".$type."_lines", $type_lines);
 
             $quote = $this->quotes->get($id);
 
@@ -176,86 +192,98 @@ class Quotes extends ZeCtrl
             unset($quote->updated_at);
 
 
-            $format = $this->configs->get(array('id'=>'crm_order_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_order_frequency'))->value;
-            $num = $this->orders->get_numerotation($frequency);
+            $format = $this->configs->get(array('id'=>'crm_'.$type.'_format'))->value;
+            $frequency = $this->configs->get(array('id'=>'crm_'.$type.'_frequency'))->value;
+            $num = $this->$type_model->get_numerotation($frequency);
             $quote->numerotation = $this->parseFormat($format, $num);
 
-            $id_order = $this->orders->insert($quote);
+            $new_id = $this->$type_model->insert($quote);
+            $id_key = "id_".$type;
 
-            if($companies = $this->quote_companies->all(array('id_quote'=>$id))){
+            if($companies = $this->$type_companies->all(array('id_quote'=>$id))){
                 foreach($companies as $company){
                     unset($company->id);
                     unset($company->id_quote);
                     unset($company->created_at);
                     unset($company->updated_at);
 
-                    $company->id_order = $id_order;
+                    $company->$id_key = $new_id;
 
-                    $this->order_companies->insert($company);
+                    $this->$type_companies->insert($company);
                 }
             }
 
-            if($contacts = $this->quote_contacts->all(array('id_quote'=>$id))){
+            if($contacts = $this->$type_contacts->all(array('id_quote'=>$id))){
                 foreach($contacts as $contact){
                     unset($contact->id);
                     unset($contact->id_quote);
                     unset($contact->created_at);
                     unset($contact->updated_at);
 
-                    $contact->id_order = $id_order;
+                    $contact->$id_key = $new_id;
 
-                    $this->order_contacts->insert($contact);
+                    $this->$type_contacts->insert($contact);
                 }
             }
 
-            if($lines = $this->quote_lines->all(array('id_quote'=>$id))){
+            if($lines = $this->$type_lines->all(array('id_quote'=>$id))){
                 foreach($lines as $line){
                     unset($line->id);
                     unset($line->id_quote);
                     unset($line->created_at);
                     unset($line->updated_at);
 
-                    $line->id_order = $id_order;
+                    $line->$id_key = $new_id;
 
-                    $this->order_lines->insert($line);
+                    $this->$type_lines->insert($line);
                 }
             }
 
         }
 
-        return $id_order;
+        return $new_id;
     }
 
-    public function getAll($id_company = '0', $type = 'company') {
+    public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_users", "users");
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
         $this->load->model("Zeapps_quote_contacts", "quote_contacts");
         $this->load->model("Zeapps_quote_lines", "quote_lines");
 
-        if($id_company !== '0')
-            $quotes = $this->quotes->all(array('id_'.$type=>$id_company));
-        else
-            $quotes = $this->quotes->all();
+        $filters = array() ;
 
-        if($quotes && is_array($quotes)){
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($id !== '0') {
+            $filters['id_' . $type] = $id;
+        }
+
+
+
+        if($quotes = $this->quotes->limit($limit, $offset)->all($filters)){
             for($i=0;$i<sizeof($quotes);$i++){
-                $user = $this->users->get($quotes[$i]->id_user);
-                if($user) {
-                    $quotes[$i]->user_name = $user->firstname[0] . '. ' . $user->lastname;
-                }
                 $quotes[$i]->company = $this->quote_companies->get(array('id_quote'=>$quotes[$i]->id));
                 $quotes[$i]->contact = $this->quote_contacts->get(array('id_quote'=>$quotes[$i]->id));
                 $quotes[$i]->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$quotes[$i]->id));
             }
         }
-
-        if ($quotes == false) {
-            echo json_encode(array());
-        } else {
-            echo json_encode($quotes);
+        else{
+            $quotes = [];
         }
+        $total = $this->quotes->count($filters);
+
+        if($context){
+
+        }
+
+        echo json_encode(array(
+            'quotes' => $quotes,
+            'total' => $total
+        ));
 
     }
 
@@ -510,77 +538,7 @@ class Quotes extends ZeCtrl
         }
     }
 
-    public function uploadDocuments($id_quote = null){
-        if($id_quote) {
-            $this->load->model("Zeapps_quote_documents", "quote_documents");
-
-            $data = [];
-            $res = [];
-
-            $data['id_quote'] = $id_quote;
-
-            $files = $_FILES['files'];
-
-            $path = '/assets/upload/crm/quotes/';
-
-            $time = time();
-
-            $year = date('Y', $time);
-            $month = date('m', $time);
-            $day = date('d', $time);
-            $hour = date('H', $time);
-
-            $data['created_at'] = $year . '-' . $month . '-' . $day;
-
-            $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
-
-            recursive_mkdir(FCPATH . $path);
-
-            for ($i = 0; $i < sizeof($files['name']); $i++) {
-                $arr = explode(".", $files["name"][$i]);
-                $extension = end($arr);
-
-                $data['name'] = implode('.', array_slice($arr, 0, -1)); // entire name except the extension
-
-                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
-
-                move_uploaded_file($files["tmp_name"][$i], FCPATH . $data['path']);
-
-                $data['id'] = $this->quote_documents->insert($data);
-
-                array_push($res, $data);
-
-                unset($data['id']);
-            }
-
-            echo json_encode($res);
-        }
-        else {
-            echo json_encode('false');
-        }
-    }
-
-    public function deleteDocument($id = null){
-        if($id){
-            $this->load->model("Zeapps_quote_documents", "quote_documents");
-
-            $document = $this->quote_documents->get($id);
-
-            $path = FCPATH;
-
-            if(unlink($path . $document->path))
-                echo json_encode($this->quote_documents->delete($id));
-            else
-                echo json_encode(false);
-
-        }
-        else{
-            echo json_encode(false);
-        }
-        return true;
-    }
-
-    public function saveActivity(){
+    public function activity(){
         $this->load->model("Zeapps_quote_activities", "quote_activities");
 
         // constitution du tableau
@@ -591,23 +549,97 @@ class Quotes extends ZeCtrl
             $data = json_decode(file_get_contents('php://input'), true);
         }
 
-        if (isset($data["id"]) && is_numeric($data["id"])) {
-            $this->quote_activities->update($data, $data["id"]);
-        } else {
+        if($data['id']){
+            $this->quote_activities->update($data, $data['id']);
+            $id = $data['id'];
+        }
+        else{
             $id = $this->quote_activities->insert($data);
-            $data['id'] = $id;
         }
 
-        echo json_encode($data);
+        $quote_activities = $this->quote_activities->get($id);
+
+        echo json_encode($quote_activities);
     }
 
-    public function deleteActivity($id = null){
-        if($id){
-            $this->load->model("Zeapps_quote_activities", "quote_activities");
+    public function del_activity($id){
+        $this->load->model("Zeapps_quote_activities", "quote_activities");
 
-            echo json_encode($this->quote_activities->delete($id));
+        echo json_encode($this->quote_activities->delete($id));
+    }
 
+    public function uploadDocuments($id_quote = null){
+        if($id_quote) {
+            $this->load->model("Zeapps_quote_documents", "quote_documents");
+
+            $data = $_POST;
+            $files = $_FILES['files'];
+            if($files) {
+                if($data['path']){
+                    unlink($data['path']);
+                }
+
+                $data['id_quote'] = $id_quote;
+
+                $path = '/assets/upload/crm/quotes/';
+
+                $time = time();
+
+                $year = date('Y', $time);
+                $month = date('m', $time);
+                $day = date('d', $time);
+                $hour = date('H', $time);
+
+                $data['created_at'] = $year . '-' . $month . '-' . $day;
+
+                $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
+
+                recursive_mkdir(FCPATH . $path);
+
+                $arr = explode(".", $files["name"][0]);
+                $extension = end($arr);
+
+                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
+
+                move_uploaded_file($files["tmp_name"][0], FCPATH . $data['path']);
+
+                if ($data['id']) {
+                    $this->quote_documents->update($data, $data['id']);
+                } else {
+                    $data['id'] = $this->quote_documents->insert($data);
+                }
+                $data['date'] = date('Y-m-d H:i:s');
+
+                echo json_encode($data);
+            }
+            else{
+                if ($data['id']) {
+                    $this->quote_documents->update($data, $data['id']);
+
+                    $data['date'] = date('Y-m-d H:i:s');
+
+                    echo json_encode($data);
+                }
+                else {
+                    echo json_encode(false);
+                }
+            }
         }
+        else {
+            echo json_encode(false);
+        }
+    }
+
+    public function del_document($id){
+        $this->load->model("Zeapps_quote_documents", "quote_documents");
+
+        if($document = $this->quote_documents->get($id)){
+            unlink($document->path);
+
+            $this->quote_documents->delete($id);
+        }
+
+        echo 'OK';
     }
 
     private function parseFormat($result = null, $num = null)

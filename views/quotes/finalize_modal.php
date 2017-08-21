@@ -2,7 +2,6 @@
     <h3 class="modal-title">{{titre}}</h3>
 </div>
 
-
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12">
@@ -14,6 +13,18 @@
             <label>
                 <input type='checkbox' ng-model="form.order">
                 Bon de Commande
+            </label>
+        </div>
+        <div class="col-md-12">
+            <label>
+                <input type='checkbox' ng-model="form.delivery">
+                Bon de livraison
+            </label>
+        </div>
+        <div class="col-md-12">
+            <label>
+                <input type='checkbox' ng-model="form.invoice">
+                Facture
             </label>
         </div>
     </div>
