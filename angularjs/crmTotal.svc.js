@@ -1,118 +1,140 @@
 app.factory("crmTotal", function(){
+
+	var doc = {};
+	var lines = [];
     
 	var service = {
-		sub : {
-			HT : subtotalHT,
-			TTC : subtotalTTC
-		},
-		preDiscount : {
-			HT : totalPreDiscountHT,
-			TTC : totalPreDiscountTTC
-		},
-		discount : totalDiscount,
-		total : {
-			HT : totalHT,
-			TVA : totalTVA,
-			TTC : totalTTC
+		init: init,
+        sub : {
+            HT : subtotalHT,
+            TTC : subtotalTTC
+        },
+		get: {
+			totals: {}
 		}
+
 	};
     
 	return service;
-    
-    
-	function subtotalHT(array, index){
-		var total = 0;
-		for(var i = index - 1; i >= 0; i--){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ht);
-			}
-			else if(array[i].type === "subTotal"){
-				i = -1;
-			}
-		}
-		return total;
+
+	function init(d, l){
+        doc = d;
+		lines = l;
+
+		process();
 	}
 
-	function subtotalTTC(array, index){
-		var total = 0;
-		for(var i = index - 1; i >= 0; i--){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ttc);
-			}
-			else if(array[i].type === "subTotal"){
-				i = -1;
-			}
-		}
-		return total;
+	function process(){
+        makeTVAarray();
+		calcTotals();
 	}
 
-	function totalPreDiscountHT(array){
-		var total = 0;
-		for(var i = 0; i < array.length; i++){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ht);
-			}
-		}
-		return total;
+	function makeTVAarray(){
+		var tmp = {};
+		angular.forEach(lines, function(line){
+			if(line !== undefined && line.type !== "subTotal" && line.type !== "comment") {
+				console.log(line.id_taxe);
+                if (tmp[line.id_taxe] === undefined) {
+                    tmp[line.id_taxe] = {
+                        ht: 0,
+                        value_taxe: parseFloat(line.value_taxe)
+                    };
+                }
+
+                tmp[line.id_taxe].ht += parseFloat(line.total_ht);
+                tmp[line.id_taxe].value = parseFloat(tmp[line.id_taxe].ht) * (parseFloat(tmp[line.id_taxe].value_taxe) / 100);
+            }
+		});
+
+		service.get.tvas = tmp;
 	}
 
-	function totalPreDiscountTTC(array){
-		var total = 0;
-		for(var i = 0; i < array.length; i++){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ttc);
-			}
-		}
-		return total;
+	function calcTotals(){
+		calcTotalPreDiscountHT();
+		calcTotalPreDiscountTTC();
+		calcTotalDiscount();
+		calcTotalHT();
+		calcTotalTVA();
+		calcTotalTTC();
 	}
 
-	function totalDiscount(array, global_discount){
+	function calcTotalPreDiscountHT(){
+		var t = 0;
+		for(var i = 0; i < lines.length; i++){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+				t += parseFloat(lines[i].price_unit);
+			}
+		}
+		service.get.totals.total_prediscount_ht = t;
+	}
+
+	function calcTotalPreDiscountTTC(){
+		var t = 0;
+		for(var i = 0; i < lines.length; i++){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+				t += parseFloat(lines[i].price_unit) * ( 1 + (parseFloat(lines[i].value_taxe) / 100));
+			}
+		}
+        service.get.totals.total_prediscount_ttc = t;
+	}
+
+	function calcTotalDiscount(){
 		var discount = 0;
-		var total = 0;
-
-		for (var i = 0; i < array.length; i++) {
-			if (array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment") {
-				discount = parseFloat(array[i].price_unit) * ( 1 -  ( 1 - parseFloat(array[i].discount) / 100) * ( 1 - parseFloat(global_discount) / 100) );
-				total += discount;
+		var t = 0;
+		for (var i = 0; i < lines.length; i++) {
+			if (lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment") {
+				discount = parseFloat(lines[i].price_unit) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) );
+				t += discount;
 			}
 		}
-
-		return total;
+        service.get.totals.total_discount = t;
 	}
 
-	function totalHT(array){
-		var total = 0;
-
-		for(var i = 0; i < array.length; i++){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ht);
+	function calcTotalHT(){
+		var t = 0;
+		for(var i = 0; i < lines.length; i++){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+				t += parseFloat(lines[i].total_ht);
 			}
 		}
-
-		return total;
+        service.get.totals.total_ht = t;
 	}
 
-	function totalTVA(array){
-		var total = 0;
-
-		for(var i = 0; i < array.length; i++){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ht) * (parseFloat(array[i].taxe) / 100);
-			}
-		}
-
-		return total;
+	function calcTotalTVA(){
+		var t = 0;
+		angular.forEach(service.get.tvas, function(tva){
+			t += parseFloat(tva.value)
+		});
+        service.get.totals.total_tva = t;
 	}
 
-	function totalTTC(array){
-		var total = 0;
-
-		for(var i = 0; i < array.length; i++){
-			if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-				total += parseFloat(array[i].total_ttc);
-			}
-		}
-
-		return total;
+	function calcTotalTTC(){
+        service.get.totals.total_ttc = parseFloat(service.get.totals.total_ht) + parseFloat(service.get.totals.total_tva);
 	}
+
+    function subtotalHT(array, index){
+        var t = 0;
+        for(var i = index - 1; i >= 0; i--){
+            if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
+                t += parseFloat(array[i].total_ht);
+            }
+            else if(array[i].type === "subTotal"){
+                i = -1;
+            }
+        }
+        return t;
+    }
+
+    function subtotalTTC(array, index){
+        var t = 0;
+        for(var i = index - 1; i >= 0; i--){
+            if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
+                t += parseFloat(array[i].total_ttc);
+            }
+            else if(array[i].type === "subTotal"){
+                i = -1;
+            }
+        }
+        return t;
+    }
 });
