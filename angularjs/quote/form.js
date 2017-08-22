@@ -52,11 +52,13 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 		});
 
 		function Initform(){
-			$scope.form.id_user_account_manager = $rootScope.user.id;
-			$scope.form.name_user_account_manager = $rootScope.user.firstname + " " + $rootScope.user.lastname;
-			$scope.form.date_creation = new Date();
-			$scope.form.date_limit = new Date();
-			$scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+			if($scope.form.id === undefined) {
+                $scope.form.id_user_account_manager = $rootScope.user.id;
+                $scope.form.name_user_account_manager = $rootScope.user.firstname + " " + $rootScope.user.lastname;
+                $scope.form.date_creation = new Date();
+                $scope.form.date_limit = new Date();
+                $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
+            }
 		}
 
 		function updateDateLimit(){
