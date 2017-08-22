@@ -80,7 +80,7 @@
             ?>
         </td>
         <td id="billing_address">
-            <br>
+            <b>Adresse de facturation</b><br>
             <?php
             if($company)
                 echo $company->company_name . '<br>';
@@ -155,8 +155,8 @@
                             </tr>
                             <?php
                         } else {
-                            $subtotal_ht = floatval($line->price_unit) * floatval($line->qty);
-                            $subtotal_ttc = floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
+                            $subtotal_ht += floatval($line->total_ht);
+                            $subtotal_ttc += floatval($line->total_ttc);
                             ?>
                             <tr>
                                 <td class="text-left"><?php echo $line->ref; ?></td>
@@ -198,9 +198,9 @@
                     if($line->type !== 'subTotal' && $line->type !== 'comment' && floatval($line->taxe) != 0) {
                         ?>
                         <tr>
-                            <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
+                            <td><?php echo number_format(floatval($line->total_ht), 2, ',', ' '); ?></td>
                             <td><?php echo number_format(floatval($line->taxe), 2, ',', ' '); ?></td>
-                            <td><?php echo number_format((floatval($line->price_unit) * floatval($line->taxe) / 100), 2, ',', ' '); ?></td>
+                            <td><?php echo number_format((floatval($line->total_ht) * floatval($line->taxe) / 100), 2, ',', ' '); ?></td>
                         </tr>
                         <?php
                     }
