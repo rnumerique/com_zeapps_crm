@@ -32,9 +32,9 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/lists_partial');
     }
 
-    public function finalize_modal()
+    public function transform_modal()
     {
-        $this->load->view('quotes/finalize_modal');
+        $this->load->view('quotes/transform_modal');
     }
 
     public function config()
@@ -60,7 +60,6 @@ class Quotes extends ZeCtrl
 
 
     public function makePDF($id, $echo = true){
-
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
         $this->load->model("Zeapps_quote_contacts", "quote_contacts");
@@ -191,7 +190,6 @@ class Quotes extends ZeCtrl
             unset($quote->created_at);
             unset($quote->updated_at);
 
-
             $format = $this->configs->get(array('id'=>'crm_'.$type.'_format'))->value;
             $frequency = $this->configs->get(array('id'=>'crm_'.$type.'_frequency'))->value;
             $num = $this->$type_model->get_numerotation($frequency);
@@ -261,8 +259,6 @@ class Quotes extends ZeCtrl
         if($id !== '0') {
             $filters['id_' . $type] = $id;
         }
-
-
 
         if($quotes = $this->quotes->limit($limit, $offset)->all($filters)){
             for($i=0;$i<sizeof($quotes);$i++){

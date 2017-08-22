@@ -205,7 +205,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function transform(){
-			zeapps_modal.loadModule("com_zeapps_crm", "finalize_quote", {}, function(objReturn) {
+			zeapps_modal.loadModule("com_zeapps_crm", "transform_quote", {}, function(objReturn) {
 				if (objReturn) {
 					var formatted_data = angular.toJson(objReturn);
 					zhttp.crm.quote.transform($scope.quote.id, formatted_data).then(function(response){

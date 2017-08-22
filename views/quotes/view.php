@@ -89,7 +89,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState =='body'">
             <div class="row">
-                <div class="col-md-12 text-right"  ng-hide="quote.finalized !== '0'">
+                <div class="col-md-12 text-right">
                     <span class="form-inline">
                         <label>Code produit :</label>
                         <span class="input-group">
@@ -132,7 +132,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th class="text-right">Remise</th>
                                 <th class="text-right">Montant HT</th>
                                 <th class="text-right">Montant TTC</th>
-                                <th ng-hide="quote.finalized !== '0'"></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody ui-sortable="sortable" class="sortableContainer" ng-model="lines">
@@ -156,7 +156,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    {{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}
+                                    {{ line.id_taxe != 0 ? (line.value_taxe | currency:'%':2) : '' }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -186,9 +186,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {{ line.designation_desc }}
                                 </td>
 
-                                <td class="text-right" ng-hide="quote.finalized !== '0'">
-                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer"
-                                            ze-modalform="submitLine"
+                                <td class="text-right">
+                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
+                                            ze-modalform="updateQuote"
                                             data-edit="line"
                                             data-title="Editer la ligne du devis"
                                             data-template="quoteLineTplUrl"></ze-btn>
@@ -324,7 +324,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='activity'">
             <div class="row">
-                <div class="col-md-12" ng-hide="quote.finalized !== '0'">
+                <div class="col-md-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-xs btn-success" ng-click="addActivity()">
                             <i class="fa fa-fw fa-plus"></i> Activité
@@ -349,7 +349,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='document'">
             <div class="row">
-                <div class="col-md-12" ng-hide="quote.finalized !== '0'">
+                <div class="col-md-12">
                     <div class="pull-right">
                         <button type="button" class="btn btn-xs btn-success" ng-click="addDocument()">
                             <i class="fa fa-fw fa-plus"></i> Document
