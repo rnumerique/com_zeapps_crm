@@ -201,7 +201,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                        <tr>
+                            <th>Base TVA</th>
+                            <th class="text-right">Taux TVA</th>
+                            <th class="text-right">Montant TVA</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="tva in tvas">
+                            <td>{{ tva.ht | currency:'€':2 }}</td>
+                            <td class="text-right">{{ tva.value_taxe | currency:'%':2 }}</td>
+                            <td class="text-right">{{ tva.value | currency:'€':2 }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="col-md-5 col-md-offset-2">
                     <div class="well well-sm">
