@@ -203,7 +203,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5 col-md-offset-2">
                     <div class="well well-sm">
                         <div ng-if="quote.total_discount > 0">
                             <div class="row">
@@ -226,7 +226,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    Remise Globale
+                                    Remise globale
                                 </div>
                                 <div class="col-md-6 text-right">
                                     -{{ quote.global_discount | number:2 }}%
@@ -235,7 +235,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    Remise (avant Taxes)
+                                    Remise totale HT
                                 </div>
                                 <div class="col-md-6 text-right">
                                     {{ quote.total_discount | currency:'€':2 }}
