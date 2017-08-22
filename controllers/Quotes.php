@@ -92,7 +92,7 @@ class Quotes extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/quotes/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Devis €n° : '.$data['quote']->numerotation.'|C. Compta : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['quote']->numerotation.'|C. Compta : '.$data['quote']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
