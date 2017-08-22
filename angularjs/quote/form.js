@@ -27,12 +27,21 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
             {label:'Gestionnaire du compte',key:'name_user_account_manager'}
         ];
 
+        $scope.accountingNumberHttp = zhttp.crm.accounting_number;
+        $scope.accountingNumberTplNew = '/com_zeapps_crm/accounting_numbers/form_modal/';
+        $scope.accountingNumberFields = [
+            {label:'Libelle',key:'label'},
+            {label:'Numero',key:'number'},
+            {label:'Type',key:'type_label'}
+        ];
+
 		$scope.updateDateLimit = updateDateLimit;
 		$scope.success = success;
 		$scope.cancel = cancel;
 		$scope.loadAccountManager = loadAccountManager;
 		$scope.loadCompany = loadCompany;
 		$scope.loadContact = loadContact;
+        $scope.loadAccountingNumber = loadAccountingNumber;
 
 		Initform();
 
@@ -142,4 +151,11 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
             }
         }
 
+        function loadAccountingNumber(accounting_number) {
+            if (accounting_number) {
+                $scope.$parent.form.accounting_number = accounting_number.number;
+            } else {
+                $scope.$parent.form.accounting_number = "";
+            }
+        }
 	}]);
