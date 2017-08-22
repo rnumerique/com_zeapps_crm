@@ -32,7 +32,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
-                    <th></th>
+                    <th class="text-right">%</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -52,7 +53,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_creation | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_limit | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.user_name}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.finalized === '1' ? 'cloturé' : ''}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.probability | number:2}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.status}}</a></td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
                                 ze-modalform="edit"

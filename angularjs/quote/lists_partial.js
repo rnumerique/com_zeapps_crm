@@ -144,11 +144,14 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
             zhttp.crm.quote.get_all(src_id, src, $scope.pageSize, offset, context, formatted_filters).then(function (response) {
                 if (response.data && response.data != "false") {
                     $rootScope.quotes = response.data.quotes;
+
                     for (var i = 0; i < $rootScope.quotes.length; i++) {
                         $rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
                         $rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
                         $rootScope.quotes[i].global_discount = parseFloat($rootScope.quotes[i].global_discount);
+                        $rootScope.quotes[i].probability = parseFloat($rootScope.quotes[i].probability);
                     }
+
                     $scope.total = response.data.total;
                 }
             });

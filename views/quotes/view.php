@@ -28,6 +28,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-6">
                     <div class="pull-right">
                         <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
+
+                        <span class="form-group form-inline">
+                            <select class="form-control input-sm" ng-model="quote.status" ng-change="updateStatus()">
+                                <option>En cours</option>
+                                <option>Gagné</option>
+                                <option>Perdu</option>
+                            </select>
+                        </span>
+
+                        ({{ quote.probability | number:2 }}%)
+
                         <ze-btn fa="pencil" color="info" hint="Editer"
                                 ze-modalform="edit"
                                 data-edit="quote"

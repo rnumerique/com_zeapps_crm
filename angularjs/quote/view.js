@@ -29,6 +29,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.last_quote = last_quote;
 
 		$scope.edit = edit;
+		$scope.updateStatus = updateStatus;
 		$scope.transform = transform;
 
 		$scope.addFromCode = addFromCode;
@@ -95,6 +96,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                     });
 
                     $scope.quote.global_discount = parseFloat($scope.quote.global_discount);
+                    $scope.quote.probability = parseFloat($scope.quote.probability);
 					$scope.quote.date_creation = new Date($scope.quote.date_creation);
 					$scope.quote.date_limit = new Date($scope.quote.date_limit);
 

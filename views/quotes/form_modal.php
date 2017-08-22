@@ -25,6 +25,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
+                <label>Status</label>
+                <select class="form-control" ng-model="form.status">
+                    <option>En cours</option>
+                    <option>Gagné</option>
+                    <option>Perdu</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Probabilité</label>
+                <input type="number" class="form-control" ng-model="form.probability">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
                 <label>Société <span class="required">**</span></label>
                 <span   ze-modalsearch="loadCompany"
                         data-http="companyHttp"
