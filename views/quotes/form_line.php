@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div class="row">
+<div class="row" ng-controller="ComZeappsCrmQuoteFormLineCtrl">
     <div class="col-md-12">
         <div class="form-group">
             <label>Désignation</label>
@@ -32,8 +32,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="col-md-3">
         <div class="form-group">
             <label>Taxe</label>
-            <select ng-model="form.taxe" class="form-control">
-                <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.value}}">
+            <select ng-model="form.id_taxe" class="form-control" ng-change="updateTaxe()">
+                <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.id}}">
                     {{ taxe.label }}
                 </option>
             </select>
