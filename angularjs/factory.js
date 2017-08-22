@@ -147,6 +147,10 @@ app.config(["$provide",
 					save : save_warehouse,
 					save_all : saveAll_warehouse,
 					del : delete_warehouse
+				},
+				accounting_number : {
+					modal : modal_accountingNumber,
+					save : save_accountingNumber
 				}
 			};
 
@@ -516,6 +520,15 @@ app.config(["$provide",
 			function delete_warehouse(id){
 				return zeHttp.post("/com_zeapps_crm/warehouse/delete/"+id);
 			}
+
+
+			// ACCOUNTING NUMBERS
+            function modal_accountingNumber(limit, offset, filters){
+                return zeHttp.post("/com_zeapps_crm/accounting_numbers/modal/" + limit + "/" + offset, filters)
+            }
+            function save_accountingNumber(data){
+                return zeHttp.post("/com_zeapps_crm/accounting_numbers/save/", data)
+            }
 
 
 			// CONFIG
