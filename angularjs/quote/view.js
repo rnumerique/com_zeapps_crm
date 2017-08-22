@@ -3,8 +3,8 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
 
-		$scope.$on("comZeappsCrm_triggerOrderHook", broadcast);
-		$scope.hooks = zeHooks.get("comZeappsCrm_OrderHook");
+		$scope.$on("comZeappsCrm_triggerQuoteHook", broadcast);
+		$scope.hooks = zeHooks.get("comZeappsCrm_QuoteHook");
 
 		$scope.progress = 0;
 		$scope.activities = [];
@@ -28,8 +28,8 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.next_quote = next_quote;
 		$scope.last_quote = last_quote;
 
-		$scope.edit = edit;
 		$scope.updateStatus = updateStatus;
+		$scope.updateQuote = updateQuote;
 		$scope.transform = transform;
 
 		$scope.addFromCode = addFromCode;
@@ -39,10 +39,6 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.addSubTotal = addSubTotal;
 		$scope.addComment = addComment;
 
-		$scope.updateSums = updateSums;
-		$scope.updateTotals = updateTotals;
-
-		$scope.submitLine = submitLine;
 		$scope.deleteLine = deleteLine;
 
 		$scope.subtotalHT = subtotalHT;
@@ -82,7 +78,6 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			zhttp.crm.quote.get($routeParams.id).then(function(response){
 				if(response.data && response.data != "false"){
 					$scope.quote = response.data.quote;
-					$scope.sortable.disabled = !!parseInt($scope.quote.finalized);
 					$scope.company = response.data.company;
 					$scope.contact = response.data.contact;
 					$scope.activities = response.data.activities || [];
@@ -117,6 +112,16 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 						line.discount = parseFloat(line.discount);
 					});
 					$scope.lines = lines;
+
+                    crmTotal.init($scope.quote, $scope.lines);
+                    $scope.tvas = crmTotal.get.tvas;
+                    var totals = crmTotal.get.totals;
+                    $scope.quote.total_prediscount_ht = totals.total_prediscount_ht;
+                    $scope.quote.total_prediscount_ttc = totals.total_prediscount_ttc;
+                    $scope.quote.total_discount = totals.total_discount;
+                    $scope.quote.total_ht = totals.total_ht;
+                    $scope.quote.total_tva = totals.total_tva;
+                    $scope.quote.total_ttc = totals.total_ttc;
 				}
 			});
 		}
@@ -179,31 +184,22 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			}
 		}
 
-		function edit(){
-			var data = $scope.quote;
+        function updateStatus(){
+			var data = {};
 
-			var y = data.date_creation.getFullYear();
-			var M = data.date_creation.getMonth();
-			var d = data.date_creation.getDate();
-
-			data.date_creation = new Date(Date.UTC(y, M, d));
-
-			var y = data.date_limit.getFullYear();
-			var M = data.date_limit.getMonth();
-			var d = data.date_limit.getDate();
-
-			data.date_limit = new Date(Date.UTC(y, M, d));
+			data.id = $scope.quote.id;
+			data.status = $scope.quote.status;
 
 			var formatted_data = angular.toJson(data);
 
 			zhttp.crm.quote.save(formatted_data).then(function(response){
-				if(response.data && response.data != "false"){
-                    $rootScope.toasts.push({success:"Les informations du devis ont bien été mises a jour"});
-				}
-				else{
-                    $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour des informations du devis"});
-				}
-			});
+                if(response.data && response.data != "false"){
+                    $rootScope.toasts.push({success:"Le status du devis a bien été mis à jour."});
+                }
+                else{
+                    $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour du status du devis"});
+                }
+            });
 		}
 
 		function transform(){
@@ -227,7 +223,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                 zhttp.crm.product.get_code(code).then(function (response) {
                     if (response.data && response.data != "false") {
                         var line = {
-                            id_order: $routeParams.id,
+                            id_quote: $routeParams.id,
                             type: "product",
                             id_product: response.data.id,
                             ref: response.data.ref,
@@ -245,11 +241,11 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                         $scope.codeProduct = "";
 
                         var formatted_data = angular.toJson(line);
-                        zhttp.crm.order.line.save(formatted_data).then(function (response) {
+                        zhttp.crm.quote.line.save(formatted_data).then(function (response) {
                             if (response.data && response.data != "false") {
                                 line.id = response.data;
                                 $scope.lines.push(line);
-                                updateTotals();
+                                updateQuote();
                             }
                         });
                     }
@@ -269,7 +265,6 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		function addLine(){
 			// charge la modal de la liste de produit
 			zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
-				//console.log(objReturn);
 				if (objReturn) {
 					var line = {
 						id_quote: $routeParams.id,
@@ -292,7 +287,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 						if(response.data && response.data != "false"){
 							line.id = response.data;
 							$scope.lines.push(line);
-							updateTotals();
+                            updateQuote();
 						}
 					});
 				}
@@ -311,7 +306,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 				if(response.data && response.data != "false"){
 					subTotal.id = response.data;
 					$scope.lines.push(subTotal);
-					updateTotals();
+                    updateQuote();
 				}
 			});
 		}
@@ -339,31 +334,11 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function editLine(line){
-			if(line.type === "product")
-				updateSums(line);
-			else{
-				$rootScope.$broadcast("comZeappsCrm_quoteEditTrigger",
-					{
-						line : line
-					}
-				);
-			}
-		}
-
-		function updateSums(line){
-			line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) );
-			line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) ) * ( 1 + (parseFloat(line.taxe) / 100) );
-		}
-
-		function submitLine(line){
-            updateSums(line);
-			var formatted_data = angular.toJson(line);
-			zhttp.crm.quote.line.save(formatted_data).then(function(response){
-				if(response.data && response.data != "false"){
-					line.edit = false;
-					updateTotals();
+			$rootScope.$broadcast("comZeappsCrm_quoteEditTrigger",
+				{
+					line : line
 				}
-			});
+			);
 		}
 
 		function deleteLine(line){
@@ -378,7 +353,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 							}
 						);
 
-						updateTotals();
+                        updateQuote();
 					}
 				});
 			}
@@ -392,20 +367,55 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			return crmTotal.sub.TTC($scope.lines, index);
 		}
 
-		function updateTotals(){
+        function updateSums(line){
+            line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) );
+            line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) ) * ( 1 + (parseFloat(line.value_taxe) / 100) );
+        }
+
+		function updateQuote(){
 			if($scope.quote) {
-				$scope.quote.total_prediscount_ht = crmTotal.preDiscount.HT($scope.lines);
-				$scope.quote.total_prediscount_ttc = crmTotal.preDiscount.TTC($scope.lines);
-				$scope.quote.total_discount = crmTotal.discount($scope.lines, $scope.quote.global_discount);
-				$scope.quote.total_ht = crmTotal.total.HT($scope.lines);
-				$scope.quote.total_tva = crmTotal.total.TVA($scope.lines);
-				$scope.quote.total_ttc = crmTotal.total.TTC($scope.lines);
+				angular.forEach($scope.lines, function(line){
+					updateSums(line);
+                    if(line.id){
+                        editLine(line);
+                    }
+                    var formatted_data = angular.toJson(line);
+                    zhttp.crm.quote.line.save(formatted_data)
+				});
 
-				var data = $scope.quote;
+                crmTotal.init($scope.quote, $scope.lines);
+                $scope.tvas = crmTotal.get.tvas;
+                var totals = crmTotal.get.totals;
+				$scope.quote.total_prediscount_ht = totals.total_prediscount_ht;
+				$scope.quote.total_prediscount_ttc = totals.total_prediscount_ttc;
+				$scope.quote.total_discount = totals.total_discount;
+				$scope.quote.total_ht = totals.total_ht;
+				$scope.quote.total_tva = totals.total_tva;
+				$scope.quote.total_ttc = totals.total_ttc;
 
-				var formatted_data = angular.toJson(data);
+                var data = $scope.quote;
 
-				zhttp.crm.quote.save(formatted_data);
+                var y = data.date_creation.getFullYear();
+                var M = data.date_creation.getMonth();
+                var d = data.date_creation.getDate();
+
+                data.date_creation = new Date(Date.UTC(y, M, d));
+
+                var y = data.date_limit.getFullYear();
+                var M = data.date_limit.getMonth();
+                var d = data.date_limit.getDate();
+
+                data.date_limit = new Date(Date.UTC(y, M, d));
+
+                var formatted_data = angular.toJson(data);
+                zhttp.crm.quote.save(formatted_data).then(function(response){
+                    if(response.data && response.data != "false"){
+                        $rootScope.toasts.push({success:"Les informations du devis ont bien été mises a jour"});
+                    }
+                    else{
+                        $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour des informations du devis"});
+                    }
+                });
 			}
 		}
 

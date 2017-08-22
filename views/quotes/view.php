@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         ({{ quote.probability | number:2 }}%)
 
                         <ze-btn fa="pencil" color="info" hint="Editer"
-                                ze-modalform="edit"
+                                ze-modalform="updateQuote"
                                 data-edit="quote"
                                 data-template="templateEdit"
                                 data-title="Modifier le devis"></ze-btn>
