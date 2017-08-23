@@ -140,7 +140,7 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
                 $scope.form.name_contact = contact.last_name + " " + contact.first_name;
                 $scope.form.accounting_number = $scope.form.accounting_number || contact.accounting_number;
 
-				if(contact.id_company !== "0" && $scope.form.id_company === 0){
+				if(contact.id_company !== "0" && ($scope.form.id_company === undefined || $scope.form.id_company === 0)){
 					zhttp.contact.company.get(contact.id_company).then(function(response){
 						if(response.data && response.data != "false"){
                             loadCompany(response.data.company);
