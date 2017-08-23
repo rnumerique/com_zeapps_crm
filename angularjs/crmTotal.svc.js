@@ -12,7 +12,6 @@ app.factory("crmTotal", function(){
 		get: {
 			totals: {}
 		}
-
 	};
     
 	return service;
@@ -37,12 +36,12 @@ app.factory("crmTotal", function(){
                 if (tmp[line.id_taxe] === undefined) {
                     tmp[line.id_taxe] = {
                         ht: 0,
-                        value_taxe: parseFloat(line.value_taxe)
+                        value_taxe: round2(parseFloat(line.value_taxe))
                     };
                 }
 
-                tmp[line.id_taxe].ht += parseFloat(line.total_ht);
-                tmp[line.id_taxe].value = parseFloat(tmp[line.id_taxe].ht) * (parseFloat(tmp[line.id_taxe].value_taxe) / 100);
+                tmp[line.id_taxe].ht += round2(parseFloat(line.total_ht));
+                tmp[line.id_taxe].value = round2(parseFloat(tmp[line.id_taxe].ht) * (parseFloat(tmp[line.id_taxe].value_taxe) / 100));
             }
 		});
 
@@ -62,7 +61,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
 			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
-				t += parseFloat(lines[i].price_unit);
+				t += round2(parseFloat(lines[i].price_unit));
 			}
 		}
 		service.get.totals.total_prediscount_ht = t;
@@ -72,7 +71,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
 			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
-				t += parseFloat(lines[i].price_unit) * ( 1 + (parseFloat(lines[i].value_taxe) / 100));
+				t += round2(parseFloat(lines[i].price_unit) * ( 1 + (parseFloat(lines[i].value_taxe) / 100)));
 			}
 		}
         service.get.totals.total_prediscount_ttc = t;
@@ -83,7 +82,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for (var i = 0; i < lines.length; i++) {
 			if (lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment") {
-				discount = parseFloat(lines[i].price_unit) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) );
+				discount = round2(parseFloat(lines[i].price_unit) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) ));
 				t += discount;
 			}
 		}
@@ -94,7 +93,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
 			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
-				t += parseFloat(lines[i].total_ht);
+				t += round2(parseFloat(lines[i].total_ht));
 			}
 		}
         service.get.totals.total_ht = t;
@@ -103,7 +102,7 @@ app.factory("crmTotal", function(){
 	function calcTotalTVA(){
 		var t = 0;
 		angular.forEach(service.get.tvas, function(tva){
-			t += parseFloat(tva.value)
+			t += round2(parseFloat(tva.value));
 		});
         service.get.totals.total_tva = t;
 	}
@@ -116,7 +115,7 @@ app.factory("crmTotal", function(){
         var t = 0;
         for(var i = index - 1; i >= 0; i--){
             if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-                t += parseFloat(array[i].total_ht);
+                t += round2(parseFloat(array[i].total_ht));
             }
             else if(array[i].type === "subTotal"){
                 i = -1;
@@ -129,7 +128,7 @@ app.factory("crmTotal", function(){
         var t = 0;
         for(var i = index - 1; i >= 0; i--){
             if(array[i] !== undefined && array[i].type !== "subTotal" && array[i].type !== "comment"){
-                t += parseFloat(array[i].total_ttc);
+                t += round2(parseFloat(array[i].total_ttc));
             }
             else if(array[i].type === "subTotal"){
                 i = -1;
