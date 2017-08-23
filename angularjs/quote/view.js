@@ -217,6 +217,12 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			});
 		}
 
+        function keyEventaddFromCode($event){
+            if($event.which === 13){
+                addFromCode();
+            }
+        }
+
 		function addFromCode(){
 			if($scope.codeProduct !== "") {
                 var code = $scope.codeProduct;
@@ -232,10 +238,9 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                             qty: 1,
                             discount: 0.00,
                             price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
-                            taxe: "" + parseFloat(response.data.value_taxe),
-                            sort: $scope.lines.length,
-                            total_ht: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
-                            total_ttc: ((parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc)) * (1 + (parseFloat(response.data.value_taxe) / 100)))
+                            id_taxe: parseFloat(response.data.id_taxe),
+                            value_taxe: parseFloat(response.data.value_taxe),
+                            sort: $scope.lines.length
                         };
                         crmTotal.line.update(line);
 
@@ -257,12 +262,6 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
             }
 		}
 
-        function keyEventaddFromCode($event){
-            if($event.which === 13){
-                addFromCode();
-            }
-        }
-
 		function addLine(){
 			// charge la modal de la liste de produit
 			zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
@@ -277,10 +276,9 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 						qty: "1",
 						discount: 0.00,
 						price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
-						taxe: parseFloat(objReturn.value_taxe),
-						sort: $scope.lines.length,
-						total_ht: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
-						total_ttc: ((parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc)) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
+						id_taxe: parseFloat(objReturn.id_taxe),
+						value_taxe: parseFloat(objReturn.value_taxe),
+						sort: $scope.lines.length
 					};
                     crmTotal.line.update(line);
 
