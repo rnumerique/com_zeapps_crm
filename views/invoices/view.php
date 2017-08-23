@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div id="breadcrumb">Devis</div>
+<div id="breadcrumb">Factures</div>
 <div id="content">
 
 
@@ -10,22 +10,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                     <div class="titleWell">
-                        Facture :
-                        <span ng-hide="edit">{{ invoice.libelle }}</span>
-                        <input type="text" class="form-control" ng-model="invoice.libelle" ng-show="edit">
+                        Facture : {{ invoice.libelle }}
                     </div>
-                    <div>
-                        n° : {{ invoice.numerotation }}
+                    <div class="small">
+                        n° {{ invoice.numerotation }}
+                    </div>
+                    <div class="small">
+                        Client :
+                        {{invoice.name_company}}
+                        <span ng-if="invoice.name_company && invoice.name_contact">-</span>
+                        {{invoice.name_contact ? invoice.name_contact : ""}}
+                        <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
+                            {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-primary btn-xs" ng-click="back()"><span class="fa fa-fw fa-arrow-left"></span></button>
-                        <button type="button" class="btn btn-info btn-xs" ng-click="toggleEdit()" ng-hide="invoice.finalized !== '0'"><i class="fa fa-fw fa-pencil" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-primary btn-xs" ng-click="print()"><i class="fa fa-fw fa-download" aria-hidden="true"></i></button>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="finalize()" ng-hide="invoice.finalized !== '0' || edit">
-                            <i class="fa fa-fw fa-check"></i> <span i8n="Clôturer"></span>
-                        </button>
+                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
+
+                        <span class="form-group form-inline">
+                            <select class="form-control input-sm" ng-model="invoice.status" ng-change="updateStatus()">
+                                <option>En cours</option>
+                                <option>Gagné</option>
+                                <option>Perdu</option>
+                            </select>
+                        </span>
+
+                        ({{ invoice.probability | number:2 }}%)
+
+                        <ze-btn fa="pencil" color="info" hint="Editer"
+                                ze-modalform="updateInvoice"
+                                data-edit="invoice"
+                                data-template="templateEdit"
+                                data-title="Modifier la facture"></ze-btn>
+                        <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
+                        <ze-btn fa="files-o" color="success" hint="Transformer" ng-click="transform()"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_invoices > 0">
                             <button type="button" class="btn btn-default" ng-class="invoice_first == 0 ? 'disabled' :''" ng-click="first_invoice()"><span class="fa fa-fw fa-fast-backward"></span></button>
@@ -37,14 +57,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12" ng-if="company">
-                    <strong>Entreprise :</strong> {{ company.company_name }}<br>
-                    <strong>En cours :</strong> {{ company.due | currency:'€':2 }}
-                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
-                        {{ showDetailsEntreprise ? 'masquer' : 'détails' }}
-                    </button>
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsEntreprise">
+        </div>
+
+        <div class="row" ng-if="showDetailsEntreprise">
+            <div class="col-md-12">
+                <div class="well">
+                    <strong>En cours :</strong> {{ (company.due || contact.due) | currency:'€':2 }}
+                    <table class="table table-stripped table-condensed table-responsive" ng-if="(company.due_lines || contact.due_lines).length > 0">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -54,34 +73,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th></th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="due_line in company.due_lines">
-                            <td>{{ due_line.numerotation }}</td>
-                            <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
-                            <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
-                            <td class="text-right">
-                                <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
-                                    <i class="fa fa-fw fa-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-12" ng-if="contact && !company">
-                    <strong>Contact :</strong> {{ contact.last_name + ' ' + contact.first_name }}<br>
-                    <strong>En cours :</strong> {{ contact.due | currency:'€':2 }}
-                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsContact = !showDetailsContact">détails</button>
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="showDetailsContact">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Libelle</th>
-                            <th>Date limite</th>
-                            <th class="text-right">Somme due</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="due_line in contact.due_lines">
+                        <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
                             <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
@@ -97,63 +89,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="well">
-                    <strong>Adresse de facturation :</strong><br>
-                    {{ company.company_name }}<br ng-if="company.company_name">
-                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                    <span ng-hide="edit">{{ invoice.billing_address_1 }}</span><br ng-if="invoice.billing_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.billing_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.billing_address_2 }}</span><br ng-if="invoice.billing_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.billing_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.billing_address_3 }}</span><br ng-if="invoice.billing_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.billing_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.billing_zipcode + ' ' + invoice.billing_city }}</span>
-                    <input type="text" class="form-control" ng-model="invoice.billing_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="invoice.billing_city" ng-show="edit">
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="well">
-                    <strong>Adresse de livraison :</strong><br>
-                    {{ company.company_name }}<br ng-if="company.company_name">
-                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                    <span ng-hide="edit">{{ invoice.delivery_address_1 }}</span><br ng-if="invoice.delivery_address_1 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.delivery_address_1" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.delivery_address_2 }}</span><br ng-if="invoice.delivery_address_2 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.delivery_address_2" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.delivery_address_3 }}</span><br ng-if="invoice.delivery_address_3 && !edit">
-                    <input type="text" class="form-control" ng-model="invoice.delivery_address_3" ng-show="edit">
-                    <span ng-hide="edit">{{ invoice.delivery_zipcode + ' ' + invoice.delivery_city }}</span>
-                    <input type="text" class="form-control" ng-model="invoice.delivery_zipcode" ng-show="edit">
-                    <input type="text" class="form-control" ng-model="invoice.delivery_city" ng-show="edit">
-                </div>
-            </div>
-        </div>
-
-
-        <ul df-tab-menu menu-control="{{navigationState}}" theme="bootstrap" role="tablist"
-            class="df-tab-menu nav nav-tabs">
-            <li data-menu-item="body"><a href="#" data-ng-click="navigationState = 'body'">Corps</a></li>
-            <li data-menu-item="header"><a href="#" data-ng-click="navigationState = 'header'">Entête</a></li>
-            <li data-menu-item="condition"><a href="#" data-ng-click="navigationState = 'condition'">Conditions</a></li>
-            <li data-menu-item="activity"><a href="#" data-ng-click="navigationState = 'activity'">Activité</a></li>
-            <li data-menu-item="document"><a href="#" data-ng-click="navigationState = 'document'">Documents</a></li>
-
-            <li data-more-menu-item><a class="btn btn-primary"><span class="fa fa-fw fa-menu-down"></span></a>
-            </li>
+        <ul role="tablist" class="nav nav-tabs">
+            <li ng-class="navigationState =='body' ? 'active' : ''"><a href="#" ng-click="setTab('body')">Corps</a></li>
+            <li ng-class="navigationState =='header' ? 'active' : ''"><a href="#" ng-click="setTab('header')">Entête</a></li>
+            <li ng-class="navigationState =='condition' ? 'active' : ''"><a href="#" ng-click="setTab('condition')">Conditions</a></li>
+            <li ng-class="navigationState =='addresses' ? 'active' : ''"><a href="#" ng-click="setTab('addresses')">Adresses</a></li>
+            <li ng-class="navigationState =='activity' ? 'active' : ''"><a href="#" ng-click="setTab('activity')">Activité</a></li>
+            <li ng-class="navigationState =='document' ? 'active' : ''"><a href="#" ng-click="setTab('document')">Documents</a></li>
         </ul>
 
-
-        <div ng-show="navigationState=='body'">
+        <div ng-show="navigationState =='body'">
             <div class="row">
-                <div class="col-md-12 text-right"  ng-hide="invoice.finalized !== '0'">
+                <div class="col-md-12 text-right">
                     <span class="form-inline">
                         <label>Code produit :</label>
                         <span class="input-group">
-                            <input type="text" class="form-control input-sm" ng-model="codeProduct">
+                            <input type="text" class="form-control input-sm" ng-model="codeProduct" ng-keypress="keyEventaddFromCode($event)" >
                             <span class="input-group-addon" ng-click="addFromCode()">
                                 <i class="fa fa-fw fa-plus text-success"></i>
                             </span>
@@ -192,7 +143,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th class="text-right">Remise</th>
                                 <th class="text-right">Montant HT</th>
                                 <th class="text-right">Montant TTC</th>
-                                <th ng-hide="invoice.finalized !== '0'"></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody ui-sortable="sortable" class="sortableContainer" ng-model="lines">
@@ -203,42 +154,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </td>
 
                                 <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">
-                                        <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
-                                        {{ line.designation_desc }}
-                                    </span>
-                                    <input type="text" class="form-control" ng-model="line.designation_title" ng-show="line.edit">
-                                    <textarea class="form-control" ng-model="line.designation_desc" ng-show="line.edit"></textarea>
+                                    <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
+                                    <span class="text-wrap">{{ line.designation_desc }}</span>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.qty | number }}</span>
-                                    <input type="number" class="form-control" ng-model="line.qty" ng-show="line.edit" ng-change="updateSums(line)">
+                                    {{ line.qty | number }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.price_unit | currency }}</span>
-                                    <div class="input-group" ng-show="line.edit">
-                                        <input type="number" class="form-control" ng-model="line.price_unit" ng-change="updateSums(line)">
-                                        <div class="input-group-addon">€</div>
-                                    </div>
+                                    {{ line.price_unit | currency }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.taxe != 0 ? (line.taxe | currency:'%':2) : '' }}</span>
-                                    <select ng-model="line.taxe" ng-change="updateSums(line)" class="form-control"  ng-show="line.edit">
-                                        <option ng-repeat="taxe in taxes | filter:{ active : 1 }" value="{{taxe.value}}">
-                                            {{ taxe.label }}
-                                        </option>
-                                    </select>
+                                    {{ line.id_taxe != 0 ? (line.value_taxe | currency:'%':2) : '' }}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
-                                    <span ng-hide="line.edit">{{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}</span>
-                                    <div class="input-group" ng-show="line.edit">
-                                        <input type="number" class="form-control" ng-model="line.discount" ng-change="updateSums(line)">
-                                        <div class="input-group-addon">%</div>
-                                    </div>
+                                    {{ line.discount != 0 ? ((0-line.discount) | currency:'%':2) : ''}}
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -264,16 +197,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {{ line.designation_desc }}
                                 </td>
 
-                                <td class="text-right" ng-hide="invoice.finalized !== '0'">
-                                    <button type="button" class="btn btn-info btn-xs" ng-click="editLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || line.type == 'abonnement' || line.edit">
-                                        <span class="fa fa-fw fa-pencil"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" ng-click="submitLine(line)" ng-hide="line.type == 'subTotal' || line.type == 'comment' || !line.edit">
-                                        <span class="fa fa-fw fa-check"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-xs" ng-click="deleteLine(line)">
-                                        <span class="fa fa-fw fa-trash"></span>
-                                    </button>
+                                <td class="text-right">
+                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
+                                            ze-modalform="updateInvoice"
+                                            data-edit="line"
+                                            data-title="Editer la ligne de la facture"
+                                            data-template="invoiceLineTplUrl"></ze-btn>
+                                    <ze-btn fa="trash" color="danger" direction="left" hint="Supprimer" ng-click="deleteLine(line)" ze-confirmation></ze-btn>
                                 </td>
                             </tr>
                         </tbody>
@@ -282,51 +212,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-5">
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                        <tr>
+                            <th>Base TVA</th>
+                            <th class="text-right">Taux TVA</th>
+                            <th class="text-right">Montant TVA</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="tva in tvas">
+                            <td>{{ tva.ht | currency:'€':2 }}</td>
+                            <td class="text-right">{{ tva.value_taxe | currency:'%':2 }}</td>
+                            <td class="text-right">{{ tva.value | currency:'€':2 }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5 col-md-offset-2">
                     <div class="well well-sm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                Total HT av remise
-                            </div>
-                            <div class="col-md-6 text-right">
-                                {{ invoice.total_prediscount_ht | currency:'€':2 }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                Total TTC av remise
-                            </div>
-                            <div class="col-md-6 text-right">
-                                {{ invoice.total_prediscount_ttc | currency:'€':2 }}
-                            </div>
-                        </div>
-                        <hr>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                Remise Globale
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <span ng-hide="edit">-{{ invoice.global_discount | number:2 }}%</span>
-                                <div class="input-group" ng-show="edit">
-                                    <input type="text" class="form-control" ng-model="invoice.global_discount" ng-change="updateTotals()">
-                                    <div class="input-group-addon">%</div>
+                        <div ng-if="invoice.total_discount > 0">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Total HT av remise
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ invoice.total_prediscount_ht | currency:'€':2 }}
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                Remise (avant Taxes)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Total TTC av remise
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ invoice.total_prediscount_ttc | currency:'€':2 }}
+                                </div>
                             </div>
-                            <div class="col-md-6 text-right">
-                                {{ invoice.total_discount | currency:'€':2 }}
-                            </div>
-                        </div>
+                            <hr>
 
-                        <hr>
+                            <div class="row" ng-if="invoice.global_discount > 0">
+                                <div class="col-md-6">
+                                    Remise globale
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    -{{ invoice.global_discount | number:2 }}%
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    Total remises HT
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    {{ invoice.total_discount | currency:'€':2 }}
+                                </div>
+                            </div>
+
+                            <hr>
+                        </div>
 
                         <div class="row total">
                             <div class="col-md-6">
@@ -334,6 +278,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <div class="col-md-6 text-right">
                                 {{ invoice.total_ht | currency:'€':2 }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                Total TVA
+                            </div>
+                            <div class="col-md-6 text-right">
+                                {{ invoice.total_tva | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -353,115 +306,101 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            <div ng-hide="edit">{{ invoice.reference_client }}</div>
-            <input type="text" class="form-control" ng-model="invoice.reference_client" ng-show="edit">
+            {{ invoice.reference_client }}
             <br/>
             <strong>Date de création de la facture :</strong>
-            <div ng-hide="edit">{{ invoice.date_creation | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="invoice.date_creation" ng-show="edit">
+            {{ invoice.date_creation | date:'dd/MM/yyyy' }}
             <br/>
-            <strong>Date de validité de la facture :</strong>
-            <div ng-hide="edit">{{ invoice.date_limit | date:'dd/MM/yyyy' }}</div>
-            <input type="date" class="form-control" ng-model="invoice.date_limit" ng-show="edit">
+            <strong>Date d'échéance de la facture :</strong>
+            {{ invoice.date_limit | date:'dd/MM/yyyy' }}
             <br/>
+        </div>
+
+        <div ng-if="navigationState=='addresses'">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="well">
+                        <strong>Adresse de facturation :</strong><br>
+                        {{ company.company_name }}<br ng-if="company.company_name">
+                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
+                        {{ invoice.billing_address_1 }}<br ng-if="invoice.billing_address_1">
+                        {{ invoice.billing_address_2 }}<br ng-if="invoice.billing_address_2">
+                        {{ invoice.billing_address_3 }}<br ng-if="invoice.billing_address_3">
+                        {{ invoice.billing_zipcode + ' ' + invoice.billing_city }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="well">
+                        <strong>Adresse de livraison :</strong><br>
+                        {{ company.company_name }}<br ng-if="company.company_name">
+                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
+                        {{ invoice.delivery_address_1 }}<br ng-if="invoice.delivery_address_1">
+                        {{ invoice.delivery_address_2 }}<br ng-if="invoice.delivery_address_2">
+                        {{ invoice.delivery_address_3 }}<br ng-if="invoice.delivery_address_3">
+                        {{ invoice.delivery_zipcode + ' ' + invoice.delivery_city }}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            <div ng-hide="edit">{{ invoice.modalities }}</div>
-            <select ng-model="invoice.modalities" class="form-control" ng-show="edit">
-                <option ng-repeat="modality in modalities">
-                    {{ modality.label }}
-                </option>
-            </select>
-            <br/>
+            {{ invoice.modalities }}
         </div>
 
         <div ng-show="navigationState=='activity'">
             <div class="row">
-                <div class="col-md-12 text-right" ng-hide="invoice.finalized !== '0'">
-                    <button type="button" class="btn btn-success btn-xs" ng-click="toggleActivity()">
-                        <span class="fa fa-fw fa-plus"></span> activité
-                    </button>
-                    <div ng-show="showActivityInput" class="text-left">
-                        <div class="col-md-6 form-group">
-                            <label i8n="libelle"></label>
-                            <input type="text" class="form-control" ng-model="activity.libelle">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="addActivity()">
+                            <i class="fa fa-fw fa-plus"></i> Activité
+                        </button>
+                    </div>
+                    <div class="card_document" ng-repeat="activity in activities | orderBy:['-date','-id']">
+                        <div class="card_document-head clearfix">
+                            <div class="pull-right">
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editActivity(activity)"></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteActivity(activity)" ze-confirmation></ze-btn>
+                            </div>
+                            <strong>{{ activity.libelle }}</strong>
                         </div>
-                        <div class="col-md-6 form-group">
-                            <label i8n="deadline"></label>
-                            <input type="date" class="form-control" ng-model="activity.reminder">
-                        </div>
-                        <div class='col-md-12 form-group'>
-                            <label i8n="Commentaire"></label>
-                            <textarea class="form-control" ng-model="activity.description" rows="3"></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="button" class="btn btn-default btn-xs" ng-click="closeActivity()">
-                                Annuler
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm" ng-click="addActivity()">
-                                Valider
-                            </button>
+                        <div class="card_document-body" ng-if="activity.description">{{ activity.description }}</div>
+                        <div class="card_document-footer text-muted">
+                            Envoyé par <strong>{{ activity.name_user }}</strong> le <strong>{{ activity.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ activity.date | date:'HH:mm' }}</strong>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12" ng-repeat="activity in activities">
-                    <div>
-                        <strong>
-                            {{ activity.libelle }}
-                            <button type="button" class="btn btn-info btn-xs" ng-click="editActivity(activity)">
-                                <span class="fa fa-fw fa-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-xs" ng-click="deleteActivity()">
-                                <span class="fa fa-fw fa-trash"></span>
-                            </button>
-                        </strong>
-                    </div>
-                    <div class="text-muted">
-                        {{ activity.reminder | date:'dd/MM/yyyy' }}
-                    </div>
-                    <p>
-                        {{ activity.description }}
-                    </p>
                 </div>
             </div>
         </div>
 
         <div ng-show="navigationState=='document'">
             <div class="row">
-                <div class="col-md-12 text-right" ng-hide="invoice.finalized !== '0'">
-                    <button type="button" class="btn btn-xs btn-success" ngf-select="upload($files)" multiple ng-if="!progress">
-                        <span class="fa fa-fw fa-plus"></span> document
-                    </button>
-                    <div class="progress" ng-if="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" ng-style="{'width': progress + '%' }">
-                            {{ progress }}%
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-xs btn-success" ng-click="addDocument()">
+                            <i class="fa fa-fw fa-plus"></i> Document
+                        </button>
+                    </div>
+                    <div class="card_document" ng-repeat="document in documents | orderBy:['-date','-id']">
+                        <div class="card_document-head clearfix">
+                            <div class="pull-right">
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editDocument(document)"></ze-btn>
+                                <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteDocument(document)" ze-confirmation></ze-btn>
+                            </div>
+                            <i class="fa fa-fw fa-file"></i>
+                            <a ng-href="{{ document.path }}" class="text-primary" target="_blank">
+                                <strong>{{ document.label }}</strong>
+                            </a>
+                        </div>
+                        <div class="card_document-body" ng-if="document.description">{{ document.description }}</div>
+                        <div class="card_document-footer text-muted">
+                            Envoyé par <strong>{{ document.name_user }}</strong> le <strong>{{ document.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ document.date | date:'HH:mm' }}</strong>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-12" ng-repeat="document in documents">
-                    <div>
-                        <strong>
-                            {{ document.name }}
-                        </strong>
-                        <button type="button" class="btn btn-danger btn-xs" ng-click="deleteDocument(document)" ng-hide="invoice.finalized !== '0'">
-                            <span class="fa fa-fw fa-trash"></span>
-                        </button>
-                    </div>
-                    <div class="text-muted">
-                        <span i8n="Ajouté le"></span> {{ document.created_at | date:'dd/MM/yyyy' }}
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <form-buttons ng-if="edit"></form-buttons>
 
     </form>
 

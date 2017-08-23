@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div id="breadcrumb">Config > devis</div>
+<div id="breadcrumb">Config > facture</div>
 <div id="content">
 
     <div class="row">

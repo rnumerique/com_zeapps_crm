@@ -19,22 +19,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Société <span class="required">**</span></label>
-                        <div class="input-group">
-                            <input type="text" ng-model="form.company.company_name" class="form-control" disabled ng-required="!form.contact">
 
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="removeCompany()"
-                                        ng-show="form.company.id != 0 && form.company.id != undefined">x
-                                </button>
-                                <button class="btn btn-default" type="button" ng-click="loadCompany()">...</button>
-                            </span>
-                        </div>
+                        <span   ze-modalsearch="loadCompany"
+                                data-http="companyHttp"
+                                data-model="form.company.company_name"
+                                data-fields="companyFields"
+                                data-template-new="companyTplNew"
+                                data-title="Choisir une entreprise"></span>
                     </div>
 
 
                     <div class="form-group">
                         <label>Compte comptable</label>
-                        <input type="text" ng-model="form.accounting_number" class="form-control">
+                        <span   ze-modalsearch="loadAccountingNumber"
+                                data-http="accountingNumberHttp"
+                                data-model="form.accounting_number"
+                                data-fields="accountingNumberFields"
+                                data-template-new="accountingNumberTplNew"
+                                data-title="Choisir un compte comptable"></span>
                     </div>
 
                     <div class="form-group">
@@ -68,31 +70,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                     <div class="form-group">
                         <label>Gestionnaire de la commande <span class="required">*</span></label>
-                        <div class="input-group">
-                            <input type="text" ng-model="form.name_user_account_manager" class="form-control" disabled ng-required="true">
 
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="removeAccountManager()"
-                                        ng-show="form.id_user_account_manager != 0 && form.id_user_account_manager != undefined">x
-                                </button>
-                                <button class="btn btn-default" type="button" ng-click="loadAccountManager()">...</button>
-                            </span>
-                        </div>
+                        <span   ze-modalsearch="loadAccountManager"
+                                data-http="accountManagerHttp"
+                                data-model="form.name_user_account_manager"
+                                data-fields="accountManagerFields"
+                                data-title="Choisir une entreprise"></span>
                     </div>
 
 
                     <div class="form-group">
                         <label>Contact <span class="required">**</span></label>
-                        <div class="input-group">
-                            <input type="text" ng-model="form.contact.name" class="form-control" disabled ng-required="!form.company">
 
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="removeContact()"
-                                        ng-show="form.contact.id != 0 && form.contact.id != undefined">x
-                                </button>
-                                <button class="btn btn-default" type="button" ng-click="loadContact()">...</button>
-                            </span>
-                        </div>
+                        <span   ze-modalsearch="loadContact"
+                                data-http="contactHttp"
+                                data-model="form.contact.name"
+                                data-fields="contactFields"
+                                data-template-new="contactTplNew"
+                                data-title="Choisir un contact"></span>
                     </div>
 
 

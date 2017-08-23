@@ -80,7 +80,7 @@
             ?>
         </td>
         <td id="billing_address">
-            <br>
+            <b>Adresse de facturation</b><br>
             <?php
             if($company)
                 echo $company->company_name . '<br>';
@@ -102,14 +102,18 @@
         </td>
     </tr>
     <tr>
+        <?php if($delivery->modalities !== ""){ ?>
         <td class="border">
             <strong>Mode de reglement</strong><br>
             <?php echo $delivery->modalities; ?>
         </td>
+        <?php } ?>
+        <?php if($delivery->date_limit !== "0000-00-00 00:00:00"){ ?>
         <td class="border">
-            <strong>Date d'échéance</strong><br>
-            <?php if($delivery->date_limit) echo date('d/m/Y', $delivery->date_limit); ?>
+            <strong>Date de validité</strong><br>
+            <?php  echo date('d/m/Y', strtotime($delivery->date_limit)); ?>
         </td>
+        <?php } ?>
     </tr>
     <tr>
         <td colspan="2">
@@ -155,8 +159,8 @@
                             </tr>
                             <?php
                         } else {
-                            $subtotal_ht = floatval($line->price_unit) * floatval($line->qty);
-                            $subtotal_ttc = floatval($line->price_unit) * floatval($line->qty) * (1 + (floatval($line->taxe) / 100));
+                            $subtotal_ht += floatval($line->total_ht);
+                            $subtotal_ttc += floatval($line->total_ttc);
                             ?>
                             <tr>
                                 <td class="text-left"><?php echo $line->ref; ?></td>
@@ -166,7 +170,7 @@
                                 </td>
                                 <td class="text-center"><?php echo floatval($line->qty) === round(floatval($line->qty)) ? intval($line->qty) : number_format(floatval($line->qty), 3, ',', ' '); ?></td>
                                 <td class="text-right"><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
-                                <td class="text-right"><?php echo number_format(floatval($line->taxe), 2, ',', ' ') . '%'; ?></td>
+                                <td class="text-right"><?php echo number_format(floatval($line->value_taxe), 2, ',', ' ') . '%'; ?></td>
                                 <?php if($showDiscount){ ?>
                                     <td class="text-right"><?php echo number_format(floatval($line->discount), 2, ',', ' ') . '%'; ?></td>
                                 <?php } ?>
@@ -194,27 +198,25 @@
                 </thead>
                 <tbody>
                 <?php
-                foreach ($lines as $line) {
-                    if($line->type !== 'subTotal' && $line->type !== 'comment' && floatval($line->taxe) != 0) {
-                        ?>
-                        <tr>
-                            <td><?php echo number_format(floatval($line->price_unit), 2, ',', ' '); ?></td>
-                            <td><?php echo number_format(floatval($line->taxe), 2, ',', ' '); ?></td>
-                            <td><?php echo number_format((floatval($line->price_unit) * floatval($line->taxe) / 100), 2, ',', ' '); ?></td>
-                        </tr>
-                        <?php
-                    }
+                foreach ($tvas as $tva) {
+                    ?>
+                    <tr>
+                        <td><?php echo number_format(floatval($tva['ht']), 2, ',', ' '); ?></td>
+                        <td class="text-right"><?php echo number_format(floatval($tva['value_taxe']), 2, ',', ' '); ?>%</td>
+                        <td class="text-right"><?php echo number_format(floatval($tva['value']), 2, ',', ' '); ?></td>
+                    </tr>
+                    <?php
                 }
                 ?>
                 </tbody>
             </table>
         </td>
         <td class="text-right">
-            <table class="total">
-                <?php if(floatval($delivery->global_discount) > 0){ ?>
+                <?php if(floatval($delivery->total_discount) > 0){ ?>
+                <table class="total">
                     <tr>
                         <td class="text-left">
-                            <strong>Total HT av remise</strong>
+                            Total HT av remise
                         </td>
                         <td class="text-right">
                             <?php echo number_format(floatval($delivery->total_prediscount_ht), 2, ',', ' '); ?>
@@ -222,29 +224,33 @@
                     </tr>
                     <tr>
                         <td class="text-left">
-                            <strong>Total TTC av remise</strong>
+                            Total TTC av remise
                         </td>
                         <td class="text-right">
                             <?php echo number_format(floatval($delivery->total_prediscount_ttc), 2, ',', ' '); ?>
                         </td>
                     </tr>
+                    <?php if(floatval($delivery->global_discount) > 0){ ?>
                     <tr>
                         <td class="text-left">
-                            <strong>Remise Globable</strong>
+                            Remise globable
                         </td>
                         <td class="text-right">
                             <?php echo number_format(floatval($delivery->global_discount), 2, ',', ' ') . '%'; ?>
                         </td>
                     </tr>
+                    <?php } ?>
                     <tr>
                         <td class="text-left">
-                            <strong>Remise (avant taxes)</strong>
+                            Total remises HT
                         </td>
                         <td class="text-right">
                             <?php echo number_format(floatval($delivery->total_discount), 2, ',', ' ') ? : '0,00'; ?>
                         </td>
                     </tr>
+                </table>
                 <?php }?>
+            <table class="total">
                 <tr>
                     <td class="text-left">
                         <strong>Total HT</strong>
@@ -255,10 +261,10 @@
                 </tr>
                 <tr>
                     <td class="text-left">
-                        <strong>TVA</strong>
+                        Total TVA
                     </td>
                     <td class="text-right">
-                        <?php echo number_format((floatval($delivery->total_ttc)-floatval($delivery->total_ht)), 2, ',', ' '); ?>
+                        <?php echo number_format(floatval($delivery->total_tva), 2, ',', ' '); ?>
                     </td>
                 </tr>
                 <tr>

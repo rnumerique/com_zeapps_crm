@@ -1,37 +1,60 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Delivery extends ZeCtrl
+class Deliveries extends ZeCtrl
 {
     public function view()
     {
-        $this->load->view('delivery/view');
+        $this->load->view('deliveries/view');
     }
 
     public function form()
     {
-        $this->load->view('delivery/form');
+        $this->load->view('deliveries/form');
+    }
+
+    public function form_modal()
+    {
+        $this->load->view('deliveries/form_modal');
+    }
+
+    public function form_line(){
+        $this->load->view('deliveries/form_line');
     }
 
     public function lists()
     {
-        $this->load->view('delivery/lists');
+        $this->load->view('deliveries/lists');
     }
 
     public function lists_partial()
     {
-        $this->load->view('delivery/lists_partial');
+        $this->load->view('deliveries/lists_partial');
+    }
+
+    public function transform_modal()
+    {
+        $this->load->view('deliveries/transform_modal');
     }
 
     public function config()
     {
-        $this->load->view('delivery/config');
+        $this->load->view('deliveries/config');
+    }
+
+    public function modal_activity()
+    {
+        $this->load->view('deliveries/modal_activity');
+    }
+
+    public function modal_document()
+    {
+        $this->load->view('deliveries/modal_document');
     }
 
 
 
     public function makePDF($id, $echo = true){
-
         $this->load->model("Zeapps_deliveries", "deliveries");
         $this->load->model("Zeapps_delivery_companies", "delivery_companies");
         $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
@@ -46,14 +69,26 @@ class Delivery extends ZeCtrl
         $data['lines'] = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
 
         $data['showDiscount'] = false;
+        $data['tvas'] = [];
         foreach($data['lines'] as $line){
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
+
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
         }
 
-
         //load the view and saved it into $html variable
-        $html = $this->load->view('delivery/PDF', $data, true);
+        $html = $this->load->view('deliveries/PDF', $data, true);
 
         $nomPDF = $data['company']->company_name.'_'.$data['delivery']->numerotation.'_'.$data['delivery']->libelle;
         $nomPDF = preg_replace('/\W+/', '_', $nomPDF);
@@ -65,7 +100,7 @@ class Delivery extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/deliveries/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Livraison €n° : '.$data['delivery']->numerotation.'|C. Compta : '.$data['delivery']->accounting_number.'|Fait le {DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['delivery']->numerotation.'|C. Compta : '.$data['delivery']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
@@ -111,117 +146,169 @@ class Delivery extends ZeCtrl
         echo json_encode($result);
     }
 
-    public function finalize($id) {
+    public function transform($id) {
         if($id) {
             $this->load->model("Zeapps_deliveries", "deliveries");
-            $this->load->model("Zeapps_delivery_lines", "delivery_lines");
-            $this->load->model("Zeapps_stock_movements", "stock_movements");
-            $this->load->model("Zeapps_product_products", "products");
-            $this->load->model("Zeapps_product_lines", "product_lines");
 
-            $nomPDF = $this->makePDF($id, false);
+            // constitution du tableau
+            $data = array() ;
 
-            if($delivery = $this->deliveries->get($id)) {
+            if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+                // POST is actually in json format, do an internal translation
+                $data = json_decode(file_get_contents('php://input'), true);
+            }
 
-                $company = $this->delivery_companies->get(array('id_delivery'=>$id));
-                $contact = $this->delivery_contacts->get(array('id_delivery'=>$id));
+            $return = [];
 
-                $this->stock_movements->delete(array('name_table' => 'zeapps_deliveries','id_table' => $id));
-
-                if ($lines = $this->delivery_lines->all(array('id_delivery' => $id))) {
-                    foreach ($lines as $line) {
-                        if ($line->id_product > 0) {
-                            if ($product = $this->products->get($line->id_product)) {
-                                if($product->id_stock > 0) {
-                                    $now = date('Y-m-d H:i:s');
-                                    $data = [
-                                        'id_warehouse' => $delivery->id_warehouse,
-                                        'id_stock' => $product->id_stock,
-                                        'label' => 'Bon de livraison n°' . $delivery->numerotation,
-                                        'qty' => -1 * floatval($line->qty),
-                                        'id_table' => $id,
-                                        'name_table' => 'zeapps_deliveries',
-                                        'date_mvt' => $now
-                                    ];
-
-                                    $this->stock_movements->insert($data);
-                                }
-                                elseif($product->compose > 0){
-                                    if($product_lines = $this->product_lines->all(array('id_product' => $product->id))){
-                                        foreach($product_lines as $product_line){
-                                            if($part = $this->products->get($product_line->id_part)){
-                                                if($part->id_stock > 0){
-
-                                                    $company_name = $company ? $company->company_name . ' - ' : '';
-                                                    $contact_name = $contact ? $contact->last_name . ' ' . $contact->first_name : '';
-
-                                                    $name = 'BL n°' . $delivery->numerotation . ' ('.$company_name.$contact_name.')';
-
-                                                    $now = date('Y-m-d H:i:s');
-                                                    $data = [
-                                                        'id_warehouse' => $delivery->id_warehouse,
-                                                        'id_stock' => $part->id_stock,
-                                                        'label' => $name,
-                                                        'qty' => -1 * floatval($line->qty) * floatval($product_line->quantite),
-                                                        'id_table' => $id,
-                                                        'name_table' => 'zeapps_deliveries',
-                                                        'date_mvt' => $now
-                                                    ];
-
-                                                    $this->stock_movements->insert($data);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            if($data){
+                foreach($data as $document => $value){
+                    if($value == 'true'){
+                        $return[$document] = $this->createFrom($document, $id);
                     }
                 }
-
-                $this->deliveries->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
-
-                echo json_encode(array('nomPDF' => $nomPDF));
             }
-            else{
-                echo json_encode(false);
-            }
+
+            echo json_encode($return);
         }
         else{
             echo json_encode(false);
         }
     }
 
+    public function createFrom($type, $id){
+        if($id){
+            $this->load->model("Zeapps_configs", "configs");
+            $this->load->model("Zeapps_deliveries", "deliveries");
+            $this->load->model("Zeapps_delivery_companies", "delivery_companies");
+            $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
+            $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+            $type_model = $type."_model";
+            $this->load->model("Zeapps_".$type."s", $type_model);
+            $type_companies = $type."_companies";
+            $this->load->model("Zeapps_".$type."_companies", $type_companies);
+            $type_contacts = $type."_contacts";
+            $this->load->model("Zeapps_".$type."_contacts", $type_contacts);
+            $type_lines = $type."_lines";
+            $this->load->model("Zeapps_".$type."_lines", $type_lines);
 
-    public function getAll($id_company = null, $type = 'company') {
-        $this->load->model("Zeapps_users", "users");
+            $delivery = $this->deliveries->get($id);
+
+            unset($delivery->id);
+            unset($delivery->numerotation);
+            unset($delivery->created_at);
+            unset($delivery->updated_at);
+
+            $format = $this->configs->get(array('id'=>'crm_'.$type.'_format'))->value;
+            $frequency = $this->configs->get(array('id'=>'crm_'.$type.'_frequency'))->value;
+            $num = $this->$type_model->get_numerotation($frequency);
+            $delivery->numerotation = $this->parseFormat($format, $num);
+
+            $new_id = $this->$type_model->insert($delivery);
+            $id_key = "id_".$type;
+
+            if($companies = $this->$type_companies->all(array('id_delivery'=>$id))){
+                foreach($companies as $company){
+                    unset($company->id);
+                    unset($company->id_delivery);
+                    unset($company->created_at);
+                    unset($company->updated_at);
+
+                    $company->$id_key = $new_id;
+
+                    $this->$type_companies->insert($company);
+                }
+            }
+
+            if($contacts = $this->$type_contacts->all(array('id_delivery'=>$id))){
+                foreach($contacts as $contact){
+                    unset($contact->id);
+                    unset($contact->id_delivery);
+                    unset($contact->created_at);
+                    unset($contact->updated_at);
+
+                    $contact->$id_key = $new_id;
+
+                    $this->$type_contacts->insert($contact);
+                }
+            }
+
+            if($lines = $this->$type_lines->all(array('id_delivery'=>$id))){
+                foreach($lines as $line){
+                    unset($line->id);
+                    unset($line->id_delivery);
+                    unset($line->created_at);
+                    unset($line->updated_at);
+
+                    $line->$id_key = $new_id;
+
+                    $this->$type_lines->insert($line);
+                }
+            }
+
+        }
+
+        return $new_id;
+    }
+
+    public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_deliveries", "deliveries");
         $this->load->model("Zeapps_delivery_companies", "delivery_companies");
         $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
 
-        if($id_company)
-            $deliveries = $this->deliveries->all(array('id_'.$type=>$id_company));
-        else
-            $deliveries = $this->deliveries->all();
+        $filters = array() ;
 
-        if($deliveries && is_array($deliveries)){
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($id !== '0') {
+            $filters['id_' . $type] = $id;
+        }
+
+        if($deliveries = $this->deliveries->limit($limit, $offset)->all($filters)){
             for($i=0;$i<sizeof($deliveries);$i++){
-                $user = $this->users->get($deliveries[$i]->id_user);
-                if($user) {
-                    $deliveries[$i]->user_name = $user->firstname[0] . '. ' . $user->lastname;
-                }
                 $deliveries[$i]->company = $this->delivery_companies->get(array('id_delivery'=>$deliveries[$i]->id));
                 $deliveries[$i]->contact = $this->delivery_contacts->get(array('id_delivery'=>$deliveries[$i]->id));
                 $deliveries[$i]->lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$deliveries[$i]->id));
             }
         }
-
-        if ($deliveries == false) {
-            echo json_encode(array());
-        } else {
-            echo json_encode($deliveries);
+        else{
+            $deliveries = [];
         }
+        $total = $this->deliveries->count($filters);
+
+        if($context){
+
+        }
+
+        echo json_encode(array(
+            'deliveries' => $deliveries,
+            'total' => $total
+        ));
+
+    }
+
+    public function modal($limit = 15, $offset = 0) {
+        $this->load->model("Zeapps_deliveries", "deliveries");
+
+        $filters = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if(!$deliveries = $this->deliveries->limit($limit, $offset)->all($filters)){
+            $deliveries = [];
+        }
+        $total = $this->deliveries->count($filters);
+
+        echo json_encode(array(
+            'data' => $deliveries,
+            'total' => $total
+        ));
 
     }
 
@@ -277,7 +364,7 @@ class Delivery extends ZeCtrl
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
             $id = $data["id"];
-            $this->deliveries->update($data, $data["id"]);
+            $this->deliveries->update($data, array('id' => $data["id"]));
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_delivery_format'))->value;
@@ -476,77 +563,7 @@ class Delivery extends ZeCtrl
         }
     }
 
-    public function uploadDocuments($id_delivery = null){
-        if($id_delivery) {
-            $this->load->model("Zeapps_delivery_documents", "delivery_documents");
-
-            $data = [];
-            $res = [];
-
-            $data['id_delivery'] = $id_delivery;
-
-            $files = $_FILES['files'];
-
-            $path = '/assets/upload/crm/deliveries/';
-
-            $time = time();
-
-            $year = date('Y', $time);
-            $month = date('m', $time);
-            $day = date('d', $time);
-            $hour = date('H', $time);
-
-            $data['created_at'] = $year . '-' . $month . '-' . $day;
-
-            $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
-
-            recursive_mkdir(FCPATH . $path);
-
-            for ($i = 0; $i < sizeof($files['name']); $i++) {
-                $arr = explode(".", $files["name"][$i]);
-                $extension = end($arr);
-
-                $data['name'] = implode('.', array_slice($arr, 0, -1)); // entire name except the extension
-
-                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
-
-                move_uploaded_file($files["tmp_name"][$i], FCPATH . $data['path']);
-
-                $data['id'] = $this->delivery_documents->insert($data);
-
-                array_push($res, $data);
-
-                unset($data['id']);
-            }
-
-            echo json_encode($res);
-        }
-        else {
-            echo json_encode('false');
-        }
-    }
-
-    public function deleteDocument($id = null){
-        if($id){
-            $this->load->model("Zeapps_delivery_documents", "delivery_documents");
-
-            $document = $this->delivery_documents->get($id);
-
-            $path = FCPATH;
-
-            if(unlink($path . $document->path))
-                echo json_encode($this->delivery_documents->delete($id));
-            else
-                echo json_encode(false);
-
-        }
-        else{
-            echo json_encode(false);
-        }
-        return true;
-    }
-
-    public function saveActivity(){
+    public function activity(){
         $this->load->model("Zeapps_delivery_activities", "delivery_activities");
 
         // constitution du tableau
@@ -557,23 +574,97 @@ class Delivery extends ZeCtrl
             $data = json_decode(file_get_contents('php://input'), true);
         }
 
-        if (isset($data["id"]) && is_numeric($data["id"])) {
-            $this->delivery_activities->update($data, $data["id"]);
-        } else {
+        if($data['id']){
+            $this->delivery_activities->update($data, $data['id']);
+            $id = $data['id'];
+        }
+        else{
             $id = $this->delivery_activities->insert($data);
-            $data['id'] = $id;
         }
 
-        echo json_encode($data);
+        $delivery_activities = $this->delivery_activities->get($id);
+
+        echo json_encode($delivery_activities);
     }
 
-    public function deleteActivity($id = null){
-        if($id){
-            $this->load->model("Zeapps_delivery_activities", "delivery_activities");
+    public function del_activity($id){
+        $this->load->model("Zeapps_delivery_activities", "delivery_activities");
 
-            echo json_encode($this->delivery_activities->delete($id));
+        echo json_encode($this->delivery_activities->delete($id));
+    }
 
+    public function uploadDocuments($id_delivery = null){
+        if($id_delivery) {
+            $this->load->model("Zeapps_delivery_documents", "delivery_documents");
+
+            $data = $_POST;
+            $files = $_FILES['files'];
+            if($files) {
+                if($data['path']){
+                    unlink($data['path']);
+                }
+
+                $data['id_delivery'] = $id_delivery;
+
+                $path = '/assets/upload/crm/deliveries/';
+
+                $time = time();
+
+                $year = date('Y', $time);
+                $month = date('m', $time);
+                $day = date('d', $time);
+                $hour = date('H', $time);
+
+                $data['created_at'] = $year . '-' . $month . '-' . $day;
+
+                $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
+
+                recursive_mkdir(FCPATH . $path);
+
+                $arr = explode(".", $files["name"][0]);
+                $extension = end($arr);
+
+                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
+
+                move_uploaded_file($files["tmp_name"][0], FCPATH . $data['path']);
+
+                if ($data['id']) {
+                    $this->delivery_documents->update($data, $data['id']);
+                } else {
+                    $data['id'] = $this->delivery_documents->insert($data);
+                }
+                $data['date'] = date('Y-m-d H:i:s');
+
+                echo json_encode($data);
+            }
+            else{
+                if ($data['id']) {
+                    $this->delivery_documents->update($data, $data['id']);
+
+                    $data['date'] = date('Y-m-d H:i:s');
+
+                    echo json_encode($data);
+                }
+                else {
+                    echo json_encode(false);
+                }
+            }
         }
+        else {
+            echo json_encode(false);
+        }
+    }
+
+    public function del_document($id){
+        $this->load->model("Zeapps_delivery_documents", "delivery_documents");
+
+        if($document = $this->delivery_documents->get($id)){
+            unlink($document->path);
+
+            $this->delivery_documents->delete($id);
+        }
+
+        echo 'OK';
     }
 
     private function parseFormat($result = null, $num = null)

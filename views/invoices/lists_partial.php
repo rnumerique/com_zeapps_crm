@@ -4,17 +4,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <div ng-controller="ComZeappsCrmInvoiceListsPartialCtrl">
     <div class="row">
         <div class="col-md-12">
-            <h3>Factures</h3>
+            <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
+
+            <ze-btn fa="plus" color="success" hint="Facture" always-on="true"
+                    ze-modalform="add"
+                    data-template="templateInvoice"
+                    data-title="Créer une nouvelle facture"></ze-btn>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <ze-filters data-model="filter.model" data-options="filter.options"></ze-filters>
-            <div class="pull-right">
-                <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/invoice/new{{ id_company ?  "/company/" + id_company : "" }}{{ id_contact ?  "/contact/" + id_contact : "" }}'><span class='fa fa-fw fa-plus' aria-hidden='true'></span> Facture</a>
-            </div>
-        </div>
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
     </div>
 
     <div class="row">
@@ -25,48 +27,52 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>#</th>
                     <th>Libelle</th>
                     <th>Destinataire</th>
-                    <th>Contact</th>
-                    <th>Total HT (€)</th>
-                    <th>Total TTC (€)</th>
+                    <th class="text-right">Total HT</th>
+                    <th class="text-right">Total TTC</th>
                     <th>Date de création</th>
                     <th>Date limite</th>
                     <th>Responsable</th>
-                    <th></th>
+                    <th class="text-right">%</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="invoice in invoices | com_zeapps_crmFilter:filter.model">
+                <tr ng-repeat="invoice in invoices">
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.numerotation}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.libelle}}</a></td>
                     <td>
                         <a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">
-                            {{invoice.company.company_name}}
-                            <span ng-if="invoice.company.company_name && invoice.contact.last_name">-</span>
-                            {{invoice.contact ? invoice.contact.first_name[0] + '. ' + invoice.contact.last_name : ''}}
+                            {{invoice.name_company}}
+                            <span ng-if="invoice.name_company && invoice.name_contact">-</span>
+                            {{invoice.name_contact ? invoice.name_contact : ''}}
                         </a>
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">
-                            {{invoice.contact.mobile || invoice.contact.phone || invoice.contact.other_phone}}
-                            <span ng-if="(invoice.contact.mobile || invoice.contact.phone || invoice.contact.other_phone) && quote.contact.email">-</span>
-                            {{invoice.contact.email}}
-                        </a>
-                    </td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.total_ht}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.total_ttc}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.total_ht | currency:'€':2}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.total_ttc | currency:'€':2}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.date_creation | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.date_limit | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.user_name}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.finalized === '1' ? 'cloturée' : ''}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.name_user_account_manager}}</a></td>
+                    <td class="text-right"><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.probability | number:2}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/invoice/{{invoice.id}}">{{invoice.status}}</a></td>
                     <td class="text-right">
-                        <button type="button" class="btn btn-xs btn-danger" ng-click="delete(invoice)">
-                            <i class="fa fa-trash fa-fw"></i>
-                        </button>
+                        <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
+                                ze-modalform="edit"
+                                data-edit="invoice"
+                                data-title="Editer la facture"
+                                data-template="templateInvoice"></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(invoice)"></ze-btn>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+    </div>
+
 </div>

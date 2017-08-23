@@ -2,7 +2,6 @@
     <h3 class="modal-title">{{titre}}</h3>
 </div>
 
-
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12">
@@ -12,12 +11,16 @@
     <div class="row">
         <div class="col-md-12">
             <label>
-                <input type='checkbox' ng-model="form.delivery">
-                Bon de livraison
+                <input type='checkbox' ng-model="form.quote">
+                Devis
             </label>
         </div>
-    </div>
-    <div class="row">
+        <div class="col-md-12">
+            <label>
+                <input type='checkbox' ng-model="form.order">
+                Bon de Commande
+            </label>
+        </div>
         <div class="col-md-12">
             <label>
                 <input type='checkbox' ng-model="form.invoice">
@@ -29,5 +32,5 @@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-danger" ng-click="cancel()" i8n="Annuler"></button>
-    <button type="sumbit" class="btn btn-success" ng-click="finalize()">Clôturer</button>
+    <button type="sumbit" class="btn btn-success" ng-click="transform()">Convertir</button>
 </div>

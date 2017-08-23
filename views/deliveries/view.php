@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<div id="breadcrumb">Commande</div>
+<div id="breadcrumb">Bon de livraison</div>
 <div id="content">
 
 
@@ -10,16 +10,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-6">
                     <div class="titleWell">
-                        Commande : {{ order.libelle }}
+                        Bon de livraison : {{ delivery.libelle }}
                     </div>
                     <div class="small">
-                        n° {{ order.numerotation }}
+                        n° {{ delivery.numerotation }}
                     </div>
                     <div class="small">
                         Client :
-                        {{order.name_company}}
-                        <span ng-if="order.name_company && order.name_contact">-</span>
-                        {{order.name_contact ? order.name_contact : ""}}
+                        {{delivery.name_company}}
+                        <span ng-if="delivery.name_company && delivery.name_contact">-</span>
+                        {{delivery.name_contact ? delivery.name_contact : ""}}
                         <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
                             {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
                         </button>
@@ -30,29 +30,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
 
                         <span class="form-group form-inline">
-                            <select class="form-control input-sm" ng-model="order.status" ng-change="updateStatus()">
+                            <select class="form-control input-sm" ng-model="delivery.status" ng-change="updateStatus()">
                                 <option>En cours</option>
                                 <option>Gagné</option>
                                 <option>Perdu</option>
                             </select>
                         </span>
 
-                        ({{ order.probability | number:2 }}%)
+                        ({{ delivery.probability | number:2 }}%)
 
                         <ze-btn fa="pencil" color="info" hint="Editer"
-                                ze-modalform="updateOrder"
-                                data-edit="order"
+                                ze-modalform="updateDelivery"
+                                data-edit="delivery"
                                 data-template="templateEdit"
-                                data-title="Modifier la commande"></ze-btn>
+                                data-title="Modifier le bon de livraison"></ze-btn>
                         <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
                         <ze-btn fa="files-o" color="success" hint="Transformer" ng-click="transform()"></ze-btn>
 
-                        <div class="btn-group btn-group-xs" role="group" ng-if="nb_orders > 0">
-                            <button type="button" class="btn btn-default" ng-class="order_first == 0 ? 'disabled' :''" ng-click="first_order()"><span class="fa fa-fw fa-fast-backward"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="order_previous == 0 ? 'disabled' :''" ng-click="previous_order()"><span class="fa fa-fw fa-chevron-left"></span></button>
-                            <button type="button" class="btn btn-default disabled">{{order_order}}/{{nb_orders}}</button>
-                            <button type="button" class="btn btn-default" ng-class="order_next == 0 ? 'disabled' :''" ng-click="next_order()"><span class="fa fa-fw fa-chevron-right"></span></button>
-                            <button type="button" class="btn btn-default" ng-class="order_last == 0 ? 'disabled' :''" ng-click="last_order()"><span class="fa fa-fw fa-fast-forward"></span></button>
+                        <div class="btn-group btn-group-xs" role="group" ng-if="nb_deliveries > 0">
+                            <button type="button" class="btn btn-default" ng-class="delivery_first == 0 ? 'disabled' :''" ng-click="first_delivery()"><span class="fa fa-fw fa-fast-backward"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_previous == 0 ? 'disabled' :''" ng-click="previous_delivery()"><span class="fa fa-fw fa-chevron-left"></span></button>
+                            <button type="button" class="btn btn-default disabled">{{delivery_order}}/{{nb_deliveries}}</button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_next == 0 ? 'disabled' :''" ng-click="next_delivery()"><span class="fa fa-fw fa-chevron-right"></span></button>
+                            <button type="button" class="btn btn-default" ng-class="delivery_last == 0 ? 'disabled' :''" ng-click="last_delivery()"><span class="fa fa-fw fa-fast-forward"></span></button>
                         </div>
                     </div>
                 </div>
@@ -199,10 +199,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td class="text-right">
                                     <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
-                                            ze-modalform="updateOrder"
+                                            ze-modalform="updateDelivery"
                                             data-edit="line"
-                                            data-title="Editer la ligne de la commande"
-                                            data-template="orderLineTplUrl"></ze-btn>
+                                            data-title="Editer la ligne du devis"
+                                            data-template="deliveryLineTplUrl"></ze-btn>
                                     <ze-btn fa="trash" color="danger" direction="left" hint="Supprimer" ng-click="deleteLine(line)" ze-confirmation></ze-btn>
                                 </td>
                             </tr>
@@ -232,13 +232,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <div class="col-md-5 col-md-offset-2">
                     <div class="well well-sm">
-                        <div ng-if="order.total_discount > 0">
+                        <div ng-if="delivery.total_discount > 0">
                             <div class="row">
                                 <div class="col-md-6">
                                     Total HT av remise
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    {{ order.total_prediscount_ht | currency:'€':2 }}
+                                    {{ delivery.total_prediscount_ht | currency:'€':2 }}
                                 </div>
                             </div>
                             <div class="row">
@@ -246,17 +246,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     Total TTC av remise
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    {{ order.total_prediscount_ttc | currency:'€':2 }}
+                                    {{ delivery.total_prediscount_ttc | currency:'€':2 }}
                                 </div>
                             </div>
                             <hr>
 
-                            <div class="row" ng-if="order.global_discount > 0">
+                            <div class="row" ng-if="delivery.global_discount > 0">
                                 <div class="col-md-6">
                                     Remise globale
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    -{{ order.global_discount | number:2 }}%
+                                    -{{ delivery.global_discount | number:2 }}%
                                 </div>
                             </div>
 
@@ -265,7 +265,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     Total remises HT
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    {{ order.total_discount | currency:'€':2 }}
+                                    {{ delivery.total_discount | currency:'€':2 }}
                                 </div>
                             </div>
 
@@ -277,7 +277,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total HT
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ order.total_ht | currency:'€':2 }}
+                                {{ delivery.total_ht | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -286,7 +286,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TVA
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ order.total_tva | currency:'€':2 }}
+                                {{ delivery.total_tva | currency:'€':2 }}
                             </div>
                         </div>
 
@@ -295,7 +295,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 Total TTC
                             </div>
                             <div class="col-md-6 text-right">
-                                {{ order.total_ttc | currency:'€':2 }}
+                                {{ delivery.total_ttc | currency:'€':2 }}
                             </div>
                         </div>
                     </div>
@@ -306,13 +306,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='header'">
             <strong>Reference Client :</strong>
-            {{ order.reference_client }}
+            {{ delivery.reference_client }}
             <br/>
-            <strong>Date de création de la commande :</strong>
-            {{ order.date_creation | date:'dd/MM/yyyy' }}
+            <strong>Date de création du bon de livraison :</strong>
+            {{ delivery.date_creation | date:'dd/MM/yyyy' }}
             <br/>
-            <strong>Date de validité de la commande :</strong>
-            {{ order.date_limit | date:'dd/MM/yyyy' }}
+            <strong>Date de validité du bon de livraison :</strong>
+            {{ delivery.date_limit | date:'dd/MM/yyyy' }}
             <br/>
         </div>
 
@@ -323,10 +323,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <strong>Adresse de facturation :</strong><br>
                         {{ company.company_name }}<br ng-if="company.company_name">
                         {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                        {{ order.billing_address_1 }}<br ng-if="order.billing_address_1">
-                        {{ order.billing_address_2 }}<br ng-if="order.billing_address_2">
-                        {{ order.billing_address_3 }}<br ng-if="order.billing_address_3">
-                        {{ order.billing_zipcode + ' ' + order.billing_city }}
+                        {{ delivery.billing_address_1 }}<br ng-if="delivery.billing_address_1">
+                        {{ delivery.billing_address_2 }}<br ng-if="delivery.billing_address_2">
+                        {{ delivery.billing_address_3 }}<br ng-if="delivery.billing_address_3">
+                        {{ delivery.billing_zipcode + ' ' + delivery.billing_city }}
                     </div>
                 </div>
 
@@ -335,10 +335,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <strong>Adresse de livraison :</strong><br>
                         {{ company.company_name }}<br ng-if="company.company_name">
                         {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                        {{ order.delivery_address_1 }}<br ng-if="order.delivery_address_1">
-                        {{ order.delivery_address_2 }}<br ng-if="order.delivery_address_2">
-                        {{ order.delivery_address_3 }}<br ng-if="order.delivery_address_3">
-                        {{ order.delivery_zipcode + ' ' + order.delivery_city }}
+                        {{ delivery.delivery_address_1 }}<br ng-if="delivery.delivery_address_1">
+                        {{ delivery.delivery_address_2 }}<br ng-if="delivery.delivery_address_2">
+                        {{ delivery.delivery_address_3 }}<br ng-if="delivery.delivery_address_3">
+                        {{ delivery.delivery_zipcode + ' ' + delivery.delivery_city }}
                     </div>
                 </div>
             </div>
@@ -346,7 +346,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            {{ order.modalities }}
+            {{ delivery.modalities }}
         </div>
 
         <div ng-show="navigationState=='activity'">

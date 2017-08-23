@@ -13,6 +13,15 @@ class Orders extends ZeCtrl
         $this->load->view('orders/form');
     }
 
+    public function form_modal()
+    {
+        $this->load->view('orders/form_modal');
+    }
+
+    public function form_line(){
+        $this->load->view('orders/form_line');
+    }
+
     public function lists()
     {
         $this->load->view('orders/lists');
@@ -23,9 +32,9 @@ class Orders extends ZeCtrl
         $this->load->view('orders/lists_partial');
     }
 
-    public function finalize_modal()
+    public function transform_modal()
     {
-        $this->load->view('orders/finalize_modal');
+        $this->load->view('orders/transform_modal');
     }
 
     public function config()
@@ -33,10 +42,19 @@ class Orders extends ZeCtrl
         $this->load->view('orders/config');
     }
 
+    public function modal_activity()
+    {
+        $this->load->view('orders/modal_activity');
+    }
+
+    public function modal_document()
+    {
+        $this->load->view('orders/modal_document');
+    }
+
 
 
     public function makePDF($id, $echo = true){
-
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_companies", "order_companies");
         $this->load->model("Zeapps_order_contacts", "order_contacts");
@@ -51,11 +69,23 @@ class Orders extends ZeCtrl
         $data['lines'] = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
 
         $data['showDiscount'] = false;
+        $data['tvas'] = [];
         foreach($data['lines'] as $line){
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
-        }
 
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
+        }
 
         //load the view and saved it into $html variable
         $html = $this->load->view('orders/PDF', $data, true);
@@ -70,7 +100,7 @@ class Orders extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/orders/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Commande €n° : '.$data['order']->numerotation.'|C. Compta : '.$data['order']->accounting_number.'|Fait le {DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['order']->numerotation.'|C. Compta : '.$data['order']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
@@ -116,10 +146,9 @@ class Orders extends ZeCtrl
         echo json_encode($result);
     }
 
-    public function finalize($id) {
+    public function transform($id) {
         if($id) {
             $this->load->model("Zeapps_orders", "orders");
-            $this->load->library('Statistiques', 'stats', 'com_quiltmania_stats');
 
             // constitution du tableau
             $data = array() ;
@@ -134,22 +163,10 @@ class Orders extends ZeCtrl
             if($data){
                 foreach($data as $document => $value){
                     if($value == 'true'){
-                        $createFrom = 'create'.ucfirst($document).'From';
-                        $return[$document] = $this->$createFrom($id);
+                        $return[$document] = $this->createFrom($document, $id);
                     }
                 }
             }
-
-            $nomPDF = $this->makePDF($id, false);
-
-            $this->orders->update(array('finalized' => true, 'final_pdf' => $nomPDF), $id);
-
-            $this->stats->fromOrder($id);
-
-            $return['nomPDF'] = $nomPDF;
-
-            $this->trigger->set('finalize_order');
-            $this->trigger->execute(array('id' => $id));
 
             echo json_encode($return);
         }
@@ -158,17 +175,21 @@ class Orders extends ZeCtrl
         }
     }
 
-    public function createInvoiceFrom($id){
+    public function createFrom($type, $id){
         if($id){
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_orders", "orders");
             $this->load->model("Zeapps_order_companies", "order_companies");
             $this->load->model("Zeapps_order_contacts", "order_contacts");
             $this->load->model("Zeapps_order_lines", "order_lines");
-            $this->load->model("Zeapps_invoices", "invoices");
-            $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-            $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
-            $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $type_model = $type."_model";
+            $this->load->model("Zeapps_".$type."s", $type_model);
+            $type_companies = $type."_companies";
+            $this->load->model("Zeapps_".$type."_companies", $type_companies);
+            $type_contacts = $type."_contacts";
+            $this->load->model("Zeapps_".$type."_contacts", $type_contacts);
+            $type_lines = $type."_lines";
+            $this->load->model("Zeapps_".$type."_lines", $type_lines);
 
             $order = $this->orders->get($id);
 
@@ -177,152 +198,117 @@ class Orders extends ZeCtrl
             unset($order->created_at);
             unset($order->updated_at);
 
-            $id_invoice = $this->invoices->insert($order);
-
-            if($companies = $this->order_companies->all(array('id_order'=>$id))){
-                foreach($companies as $company){
-                    unset($company->id);
-                    unset($company->id_order);
-                    unset($company->created_at);
-                    unset($company->updated_at);
-
-                    $company->id_invoice = $id_invoice;
-
-                    $this->invoice_companies->insert($company);
-                }
-            }
-
-            if($contacts = $this->order_contacts->all(array('id_order'=>$id))){
-                foreach($contacts as $contact){
-                    unset($contact->id);
-                    unset($contact->id_order);
-                    unset($contact->created_at);
-                    unset($contact->updated_at);
-
-                    $contact->id_invoice = $id_invoice;
-
-                    $this->invoice_contacts->insert($contact);
-                }
-            }
-
-            if($lines = $this->order_lines->all(array('id_order'=>$id))){
-                foreach($lines as $line){
-                    unset($line->id);
-                    unset($line->id_order);
-                    unset($line->created_at);
-                    unset($line->updated_at);
-
-                    $line->id_invoice = $id_invoice;
-
-                    $this->invoice_lines->insert($line);
-                }
-            }
-
-        }
-
-        return $id_invoice;
-    }
-
-    public function createDeliveryFrom($id){
-        if($id){
-            $this->load->model("Zeapps_configs", "configs");
-            $this->load->model("Zeapps_orders", "orders");
-            $this->load->model("Zeapps_order_companies", "order_companies");
-            $this->load->model("Zeapps_order_contacts", "order_contacts");
-            $this->load->model("Zeapps_order_lines", "order_lines");
-            $this->load->model("Zeapps_deliveries", "deliveries");
-            $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-            $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
-            $this->load->model("Zeapps_delivery_lines", "delivery_lines");
-
-            $order = $this->orders->get($id);
-
-            unset($order->id);
-            unset($order->numerotation);
-            unset($order->created_at);
-            unset($order->updated_at);
-
-            $format = $this->configs->get(array('id'=>'crm_delivery_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_delivery_frequency'))->value;
-            $num = $this->deliveries->get_numerotation($frequency);
+            $format = $this->configs->get(array('id'=>'crm_'.$type.'_format'))->value;
+            $frequency = $this->configs->get(array('id'=>'crm_'.$type.'_frequency'))->value;
+            $num = $this->$type_model->get_numerotation($frequency);
             $order->numerotation = $this->parseFormat($format, $num);
 
-            $id_delivery = $this->deliveries->insert($order);
+            $new_id = $this->$type_model->insert($order);
+            $id_key = "id_".$type;
 
-            if($companies = $this->order_companies->all(array('id_order'=>$id))){
+            if($companies = $this->$type_companies->all(array('id_order'=>$id))){
                 foreach($companies as $company){
                     unset($company->id);
                     unset($company->id_order);
                     unset($company->created_at);
                     unset($company->updated_at);
 
-                    $company->id_delivery = $id_delivery;
+                    $company->$id_key = $new_id;
 
-                    $this->delivery_companies->insert($company);
+                    $this->$type_companies->insert($company);
                 }
             }
 
-            if($contacts = $this->order_contacts->all(array('id_order'=>$id))){
+            if($contacts = $this->$type_contacts->all(array('id_order'=>$id))){
                 foreach($contacts as $contact){
                     unset($contact->id);
                     unset($contact->id_order);
                     unset($contact->created_at);
                     unset($contact->updated_at);
 
-                    $contact->id_delivery = $id_delivery;
+                    $contact->$id_key = $new_id;
 
-                    $this->delivery_contacts->insert($contact);
+                    $this->$type_contacts->insert($contact);
                 }
             }
 
-            if($lines = $this->order_lines->all(array('id_order'=>$id))){
+            if($lines = $this->$type_lines->all(array('id_order'=>$id))){
                 foreach($lines as $line){
                     unset($line->id);
                     unset($line->id_order);
                     unset($line->created_at);
                     unset($line->updated_at);
 
-                    $line->id_delivery = $id_delivery;
+                    $line->$id_key = $new_id;
 
-                    $this->delivery_lines->insert($line);
+                    $this->$type_lines->insert($line);
                 }
             }
 
         }
 
-        return $id_delivery;
+        return $new_id;
     }
 
-
-    public function getAll($id_company = null, $type = 'company') {
-        $this->load->model("Zeapps_users", "users");
+    public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_companies", "order_companies");
         $this->load->model("Zeapps_order_contacts", "order_contacts");
         $this->load->model("Zeapps_order_lines", "order_lines");
 
-        if($id_company)
-            $orders = $this->orders->all(array('id_'.$type=>$id_company));
-        else
-            $orders = $this->orders->all();
+        $filters = array() ;
 
-        if($orders && is_array($orders)){
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($id !== '0') {
+            $filters['id_' . $type] = $id;
+        }
+
+        if($orders = $this->orders->limit($limit, $offset)->all($filters)){
             for($i=0;$i<sizeof($orders);$i++){
-                $user = $this->users->get($orders[$i]->id_user);
-                if($user) {
-                    $orders[$i]->user_name = $user->firstname[0] . '. ' . $user->lastname;
-                }
                 $orders[$i]->company = $this->order_companies->get(array('id_order'=>$orders[$i]->id));
                 $orders[$i]->contact = $this->order_contacts->get(array('id_order'=>$orders[$i]->id));
                 $orders[$i]->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
             }
         }
-
-        if ($orders == false) {
-            echo json_encode(array());
-        } else {
-            echo json_encode($orders);
+        else{
+            $orders = [];
         }
+        $total = $this->orders->count($filters);
+
+        if($context){
+
+        }
+
+        echo json_encode(array(
+            'orders' => $orders,
+            'total' => $total
+        ));
+
+    }
+
+    public function modal($limit = 15, $offset = 0) {
+        $this->load->model("Zeapps_orders", "orders");
+
+        $filters = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if(!$orders = $this->orders->limit($limit, $offset)->all($filters)){
+            $orders = [];
+        }
+        $total = $this->orders->count($filters);
+
+        echo json_encode(array(
+            'data' => $orders,
+            'total' => $total
+        ));
 
     }
 
@@ -378,7 +364,7 @@ class Orders extends ZeCtrl
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
             $id = $data["id"];
-            $this->orders->update($data, $data["id"]);
+            $this->orders->update($data, array('id' => $data["id"]));
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_order_format'))->value;
@@ -577,77 +563,7 @@ class Orders extends ZeCtrl
         }
     }
 
-    public function uploadDocuments($id_order = null){
-        if($id_order) {
-            $this->load->model("Zeapps_order_documents", "order_documents");
-
-            $data = [];
-            $res = [];
-
-            $data['id_order'] = $id_order;
-
-            $files = $_FILES['files'];
-
-            $path = '/assets/upload/crm/orders/';
-
-            $time = time();
-
-            $year = date('Y', $time);
-            $month = date('m', $time);
-            $day = date('d', $time);
-            $hour = date('H', $time);
-
-            $data['created_at'] = $year . '-' . $month . '-' . $day;
-
-            $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
-
-            recursive_mkdir(FCPATH . $path);
-
-            for ($i = 0; $i < sizeof($files['name']); $i++) {
-                $arr = explode(".", $files["name"][$i]);
-                $extension = end($arr);
-
-                $data['name'] = implode('.', array_slice($arr, 0, -1)); // entire name except the extension
-
-                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
-
-                move_uploaded_file($files["tmp_name"][$i], FCPATH . $data['path']);
-
-                $data['id'] = $this->order_documents->insert($data);
-
-                array_push($res, $data);
-
-                unset($data['id']);
-            }
-
-            echo json_encode($res);
-        }
-        else {
-            echo json_encode('false');
-        }
-    }
-
-    public function deleteDocument($id = null){
-        if($id){
-            $this->load->model("Zeapps_order_documents", "order_documents");
-
-            $document = $this->order_documents->get($id);
-
-            $path = FCPATH;
-
-            if(unlink($path . $document->path))
-                echo json_encode($this->order_documents->delete($id));
-            else
-                echo json_encode(false);
-
-        }
-        else{
-            echo json_encode(false);
-        }
-        return true;
-    }
-
-    public function saveActivity(){
+    public function activity(){
         $this->load->model("Zeapps_order_activities", "order_activities");
 
         // constitution du tableau
@@ -658,23 +574,97 @@ class Orders extends ZeCtrl
             $data = json_decode(file_get_contents('php://input'), true);
         }
 
-        if (isset($data["id"]) && is_numeric($data["id"])) {
-            $this->order_activities->update($data, $data["id"]);
-        } else {
+        if($data['id']){
+            $this->order_activities->update($data, $data['id']);
+            $id = $data['id'];
+        }
+        else{
             $id = $this->order_activities->insert($data);
-            $data['id'] = $id;
         }
 
-        echo json_encode($data);
+        $order_activities = $this->order_activities->get($id);
+
+        echo json_encode($order_activities);
     }
 
-    public function deleteActivity($id = null){
-        if($id){
-            $this->load->model("Zeapps_order_activities", "order_activities");
+    public function del_activity($id){
+        $this->load->model("Zeapps_order_activities", "order_activities");
 
-            echo json_encode($this->order_activities->delete($id));
+        echo json_encode($this->order_activities->delete($id));
+    }
 
+    public function uploadDocuments($id_order = null){
+        if($id_order) {
+            $this->load->model("Zeapps_order_documents", "order_documents");
+
+            $data = $_POST;
+            $files = $_FILES['files'];
+            if($files) {
+                if($data['path']){
+                    unlink($data['path']);
+                }
+
+                $data['id_order'] = $id_order;
+
+                $path = '/assets/upload/crm/orders/';
+
+                $time = time();
+
+                $year = date('Y', $time);
+                $month = date('m', $time);
+                $day = date('d', $time);
+                $hour = date('H', $time);
+
+                $data['created_at'] = $year . '-' . $month . '-' . $day;
+
+                $path .= $year . '/' . $month . '/' . $day . '/' . $hour . '/';
+
+                recursive_mkdir(FCPATH . $path);
+
+                $arr = explode(".", $files["name"][0]);
+                $extension = end($arr);
+
+                $data['path'] = $path . ltrim(str_replace(' ', '', microtime()), '0.') . "." . $extension;
+
+                move_uploaded_file($files["tmp_name"][0], FCPATH . $data['path']);
+
+                if ($data['id']) {
+                    $this->order_documents->update($data, $data['id']);
+                } else {
+                    $data['id'] = $this->order_documents->insert($data);
+                }
+                $data['date'] = date('Y-m-d H:i:s');
+
+                echo json_encode($data);
+            }
+            else{
+                if ($data['id']) {
+                    $this->order_documents->update($data, $data['id']);
+
+                    $data['date'] = date('Y-m-d H:i:s');
+
+                    echo json_encode($data);
+                }
+                else {
+                    echo json_encode(false);
+                }
+            }
         }
+        else {
+            echo json_encode(false);
+        }
+    }
+
+    public function del_document($id){
+        $this->load->model("Zeapps_order_documents", "order_documents");
+
+        if($document = $this->order_documents->get($id)){
+            unlink($document->path);
+
+            $this->order_documents->delete($id);
+        }
+
+        echo 'OK';
     }
 
     private function parseFormat($result = null, $num = null)

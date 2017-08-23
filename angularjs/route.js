@@ -29,26 +29,6 @@ app.config(["$routeProvider",
 				controller: "ComZeappsCrmQuoteListsCtrl"
 			})
 
-			.when("/ng/com_zeapps_crm/quote/new", {
-				templateUrl: "/com_zeapps_crm/quotes/form",
-				controller: "ComZeappsCrmQuoteFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/quote/new/company/:id_company", {
-				templateUrl: "/com_zeapps_crm/quotes/form",
-				controller: "ComZeappsCrmQuoteFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/quote/new/company/:id_company/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/quotes/form",
-				controller: "ComZeappsCrmQuoteFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/quote/new/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/quotes/form",
-				controller: "ComZeappsCrmQuoteFormCtrl"
-			})
-
 			.when("/ng/com_zeapps_crm/quote/:id", {
 				templateUrl: "/com_zeapps_crm/quotes/view",
 				controller: "ComZeappsCrmQuoteViewCtrl"
@@ -65,26 +45,6 @@ app.config(["$routeProvider",
 				controller: "ComZeappsCrmOrderListsCtrl"
 			})
 
-			.when("/ng/com_zeapps_crm/order/new", {
-				templateUrl: "/com_zeapps_crm/orders/form",
-				controller: "ComZeappsCrmOrderFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/order/new/company/:id_company", {
-				templateUrl: "/com_zeapps_crm/orders/form",
-				controller: "ComZeappsCrmOrderFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/order/new/company/:id_company/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/orders/form",
-				controller: "ComZeappsCrmOrderFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/order/new/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/orders/form",
-				controller: "ComZeappsCrmOrderFormCtrl"
-			})
-
 			.when("/ng/com_zeapps_crm/order/:id", {
 				templateUrl: "/com_zeapps_crm/orders/view",
 				controller: "ComZeappsCrmOrderViewCtrl"
@@ -97,37 +57,17 @@ app.config(["$routeProvider",
 
 		// DELIVERY
 			.when("/ng/com_zeapps_crm/delivery", {
-				templateUrl: "/com_zeapps_crm/delivery/lists",
+				templateUrl: "/com_zeapps_crm/deliveries/lists",
 				controller: "ComZeappsCrmDeliveryListsCtrl"
 			})
 
-			.when("/ng/com_zeapps_crm/delivery/new", {
-				templateUrl: "/com_zeapps_crm/delivery/form",
-				controller: "ComZeappsCrmDeliveryFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/delivery/new/company/:id_company", {
-				templateUrl: "/com_zeapps_crm/delivery/form",
-				controller: "ComZeappsCrmDeliveryFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/delivery/new/company/:id_company/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/delivery/form",
-				controller: "ComZeappsCrmDeliveryFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/delivery/new/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/delivery/form",
-				controller: "ComZeappsCrmDeliveryFormCtrl"
-			})
-
 			.when("/ng/com_zeapps_crm/delivery/:id", {
-				templateUrl: "/com_zeapps_crm/delivery/view",
+				templateUrl: "/com_zeapps_crm/deliveries/view",
 				controller: "ComZeappsCrmDeliveryViewCtrl"
 			})
 
 			.when("/ng/com_zeapps/delivery", {
-				templateUrl: "/com_zeapps_crm/delivery/config",
+				templateUrl: "/com_zeapps_crm/deliveries/config",
 				controller: "ComZeappsCrmDeliveryConfigCtrl"
 			})
 
@@ -135,31 +75,6 @@ app.config(["$routeProvider",
 			.when("/ng/com_zeapps_crm/invoice", {
 				templateUrl: "/com_zeapps_crm/invoices/lists",
 				controller: "ComZeappsCrmInvoiceListsCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/invoice/new", {
-				templateUrl: "/com_zeapps_crm/invoices/form",
-				controller: "ComZeappsCrmInvoiceFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/invoice/new/company/:id_company", {
-				templateUrl: "/com_zeapps_crm/invoices/form",
-				controller: "ComZeappsCrmInvoiceFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/invoice/new/company/:id_company/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/invoices/form",
-				controller: "ComZeappsCrmInvoiceFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/invoice/new/contact/:id_contact", {
-				templateUrl: "/com_zeapps_crm/invoices/form",
-				controller: "ComZeappsCrmInvoiceFormCtrl"
-			})
-
-			.when("/ng/com_zeapps_crm/invoice/:id", {
-				templateUrl: "/com_zeapps_crm/invoices/view",
-				controller: "ComZeappsCrmInvoiceViewCtrl"
 			})
 
 			.when("/ng/com_zeapps/invoice", {
