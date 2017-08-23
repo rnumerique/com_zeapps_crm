@@ -110,7 +110,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="form-group">
                 <label>Modalités de règlement</label>
                 <select ng-model="form.modalities" class="form-control">
-                    <option ng-repeat="modality in modalities">
+                    <option ng-repeat="modality in modalities" value="{{modality.label}}">
                         {{ modality.label }}
                     </option>
                 </select>
@@ -130,7 +130,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="form-group">
                 <label>Entrepôts <span class="required">*</span></label>
                 <select ng-model="form.id_warehouse" class="form-control" ng-required="true">
-                    <option ng-repeat="warehouse in warehouses" ng-value="warehouse.id">
+                    <option ng-repeat="warehouse in warehouses" value="{{warehouse.id}}">
                         {{ warehouse.label }}
                     </option>
                 </select>
