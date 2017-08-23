@@ -42,11 +42,6 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/config');
     }
 
-    public function modal()
-    {
-        $this->load->view('quotes/modal');
-    }
-
     public function modal_activity()
     {
         $this->load->view('quotes/modal_activity');
@@ -74,9 +69,22 @@ class Quotes extends ZeCtrl
         $data['lines'] = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
 
         $data['showDiscount'] = false;
+        $data['tvas'] = [];
         foreach($data['lines'] as $line){
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
+
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
         }
 
         //load the view and saved it into $html variable
@@ -243,7 +251,6 @@ class Quotes extends ZeCtrl
     }
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
-        $this->load->model("Zeapps_users", "users");
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_companies", "quote_companies");
         $this->load->model("Zeapps_quote_contacts", "quote_contacts");
