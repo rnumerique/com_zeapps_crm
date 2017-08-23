@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ttc | currency:'€':2}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_creation | date:'dd/MM/yyyy'}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_limit | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.user_name}}</a></td>
+                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.name_user_account_manager}}</a></td>
                     <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.probability | number:2}}</a></td>
                     <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.status}}</a></td>
                     <td class="text-right">
