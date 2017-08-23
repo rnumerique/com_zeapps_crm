@@ -237,6 +237,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                             total_ht: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
                             total_ttc: ((parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc)) * (1 + (parseFloat(response.data.value_taxe) / 100)))
                         };
+                        crmTotal.line.update(line);
 
                         $scope.codeProduct = "";
 
@@ -281,6 +282,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 						total_ht: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
 						total_ttc: ((parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc)) * (1 + (parseFloat(objReturn.value_taxe) / 100)))
 					};
+                    crmTotal.line.update(line);
 
 					var formatted_data = angular.toJson(line);
 					zhttp.crm.quote.line.save(formatted_data).then(function(response){
@@ -367,15 +369,10 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			return crmTotal.sub.TTC($scope.lines, index);
 		}
 
-        function updateSums(line){
-            line.total_ht = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) );
-            line.total_ttc = parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat($scope.quote.global_discount) / 100) ) * ( 1 + (parseFloat(line.value_taxe) / 100) );
-        }
-
 		function updateQuote(){
 			if($scope.quote) {
 				angular.forEach($scope.lines, function(line){
-					updateSums(line);
+                    crmTotal.line.update(line);
                     if(line.id){
                         editLine(line);
                     }

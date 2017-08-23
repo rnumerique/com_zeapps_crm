@@ -9,6 +9,9 @@ app.factory("crmTotal", function(){
             HT : subtotalHT,
             TTC : subtotalTTC
         },
+		line: {
+			update: updateSums
+		},
 		get: {
 			totals: {}
 		}
@@ -135,5 +138,14 @@ app.factory("crmTotal", function(){
             }
         }
         return t;
+    }
+
+    function updateSums(line){
+        line.total_ht = round2(parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat(doc.global_discount) / 100) ));
+        line.total_ttc = round2(line.total_ht * ( 1 + (parseFloat(line.value_taxe) / 100) ));
+    }
+
+    function round2(num) {
+        return +(Math.round(num + "e+2")  + "e-2");
     }
 });
