@@ -155,7 +155,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td ng-if="line.type != 'subTotal' && line.type != 'comment'">
                                     <strong>{{ line.designation_title }} <span ng-if="line.designation_desc">:</span></strong><br>
-                                    {{ line.designation_desc }}
+                                    <span class="text-wrap">{{ line.designation_desc }}</span>
                                 </td>
 
                                 <td class="text-right" ng-if="line.type != 'subTotal' && line.type != 'comment'">
@@ -251,7 +251,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                             <hr>
 
-                            <div class="row">
+                            <div class="row" ng-if="quote.global_discount > 0">
                                 <div class="col-md-6">
                                     Remise globale
                                 </div>
@@ -262,7 +262,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    Remise totale HT
+                                    Total remises HT
                                 </div>
                                 <div class="col-md-6 text-right">
                                     {{ quote.total_discount | currency:'€':2 }}
@@ -272,21 +272,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <hr>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                Total TVA
-                            </div>
-                            <div class="col-md-6 text-right">
-                                {{ quote.total_tva | currency:'€':2 }}
-                            </div>
-                        </div>
-
                         <div class="row total">
                             <div class="col-md-6">
                                 Total HT
                             </div>
                             <div class="col-md-6 text-right">
                                 {{ quote.total_ht | currency:'€':2 }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                Total TVA
+                            </div>
+                            <div class="col-md-6 text-right">
+                                {{ quote.total_tva | currency:'€':2 }}
                             </div>
                         </div>
 
