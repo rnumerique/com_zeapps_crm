@@ -77,6 +77,11 @@ app.config(["$routeProvider",
 				controller: "ComZeappsCrmInvoiceListsCtrl"
 			})
 
+            .when("/ng/com_zeapps_crm/invoice/:id", {
+                templateUrl: "/com_zeapps_crm/invoices/view",
+                controller: "ComZeappsCrmInvoiceViewCtrl"
+            })
+
 			.when("/ng/com_zeapps/invoice", {
 				templateUrl: "/com_zeapps_crm/invoices/config",
 				controller: "ComZeappsCrmInvoiceConfigCtrl"

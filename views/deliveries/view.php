@@ -8,27 +8,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <form>
         <div class="well">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-2">
                     <div class="titleWell">
                         Bon de livraison : {{ delivery.libelle }}
                     </div>
-                    <div class="small">
+                    <p class="small">
                         n° {{ delivery.numerotation }}
-                    </div>
-                    <div class="small">
-                        Client :
-                        {{delivery.name_company}}
-                        <span ng-if="delivery.name_company && delivery.name_contact">-</span>
-                        {{delivery.name_contact ? delivery.name_contact : ""}}
-                        <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
-                            {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="pull-right">
-                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
-
+                    </p>
+                    <p>
                         <span class="form-group form-inline">
                             <select class="form-control input-sm" ng-model="delivery.status" ng-change="updateStatus()">
                                 <option>En cours</option>
@@ -36,16 +23,43 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <option>Perdu</option>
                             </select>
                         </span>
-
                         ({{ delivery.probability | number:2 }}%)
+                    </p>
+                    <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
+                        {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
+                    </button>
+                </div>
 
+                <div class="col-md-3">
+                    <strong>Adresse de facturation :</strong><br>
+                    {{ company.company_name }}<br ng-if="company.company_name">
+                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
+                    {{ delivery.billing_address_1 }}<br ng-if="delivery.billing_address_1">
+                    {{ delivery.billing_address_2 }}<br ng-if="delivery.billing_address_2">
+                    {{ delivery.billing_address_3 }}<br ng-if="delivery.billing_address_3">
+                    {{ delivery.billing_zipcode + ' ' + delivery.billing_city }}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Adresse de livraison :</strong><br>
+                    {{ company.company_name }}<br ng-if="company.company_name">
+                    {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
+                    {{ delivery.delivery_address_1 }}<br ng-if="delivery.delivery_address_1">
+                    {{ delivery.delivery_address_2 }}<br ng-if="delivery.delivery_address_2">
+                    {{ delivery.delivery_address_3 }}<br ng-if="delivery.delivery_address_3">
+                    {{ delivery.delivery_zipcode + ' ' + delivery.delivery_city }}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="pull-right">
+                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
                         <ze-btn fa="pencil" color="info" hint="Editer"
                                 ze-modalform="updateDelivery"
                                 data-edit="delivery"
                                 data-template="templateEdit"
                                 data-title="Modifier le bon de livraison"></ze-btn>
                         <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
-                        <ze-btn fa="files-o" color="success" hint="Transformer" ng-click="transform()"></ze-btn>
+                        <ze-btn fa="files-o" color="success" hint="Dupliquer" ng-click="transform()"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_deliveries > 0">
                             <button type="button" class="btn btn-default" ng-class="delivery_first == 0 ? 'disabled' :''" ng-click="first_delivery()"><span class="fa fa-fw fa-fast-backward"></span></button>
@@ -93,7 +107,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <li ng-class="navigationState =='body' ? 'active' : ''"><a href="#" ng-click="setTab('body')">Corps</a></li>
             <li ng-class="navigationState =='header' ? 'active' : ''"><a href="#" ng-click="setTab('header')">Entête</a></li>
             <li ng-class="navigationState =='condition' ? 'active' : ''"><a href="#" ng-click="setTab('condition')">Conditions</a></li>
-            <li ng-class="navigationState =='addresses' ? 'active' : ''"><a href="#" ng-click="setTab('addresses')">Adresses</a></li>
             <li ng-class="navigationState =='activity' ? 'active' : ''"><a href="#" ng-click="setTab('activity')">Activité</a></li>
             <li ng-class="navigationState =='document' ? 'active' : ''"><a href="#" ng-click="setTab('document')">Documents</a></li>
         </ul>
@@ -110,26 +123,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </span>
                         </span>
                     </span>
-                    <button type="button" class="btn btn-success btn-xs" ng-click="addLine()">
-                        <span class="fa fa-fw fa-tags"></span> produit
-                    </button>
-                    <button type="button" class="btn btn-info btn-xs" ng-click="addSubTotal()">
-                        <span class="fa fa-fw fa-euro"></span> sous-total
-                    </button>
-                    <button type="button" class="btn btn-warning btn-xs" ng-click="toggleComment()">
-                        <span class="fa fa-fw fa-commenting"></span> commentaire
-                    </button>
-                    <div ng-show="showCommentInput">
-                        <div class='form-group text-left'>
-                            <label>Commentaire</label>
-                            <textarea class="form-control" ng-model="comment" rows="3"></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="button" class="btn btn-success btn-sm" ng-click="addComment()">
-                                Valider
-                            </button>
-                        </div>
-                    </div>
+                    <ze-btn fa="tags" color="success" hint="produit" always-on="true" ng-click="addLine()"></ze-btn>
+                    <ze-btn fa="euro" color="info" hint="sous-total" always-on="true" ng-click="addSubTotal()"></ze-btn>
+                    <ze-btn fa="commenting" color="warning" hint="commentaire" always-on="true"
+                            ze-modalform="addComment"
+                            data-title="Ajouter un commentaire"
+                            data-template="deliveryCommentTplUrl"></ze-btn>
                 </div>
                 <div class="col-md-12">
                     <table class="table table-striped table-condensed table-responsive">
@@ -199,10 +198,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td class="text-right">
                                     <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
-                                            ze-modalform="updateDelivery"
+                                            ze-modalform="editLine"
                                             data-edit="line"
                                             data-title="Editer la ligne du devis"
                                             data-template="deliveryLineTplUrl"></ze-btn>
+                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type === 'comment'"
+                                            ze-modalform="editComment"
+                                            data-edit="line"
+                                            data-title="Modifier un commentaire"
+                                            data-template="deliveryCommentTplUrl"></ze-btn>
                                     <ze-btn fa="trash" color="danger" direction="left" hint="Supprimer" ng-click="deleteLine(line)" ze-confirmation></ze-btn>
                                 </td>
                             </tr>
@@ -314,34 +318,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Date de validité du bon de livraison :</strong>
             {{ delivery.date_limit | date:'dd/MM/yyyy' }}
             <br/>
-        </div>
-
-        <div ng-if="navigationState=='addresses'">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="well">
-                        <strong>Adresse de facturation :</strong><br>
-                        {{ company.company_name }}<br ng-if="company.company_name">
-                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name || contact.first_name">
-                        {{ delivery.billing_address_1 }}<br ng-if="delivery.billing_address_1">
-                        {{ delivery.billing_address_2 }}<br ng-if="delivery.billing_address_2">
-                        {{ delivery.billing_address_3 }}<br ng-if="delivery.billing_address_3">
-                        {{ delivery.billing_zipcode + ' ' + delivery.billing_city }}
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="well">
-                        <strong>Adresse de livraison :</strong><br>
-                        {{ company.company_name }}<br ng-if="company.company_name">
-                        {{ contact.last_name + ' ' + contact.first_name }}<br ng-if="contact.last_name && contact.first_name">
-                        {{ delivery.delivery_address_1 }}<br ng-if="delivery.delivery_address_1">
-                        {{ delivery.delivery_address_2 }}<br ng-if="delivery.delivery_address_2">
-                        {{ delivery.delivery_address_3 }}<br ng-if="delivery.delivery_address_3">
-                        {{ delivery.delivery_zipcode + ' ' + delivery.delivery_city }}
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div ng-show="navigationState=='condition'">

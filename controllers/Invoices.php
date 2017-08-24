@@ -22,6 +22,10 @@ class Invoices extends ZeCtrl
         $this->load->view('invoices/form_line');
     }
 
+    public function form_comment(){
+        $this->load->view('invoices/form_comment');
+    }
+
     public function lists()
     {
         $this->load->view('invoices/lists');

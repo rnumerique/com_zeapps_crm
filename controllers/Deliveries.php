@@ -22,6 +22,10 @@ class Deliveries extends ZeCtrl
         $this->load->view('deliveries/form_line');
     }
 
+    public function form_comment(){
+        $this->load->view('deliveries/form_comment');
+    }
+
     public function lists()
     {
         $this->load->view('deliveries/lists');

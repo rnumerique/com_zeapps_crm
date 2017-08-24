@@ -10,12 +10,8 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.activities = [];
 		$scope.documents = [];
 
-		$scope.edit = false;
-		$scope.showCommentInput = false;
-		$scope.showActivityInput = false;
-		$scope.comment = "";
-
 		$scope.quoteLineTplUrl = "/com_zeapps_crm/quotes/form_line";
+        $scope.quoteCommentTplUrl = "/com_zeapps_crm/quotes/form_comment";
 		$scope.templateEdit = "/com_zeapps_crm/quotes/form_modal";
 
 		$scope.lines = [];
@@ -38,6 +34,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
         $scope.editLine = editLine;
 		$scope.addSubTotal = addSubTotal;
 		$scope.addComment = addComment;
+        $scope.editComment = editComment;
 
 		$scope.deleteLine = deleteLine;
 
@@ -311,34 +308,40 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			});
 		}
 
-		function addComment(){
-			if($scope.comment != ""){
-				var comment = {
-					id_quote: $routeParams.id,
-					type: "comment",
-					designation_desc: "",
-					sort: $scope.lines.length
-				};
-				comment.designation_desc = $scope.comment;
+        function addComment(comment){
+            if(comment.designation_desc !== ""){
+                var comment = {
+                    id_quote: $routeParams.id,
+                    type: "comment",
+                    designation_desc: comment.designation_desc,
+                    sort: $scope.lines.length
+                };
 
-				var formatted_data = angular.toJson(comment);
-				zhttp.crm.quote.line.save(formatted_data).then(function(response){
-					if(response.data && response.data != "false"){
-						comment.id = response.data;
-						$scope.lines.push(comment);
-						$scope.comment = "";
-						$scope.showCommentInput = false;
-					}
-				});
-			}
+                var formatted_data = angular.toJson(comment);
+                zhttp.crm.quote.line.save(formatted_data).then(function(response){
+                    if(response.data && response.data != "false"){
+                        comment.id = response.data;
+                        $scope.lines.push(comment);
+                    }
+                });
+            }
+        }
+
+        function editComment(comment){
+            var formatted_data = angular.toJson(comment);
+            zhttp.crm.quote.line.save(formatted_data);
+        }
+
+		function editLine(){
+			updateQuote();
 		}
 
-		function editLine(line){
-			$rootScope.$broadcast("comZeappsCrm_quoteEditTrigger",
-				{
-					line : line
-				}
-			);
+		function updateLine(line){
+            $rootScope.$broadcast("comZeappsCrm_quoteEditTrigger",
+                {
+                    line : line
+                }
+            );
 		}
 
 		function deleteLine(line){
@@ -369,10 +372,12 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 		function updateQuote(){
 			if($scope.quote) {
+				$scope.quote.global_discount = $scope.quote.global_discount || 0;
+
 				angular.forEach($scope.lines, function(line){
                     crmTotal.line.update(line);
                     if(line.id){
-                        editLine(line);
+                        updateLine(line);
                     }
                     var formatted_data = angular.toJson(line);
                     zhttp.crm.quote.line.save(formatted_data)

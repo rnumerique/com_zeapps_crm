@@ -8,16 +8,13 @@
 
         <div class="col-md-3">
             <div class="root modal-root">
-                <zeapps-happylittletree
-                    data-tree="tree.branches"
-                    data-active-branch="activeCategory"
-                </zeapps-happylittletree>
+                <zeapps-happylittletree data-tree="tree.branches" data-update="update"</zeapps-happylittletree>
             </div>
         </div>
 
         <div class="col-md-9">
             <h3 class="text-capitalize active-category-title">
-                {{ activeCategory.data.name }}
+                {{ currentBranch.name }}
             </h3>
 
             <div class="row">

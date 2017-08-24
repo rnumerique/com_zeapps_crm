@@ -33,7 +33,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th>Date limite</th>
                     <th>Responsable</th>
                     <th class="text-right">%</th>
-                    <th>Status</th>
+                    <th>Statut</th>
                     <th></th>
                 </tr>
                 </thead>

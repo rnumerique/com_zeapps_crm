@@ -109,9 +109,6 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 				$scope.id_company = data.id_company;
 				src = "company";
                 src_id = data.id_company;
-                $rootScope.deliveries = {};
-                $rootScope.deliveries.src_id = data.id_company;
-                $rootScope.deliveries.src = 'company';
 
                 loadList(true) ;
 			}
@@ -153,6 +150,9 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
                     }
 
                     $scope.total = response.data.total;
+
+                    $rootScope.deliveries.src_id = src_id;
+                    $rootScope.deliveries.src = src;
                 }
             });
         }
@@ -161,7 +161,7 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
             var formatted_data = angular.toJson(delivery);
             zhttp.crm.delivery.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
-                    loadList();
+                    $location.url("/ng/com_zeapps_crm/delivery/" + response.data);
                 }
             });
         }

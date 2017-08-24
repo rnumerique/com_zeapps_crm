@@ -7,7 +7,7 @@ listModuleModalFunction.push({
 	size:"lg",
 	resolve:{
 		titre: function () {
-			return "Convertir le devis";
+			return "Dupliquer le devis";
 		}
 	}
 });

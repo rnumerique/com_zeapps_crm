@@ -10,12 +10,8 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		$scope.activities = [];
 		$scope.documents = [];
 
-		$scope.edit = false;
-		$scope.showCommentInput = false;
-		$scope.showActivityInput = false;
-		$scope.comment = "";
-
 		$scope.deliveryLineTplUrl = "/com_zeapps_crm/deliveries/form_line";
+		$scope.deliveryCommentTplUrl = "/com_zeapps_crm/deliveries/form_comment";
 		$scope.templateEdit = "/com_zeapps_crm/deliveries/form_modal";
 
 		$scope.lines = [];
@@ -29,6 +25,7 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		$scope.last_delivery = last_delivery;
 
 		$scope.updateStatus = updateStatus;
+        $scope.editDelivery = editDelivery;
 		$scope.updateDelivery = updateDelivery;
 		$scope.transform = transform;
 
@@ -38,6 +35,7 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
         $scope.editLine = editLine;
 		$scope.addSubTotal = addSubTotal;
 		$scope.addComment = addComment;
+		$scope.editComment = editComment;
 
 		$scope.deleteLine = deleteLine;
 
@@ -311,35 +309,41 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 			});
 		}
 
-		function addComment(){
-			if($scope.comment != ""){
+		function addComment(comment){
+			if(comment.designation_desc !== ""){
 				var comment = {
 					id_delivery: $routeParams.id,
 					type: "comment",
-					designation_desc: "",
+					designation_desc: comment.designation_desc,
 					sort: $scope.lines.length
 				};
-				comment.designation_desc = $scope.comment;
 
 				var formatted_data = angular.toJson(comment);
 				zhttp.crm.delivery.line.save(formatted_data).then(function(response){
 					if(response.data && response.data != "false"){
 						comment.id = response.data;
 						$scope.lines.push(comment);
-						$scope.comment = "";
-						$scope.showCommentInput = false;
 					}
 				});
 			}
 		}
 
-		function editLine(line){
-			$rootScope.$broadcast("comZeappsCrm_deliveryEditTrigger",
-				{
-					line : line
-				}
-			);
+		function editComment(comment){
+            var formatted_data = angular.toJson(comment);
+            zhttp.crm.delivery.line.save(formatted_data);
 		}
+
+        function editLine(){
+            updateDelivery();
+        }
+
+        function updateLine(line){
+            $rootScope.$broadcast("comZeappsCrm_deliveryEditTrigger",
+                {
+                    line : line
+                }
+            );
+        }
 
 		function deleteLine(line){
 			if($scope.lines.indexOf(line) > -1){
@@ -367,12 +371,23 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 			return crmTotal.sub.TTC($scope.lines, index);
 		}
 
+        function editDelivery(delivery){
+            angular.forEach($scope.delivery, function(value, key){
+                if(delivery[key])
+                    $scope.delivery[key] = delivery[key];
+            });
+
+            updateDelivery();
+        }
+
 		function updateDelivery(){
 			if($scope.delivery) {
-				angular.forEach($scope.lines, function(line){
+                $scope.delivery.global_discount = $scope.delivery.global_discount || 0;
+
+                angular.forEach($scope.lines, function(line){
                     crmTotal.line.update(line);
                     if(line.id){
-                        editLine(line);
+                        updateLine(line);
                     }
                     var formatted_data = angular.toJson(line);
                     zhttp.crm.delivery.line.save(formatted_data)

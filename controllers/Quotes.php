@@ -22,6 +22,10 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/form_line');
     }
 
+    public function form_comment(){
+        $this->load->view('quotes/form_comment');
+    }
+
     public function lists()
     {
         $this->load->view('quotes/lists');

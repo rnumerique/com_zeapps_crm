@@ -22,6 +22,10 @@ class Orders extends ZeCtrl
         $this->load->view('orders/form_line');
     }
 
+    public function form_comment(){
+        $this->load->view('orders/form_comment');
+    }
+
     public function lists()
     {
         $this->load->view('orders/lists');

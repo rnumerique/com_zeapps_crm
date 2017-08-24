@@ -35,7 +35,6 @@ app.factory("crmTotal", function(){
 		var tmp = {};
 		angular.forEach(lines, function(line){
 			if(line !== undefined && line.type !== "subTotal" && line.type !== "comment") {
-				console.log(line.id_taxe);
                 if (tmp[line.id_taxe] === undefined) {
                     tmp[line.id_taxe] = {
                         ht: 0,
@@ -64,7 +63,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
 			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
-				t += round2(parseFloat(lines[i].price_unit));
+				t += round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty));
 			}
 		}
 		service.get.totals.total_prediscount_ht = t;
@@ -74,7 +73,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
 			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
-				t += round2(parseFloat(lines[i].price_unit) * ( 1 + (parseFloat(lines[i].value_taxe) / 100)));
+				t += round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty) * ( 1 + (parseFloat(lines[i].value_taxe) / 100)));
 			}
 		}
         service.get.totals.total_prediscount_ttc = t;
@@ -85,7 +84,7 @@ app.factory("crmTotal", function(){
 		var t = 0;
 		for (var i = 0; i < lines.length; i++) {
 			if (lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment") {
-				discount = round2(parseFloat(lines[i].price_unit) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) ));
+				discount = round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) ));
 				t += discount;
 			}
 		}
@@ -141,6 +140,10 @@ app.factory("crmTotal", function(){
     }
 
     function updateSums(line){
+    	line.qty = line.qty || 0;
+    	line.price_unit = line.price_unit || 0;
+    	line.discount = line.discount || 0;
+
         line.total_ht = round2(parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat(doc.global_discount) / 100) ));
         line.total_ttc = round2(line.total_ht * ( 1 + (parseFloat(line.value_taxe) / 100) ));
     }

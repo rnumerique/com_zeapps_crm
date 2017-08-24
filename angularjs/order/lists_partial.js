@@ -109,9 +109,6 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
 				$scope.id_company = data.id_company;
 				src = "company";
                 src_id = data.id_company;
-                $rootScope.orders = {};
-                $rootScope.orders.src_id = data.id_company;
-                $rootScope.orders.src = 'company';
 
                 loadList(true) ;
 			}
@@ -153,6 +150,9 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
                     }
 
                     $scope.total = response.data.total;
+
+                    $rootScope.orders.src_id = src_id;
+                    $rootScope.orders.src = src;
                 }
             });
         }
@@ -161,7 +161,7 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
             var formatted_data = angular.toJson(order);
             zhttp.crm.order.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
-                    loadList();
+                    $location.url("/ng/com_zeapps_crm/order/" + response.data);
                 }
             });
         }

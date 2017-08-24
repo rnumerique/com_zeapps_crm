@@ -3,9 +3,7 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_product");
 
-		$scope.activeCategory = {
-			data: ""
-		};
+        $scope.currentBranch = {};
 		$scope.tree = {
 			branches: []
 		};
@@ -13,6 +11,7 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 		$scope.form.lines = [];
 		$scope.lineForm = {};
 
+		$scope.update = update;
 		$scope.loadProductStock = loadProductStock;
 		$scope.removeProductStock = removeProductStock;
 		$scope.updatePrice = updatePrice;
@@ -40,15 +39,10 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 			loadCtxtNew();
 		}
 
-		$scope.$watch("activeCategory.data", function(value, old, scope){
-			if(typeof(value.id) !== "undefined"){
-				scope.form.id_cat = value.id;
-			}
-		});
-
-
-
-
+		function update(branch){
+            $scope.currentBranch = branch;
+            $scope.form.id_cat = branch.id;
+		}
 
 		function loadCtxtEdit(){
 			zhttp.crm.category.tree().then(function (response) {
@@ -66,7 +60,7 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 							zhttp.crm.category.openTree($scope.tree, $scope.form.id_cat);
 							zhttp.crm.category.get($scope.form.id_cat).then(function (response) {
 								if (response.status == 200) {
-									$scope.activeCategory.data = response.data;
+                                    $scope.currentBranch = response.data;
 								}
 							});
 							zhttp.crm.product_stock.get($scope.form.id_stock).then(function (response) {
@@ -88,7 +82,7 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 					zhttp.crm.category.openTree($scope.tree, $routeParams.category);
 					zhttp.crm.category.get($routeParams.category).then(function (response) {
 						if (response.status == 200) {
-							$scope.activeCategory.data = response.data;
+                            $scope.currentBranch = response.data;
 						}
 					});
 				}

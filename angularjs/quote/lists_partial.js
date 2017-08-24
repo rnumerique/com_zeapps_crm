@@ -109,9 +109,6 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 				$scope.id_company = data.id_company;
 				src = "company";
                 src_id = data.id_company;
-                $rootScope.quotes = {};
-                $rootScope.quotes.src_id = data.id_company;
-                $rootScope.quotes.src = 'company';
 
                 loadList(true) ;
 			}
@@ -153,6 +150,9 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
                     }
 
                     $scope.total = response.data.total;
+
+                    $rootScope.quotes.src_id = src_id;
+                    $rootScope.quotes.src = src;
                 }
             });
         }
@@ -161,7 +161,7 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
             var formatted_data = angular.toJson(quote);
             zhttp.crm.quote.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
-                    loadList();
+                    $location.url("/ng/com_zeapps_crm/quote/" + response.data);
                 }
             });
         }

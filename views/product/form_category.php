@@ -13,10 +13,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-3">
             <div class="root">
-                <zeapps-happylittletree
-                    data-tree="tree.branches"
-                    data-active-branch="activeCategory"
-                </zeapps-happylittletree>
+                <zeapps-happylittletree data-tree="tree.branches" data-update="update"</zeapps-happylittletree>
             </div>
         </div>
 

@@ -16,9 +16,7 @@ listModuleModalFunction.push({
 app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
 	$scope.titre = titre ;
 
-	$scope.activeCategory = {
-		data: ""
-	};
+    $scope.currentBranch = {};
 	$scope.tree = {
 		branches: []
 	};
@@ -42,23 +40,24 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalI
     $scope.page = 1;
     $scope.pageSize = 15;
 
+    $scope.update = update;
 	$scope.cancel = cancel;
 	$scope.select_product = select_product;
     $scope.loadList = loadList;
 
 	getTree();
 
-	$scope.$watch("activeCategory.data", function(value){
-		if(typeof(value.id) !== "undefined"){
-            loadList(value.id);
-		}
-	});
+	function update(branch){
+        $scope.currentBranch = branch;
+        loadList();
+	}
 
-    function loadList(id_cat) {
+    function loadList() {
+		var id = $scope.currentBranch ? $scope.currentBranch.id : 0;
         var offset = ($scope.page - 1) * $scope.pageSize;
         var formatted_filters = angular.toJson($scope.filter_model);
 
-        zeHttp.crm.product.modal(id_cat, $scope.pageSize, offset, formatted_filters).then(function (response) {
+        zeHttp.crm.product.modal(id, $scope.pageSize, offset, formatted_filters).then(function (response) {
             if (response.status == 200) {
                 $scope.products = response.data.data;
                 $scope.total = response.data.total;
@@ -69,14 +68,9 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalI
 	function getTree() {
 		zeHttp.crm.category.tree().then(function (response) {
 			if (response.status == 200) {
-				var id = $scope.activeCategory.data.id || 0;
 				$scope.tree.branches = response.data;
-				zeHttp.crm.category.openTree($scope.tree, id);
-				zeHttp.crm.category.get(id).then(function (response) {
-					if (response.status == 200) {
-						$scope.activeCategory.data = response.data;
-					}
-				});
+                $scope.currentBranch = $scope.tree.branches[0];
+                loadList();
 			}
 		});
 	}

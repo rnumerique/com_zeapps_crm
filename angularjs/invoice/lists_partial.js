@@ -109,9 +109,6 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
 				$scope.id_company = data.id_company;
 				src = "company";
                 src_id = data.id_company;
-                $rootScope.invoices = {};
-                $rootScope.invoices.src_id = data.id_company;
-                $rootScope.invoices.src = 'company';
 
                 loadList(true) ;
 			}
@@ -153,6 +150,9 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
                     }
 
                     $scope.total = response.data.total;
+
+                    $rootScope.invoices.src_id = src_id;
+                    $rootScope.invoices.src = src;
                 }
             });
         }
@@ -161,7 +161,7 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
             var formatted_data = angular.toJson(invoice);
             zhttp.crm.invoice.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
-                    loadList();
+                    $location.url("/ng/com_zeapps_crm/invoice/" + response.data);
                 }
             });
         }

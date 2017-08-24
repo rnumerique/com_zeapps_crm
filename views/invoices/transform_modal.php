@@ -27,6 +27,12 @@
                 Bon de livraison
             </label>
         </div>
+        <div class="col-md-12">
+            <label>
+                <input type='checkbox' ng-model="form.invoice">
+                Facture
+            </label>
+        </div>
     </div>
 </div>
 

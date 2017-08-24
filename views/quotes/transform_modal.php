@@ -11,6 +11,12 @@
     <div class="row">
         <div class="col-md-12">
             <label>
+                <input type='checkbox' ng-model="form.quote">
+                Devis
+            </label>
+        </div>
+        <div class="col-md-12">
+            <label>
                 <input type='checkbox' ng-model="form.order">
                 Bon de Commande
             </label>

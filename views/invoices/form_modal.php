@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label>Status</label>
+                <label>Statut</label>
                 <select class="form-control" ng-model="form.status">
                     <option>En cours</option>
                     <option>Gagné</option>

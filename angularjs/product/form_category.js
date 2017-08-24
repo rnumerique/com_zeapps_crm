@@ -3,15 +3,14 @@ app.controller("ComZeappsCrmProductFormCategoryCtrl", ["$scope", "$route", "$rou
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_product");
 
-		$scope.activeCategory = {
-			data: ""
-		};
+        $scope.currentBranch = {};
 		$scope.tree = {
 			branches: []
 		};
 		$scope.form = [];
 		$scope.error = "";
 
+		$scope.update = update;
 		$scope.success = success;
 		$scope.cancel = cancel;
 
@@ -23,12 +22,10 @@ app.controller("ComZeappsCrmProductFormCategoryCtrl", ["$scope", "$route", "$rou
 			loadCtxtNew();
 		}
 
-		$scope.$watch("activeCategory.data", function(value, old, scope){
-			if(typeof(value.id) !== "undefined"){
-				scope.form.id_parent = value.id;
-			}
-		});
-
+		function update(branch){
+			$scope.currentBranch = branch;
+            $scope.form.id_parent = branch.id;
+		}
 
 		function loadCtxtNew(){
 			zhttp.crm.category.tree().then(function (response) {
@@ -37,7 +34,7 @@ app.controller("ComZeappsCrmProductFormCategoryCtrl", ["$scope", "$route", "$rou
 					zhttp.crm.category.openTree($scope.tree, $routeParams.id_parent);
 					zhttp.crm.category.get($routeParams.id_parent).then(function (response) {
 						if (response.status == 200) {
-							$scope.activeCategory.data = response.data;
+                            $scope.currentBranch = response.data;
 						}
 					});
 				}
@@ -52,8 +49,8 @@ app.controller("ComZeappsCrmProductFormCategoryCtrl", ["$scope", "$route", "$rou
 							$scope.form = response.data;
 							zhttp.crm.category.get($scope.form.id_parent).then(function (response) {
 								if (response.status == 200) {
-									$scope.activeCategory.data = response.data;
-									zhttp.crm.category.openTree($scope.tree, $scope.activeCategory.data.id);
+                                    $scope.currentBranch = response.data;
+									zhttp.crm.category.openTree($scope.tree, $scope.currentBranch.data.id);
 								}
 							});
 						}
