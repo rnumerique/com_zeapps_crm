@@ -80,9 +80,10 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 					$scope.order = response.data.order;
 					$scope.company = response.data.company;
 					$scope.contact = response.data.contact;
-					$scope.activities = response.data.activities || [];
+
+                    $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
-						activity.date = new Date(activity.date);
+						activity.deadline = new Date(activity.deadline);
 					});
 
 					$scope.documents = response.data.documents || [];

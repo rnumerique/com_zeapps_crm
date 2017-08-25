@@ -79,7 +79,8 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 					$scope.quote = response.data.quote;
 					$scope.company = response.data.company;
 					$scope.contact = response.data.contact;
-					$scope.activities = response.data.activities || [];
+
+                    $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
 						activity.deadline = new Date(activity.deadline);
 					});

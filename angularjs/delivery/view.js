@@ -80,7 +80,8 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 					$scope.delivery = response.data.delivery;
 					$scope.company = response.data.company;
 					$scope.contact = response.data.contact;
-					$scope.activities = response.data.activities || [];
+
+                    $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
 						activity.deadline = new Date(activity.deadline);
 					});
