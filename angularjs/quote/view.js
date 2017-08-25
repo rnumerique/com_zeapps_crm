@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks) {
+app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts) {
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
 
@@ -194,10 +194,10 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 			zhttp.crm.quote.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
-                    $rootScope.toasts.push({success:"Le status du devis a bien été mis à jour."});
+                    toasts('success',"Le status du devis a bien été mis à jour.");
                 }
                 else{
-                    $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour du status du devis"});
+                    toasts('danger',"Il y a eu une erreur lors de la mise a jour du status du devis");
                 }
             });
 		}
@@ -257,7 +257,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                         });
                     }
                     else {
-                        $rootScope.toasts.push({"danger": "Aucun produit avec le code " + code + " trouvé dans la base de donnée."});
+                        toasts("danger", "Aucun produit avec le code " + code + " trouvé dans la base de donnée.");
                     }
                 });
             }
@@ -415,10 +415,10 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                 var formatted_data = angular.toJson(data);
                 zhttp.crm.quote.save(formatted_data).then(function(response){
                     if(response.data && response.data != "false"){
-                        $rootScope.toasts.push({success:"Les informations du devis ont bien été mises a jour"});
+                        toasts('success',"Les informations du devis ont bien été mises a jour");
                     }
                     else{
-                        $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour des informations du devis"});
+                        toasts('danger',"Il y a eu une erreur lors de la mise a jour des informations du devis");
                     }
                 });
 			}
@@ -472,10 +472,10 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                         response.data.id_user = $rootScope.user.id;
                         response.data.name_user = $rootScope.user.firstname[0] + '. ' + $rootScope.user.lastname;
                         $scope.documents.push(response.data);
-                        $rootScope.toasts.push({success: "Les documents ont bien été mis en ligne"});
+                        toasts('success', "Les documents ont bien été mis en ligne");
                     }
                     else{
-                        $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise en ligne des documents"});
+                        toasts('danger', "Il y a eu une erreur lors de la mise en ligne des documents");
                     }
                 }
             );
@@ -490,10 +490,10 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                     $scope.progress = false;
                     if(response.data && response.data != "false"){
                         response.data.date = new Date(response.data.date);
-                        $rootScope.toasts.push({success: "Les documents ont bien été mis à jour"});
+                        toasts('success', "Les documents ont bien été mis à jour");
                     }
                     else{
-                        $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise à jour des documents"});
+                        toasts('danger', "Il y a eu une erreur lors de la mise à jour des documents");
                     }
                 }
             );

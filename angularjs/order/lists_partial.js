@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout) {
+app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.orders)
 			$rootScope.orders = [];
@@ -185,10 +185,10 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
 
             zhttp.crm.order.save(formatted_data).then(function(response){
                 if(response.data && response.data != "false"){
-                    $rootScope.toasts.push({success:"Les informations du devis ont bien été mises a jour"});
+                    toasts('success', "Les informations du devis ont bien été mises a jour");
                 }
                 else{
-                    $rootScope.toasts.push({danger:"Il y a eu une erreur lors de la mise a jour des informations du devis"});
+                    toasts('danger', "Il y a eu une erreur lors de la mise a jour des informations du devis");
                 }
             });
         }

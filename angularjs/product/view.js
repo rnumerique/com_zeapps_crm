@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal) {
+app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "toasts",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, toasts) {
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_product");
 
@@ -78,7 +78,7 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 			}
 			zhttp.crm.category.update_order(data).then(function(response){
 				if (response.status != 200) {
-					$rootScope.toasts.push({"danger":"There was an error when trying to access the Server, please try again ! If the problem persists contact the administrator of this website."});
+					toasts("danger", "There was an error when trying to access the Server, please try again ! If the problem persists contact the administrator of this website.");
 				}
 			});
 		}
