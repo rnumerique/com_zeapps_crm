@@ -61,7 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-edit="invoice"
                                 data-title="Editer la facture"
                                 data-template="templateInvoice"></ze-btn>
-                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(invoice)"></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(invoice)" ze-confirmation></ze-btn>
                     </td>
                 </tr>
                 </tbody>

@@ -61,7 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-edit="order"
                                 data-title="Editer la commande"
                                 data-template="templateOrder"></ze-btn>
-                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(order)"></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(order)" ze-confirmation></ze-btn>
                     </td>
                 </tr>
                 </tbody>

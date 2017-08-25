@@ -61,7 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-edit="quote"
                                 data-title="Editer le devis"
                                 data-template="templateQuote"></ze-btn>
-                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(quote)"></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(quote)" ze-confirmation></ze-btn>
                     </td>
                 </tr>
                 </tbody>
