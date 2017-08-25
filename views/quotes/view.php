@@ -333,21 +333,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-12">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="addActivity()">
-                            <i class="fa fa-fw fa-plus"></i> Activité
-                        </button>
+                        <ze-btn data-fa="plus" data-hint="Activité" always-on="true" data-color="success"
+                                ze-modalform="addActivity"
+                                data-template="quoteActivityTplUrl"
+                                data-title="Créer une activité"></ze-btn>
                     </div>
                     <div class="card_document" ng-repeat="activity in activities | orderBy:['-date','-id']">
                         <div class="card_document-head clearfix">
                             <div class="pull-right">
-                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editActivity(activity)"></ze-btn>
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info"
+                                        ze-modalform="editActivity"
+                                        data-edit="activity"
+                                        data-template="quoteActivityTplUrl"
+                                        data-title="Modifier l'activité"></ze-btn>
                                 <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteActivity(activity)" ze-confirmation></ze-btn>
                             </div>
-                            <strong>{{ activity.libelle }}</strong>
+                            <strong>{{ activity.label_type ? activity.label_type + " : " : "" }}{{ activity.libelle }}</strong><br>
+                            Date limite : {{ activity.deadline | date:'dd/MM/yyyy' }} - {{ activity.status }}
                         </div>
                         <div class="card_document-body" ng-if="activity.description">{{ activity.description }}</div>
                         <div class="card_document-footer text-muted">
-                            Envoyé par <strong>{{ activity.name_user }}</strong> le <strong>{{ activity.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ activity.date | date:'HH:mm' }}</strong>
+                            Créé par <strong>{{ activity.name_user }}</strong>
                         </div>
                     </div>
                 </div>
@@ -358,14 +364,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="row">
                 <div class="col-md-12">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-xs btn-success" ng-click="addDocument()">
-                            <i class="fa fa-fw fa-plus"></i> Document
-                        </button>
+                        <ze-btn data-fa="plus" data-hint="Document" always-on="true" data-color="success"
+                                ze-modalform="addDocument"
+                                data-template="quoteDocumentTplUrl"
+                                data-title="Ajouter un document"></ze-btn>
                     </div>
                     <div class="card_document" ng-repeat="document in documents | orderBy:['-date','-id']">
                         <div class="card_document-head clearfix">
                             <div class="pull-right">
-                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info" ng-click="editDocument(document)"></ze-btn>
+                                <ze-btn data-fa="pencil" data-hint="Editer" data-direction="left" data-color="info"
+                                        ze-modalform="editDocument"
+                                        data-edit="document"
+                                        data-template="quoteDocumentTplUrl"
+                                        data-title="Modifier le document"></ze-btn>
                                 <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteDocument(document)" ze-confirmation></ze-btn>
                             </div>
                             <i class="fa fa-fw fa-file"></i>
