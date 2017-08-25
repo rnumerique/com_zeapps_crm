@@ -16,7 +16,7 @@ app.controller("ZeAppsCrmModalQuoteTransformCtrl", function($scope, $uibModalIns
 	$scope.titre = titre ;
 
 	$scope.form = {
-		order : true
+		orders : true
 	};
 
 	$scope.cancel = cancel;

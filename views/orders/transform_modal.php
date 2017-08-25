@@ -11,25 +11,25 @@
     <div class="row">
         <div class="col-md-12">
             <label>
-                <input type='checkbox' ng-model="form.quote">
+                <input type='checkbox' ng-model="form.quotes">
                 Devis
             </label>
         </div>
         <div class="col-md-12">
             <label>
-                <input type='checkbox' ng-model="form.order">
+                <input type='checkbox' ng-model="form.orders">
                 Bon de Commande
             </label>
         </div>
         <div class="col-md-12">
             <label>
-                <input type='checkbox' ng-model="form.delivery">
+                <input type='checkbox' ng-model="form.deliveries">
                 Bon de livraison
             </label>
         </div>
         <div class="col-md-12">
             <label>
-                <input type='checkbox' ng-model="form.invoice">
+                <input type='checkbox' ng-model="form.invoices">
                 Facture
             </label>
         </div>

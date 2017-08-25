@@ -15,9 +15,7 @@ listModuleModalFunction.push({
 app.controller("ZeAppsCrmModalDeliveryTransformCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
 	$scope.titre = titre ;
 
-	$scope.form = {
-		order : true
-	};
+	$scope.form = {};
 
 	$scope.cancel = cancel;
 	$scope.transform = transform;

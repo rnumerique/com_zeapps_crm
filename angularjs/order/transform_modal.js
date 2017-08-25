@@ -16,7 +16,8 @@ app.controller("ZeAppsCrmModalOrderTransformCtrl", function($scope, $uibModalIns
 	$scope.titre = titre ;
 
 	$scope.form = {
-		order : true
+		deliveries : true,
+		invoices : true
 	};
 
 	$scope.cancel = cancel;
