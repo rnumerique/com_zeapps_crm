@@ -145,7 +145,7 @@ class Orders extends ZeCtrl
         $frequency = $data['frequency'];
         $num = $this->orders->get_numerotation($frequency);
 
-        $result = $this->parseFormat($format, $num);
+        $result = $this->orders->parseFormat($format, $num);
 
         echo json_encode($result);
     }
@@ -153,6 +153,7 @@ class Orders extends ZeCtrl
     public function transform($id) {
         if($id) {
             $this->load->model("Zeapps_orders", "orders");
+            $this->load->model("Zeapps_order_lines", "order_lines");
 
             // constitution du tableau
             $data = array() ;
@@ -164,10 +165,15 @@ class Orders extends ZeCtrl
 
             $return = [];
 
-            if($data){
-                foreach($data as $document => $value){
-                    if($value == 'true'){
-                        $return[$document] = $this->createFrom($document, $id);
+            if($src = $this->orders->get($id)){
+                $src->lines = $this->order_lines->all(array('id_order' => $id));
+
+                if($data){
+                    foreach($data as $document => $value){
+                        if($value == 'true'){
+                            $this->load->model("Zeapps_".$document, $document);
+                            $return[$document] = $this->$document->createFrom($src);
+                        }
                     }
                 }
             }
@@ -177,81 +183,6 @@ class Orders extends ZeCtrl
         else{
             echo json_encode(false);
         }
-    }
-
-    public function createFrom($type, $id){
-        if($id){
-            $this->load->model("Zeapps_configs", "configs");
-            $this->load->model("Zeapps_orders", "orders");
-            $this->load->model("Zeapps_order_companies", "order_companies");
-            $this->load->model("Zeapps_order_contacts", "order_contacts");
-            $this->load->model("Zeapps_order_lines", "order_lines");
-            $type_model = $type."_model";
-            $this->load->model("Zeapps_".$type."s", $type_model);
-            $type_companies = $type."_companies";
-            $this->load->model("Zeapps_".$type."_companies", $type_companies);
-            $type_contacts = $type."_contacts";
-            $this->load->model("Zeapps_".$type."_contacts", $type_contacts);
-            $type_lines = $type."_lines";
-            $this->load->model("Zeapps_".$type."_lines", $type_lines);
-
-            $order = $this->orders->get($id);
-
-            unset($order->id);
-            unset($order->numerotation);
-            unset($order->created_at);
-            unset($order->updated_at);
-
-            $format = $this->configs->get(array('id'=>'crm_'.$type.'_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_'.$type.'_frequency'))->value;
-            $num = $this->$type_model->get_numerotation($frequency);
-            $order->numerotation = $this->parseFormat($format, $num);
-
-            $new_id = $this->$type_model->insert($order);
-            $id_key = "id_".$type;
-
-            if($companies = $this->$type_companies->all(array('id_order'=>$id))){
-                foreach($companies as $company){
-                    unset($company->id);
-                    unset($company->id_order);
-                    unset($company->created_at);
-                    unset($company->updated_at);
-
-                    $company->$id_key = $new_id;
-
-                    $this->$type_companies->insert($company);
-                }
-            }
-
-            if($contacts = $this->$type_contacts->all(array('id_order'=>$id))){
-                foreach($contacts as $contact){
-                    unset($contact->id);
-                    unset($contact->id_order);
-                    unset($contact->created_at);
-                    unset($contact->updated_at);
-
-                    $contact->$id_key = $new_id;
-
-                    $this->$type_contacts->insert($contact);
-                }
-            }
-
-            if($lines = $this->$type_lines->all(array('id_order'=>$id))){
-                foreach($lines as $line){
-                    unset($line->id);
-                    unset($line->id_order);
-                    unset($line->created_at);
-                    unset($line->updated_at);
-
-                    $line->$id_key = $new_id;
-
-                    $this->$type_lines->insert($line);
-                }
-            }
-
-        }
-
-        return $new_id;
     }
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
@@ -374,7 +305,7 @@ class Orders extends ZeCtrl
             $format = $this->configs->get(array('id'=>'crm_order_format'))->value;
             $frequency = $this->configs->get(array('id'=>'crm_order_frequency'))->value;
             $num = $this->orders->get_numerotation($frequency);
-            $data['numerotation'] = $this->parseFormat($format, $num);
+            $data['numerotation'] = $this->orders->parseFormat($format, $num);
 
             if($data['id_company'] && $data['id_company'] > 0){
                 $company = $this->companies->get($data['id_company']);
@@ -669,42 +600,5 @@ class Orders extends ZeCtrl
         }
 
         echo 'OK';
-    }
-
-    private function parseFormat($result = null, $num = null)
-    {
-        if ($result && $num){
-            $result = preg_replace_callback('/[[dDjzmMnyYgGhH\-_]*(x+)[dDjzmMnyYgGhH\-_]*]/',
-                function ($matches) use ($num) {
-                    return str_replace($matches[1], substr($num, -strlen($matches[1])), $matches[0]);
-                },
-                $result);
-
-            $result = preg_replace_callback('/[[dDjzmMnyYgGhH\-_]*(X+)[dDjzmMnyYgGhH\-_]*]/',
-                function ($matches) use ($num) {
-                    if (strlen($matches[1]) > strlen($num)) {
-                        return str_replace($matches[1], str_pad($num, strlen($matches[1]), '0', STR_PAD_LEFT), $matches[0]);
-                    } else {
-                        return str_replace($matches[1], substr($num, -strlen($matches[1])), $matches[0]);
-                    }
-                },
-                $result);
-
-            $timestamp = time();
-
-            $result = preg_replace_callback('/[[xX0-9\-_]*([dDjzmMnyYgGhH]+)[xX0-9\-_]*[]\/\-_]/',
-                function ($matches) use ($timestamp) {
-                    foreach ($matches as $match) {
-                        return date($match, $timestamp);
-                    }
-                    return true;
-                },
-                $result);
-
-            $result = str_replace(array('[', ']'), '', $result);
-
-            return $result;
-        }
-        return false;
     }
 }
