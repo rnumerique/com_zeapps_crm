@@ -26,6 +26,16 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/form_comment');
     }
 
+    public function form_activity()
+    {
+        $this->load->view('quotes/form_activity');
+    }
+
+    public function form_document()
+    {
+        $this->load->view('quotes/form_document');
+    }
+
     public function lists()
     {
         $this->load->view('quotes/lists');
@@ -44,16 +54,6 @@ class Quotes extends ZeCtrl
     public function config()
     {
         $this->load->view('quotes/config');
-    }
-
-    public function modal_activity()
-    {
-        $this->load->view('quotes/modal_activity');
-    }
-
-    public function modal_document()
-    {
-        $this->load->view('quotes/modal_document');
     }
 
 

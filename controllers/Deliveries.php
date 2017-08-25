@@ -26,6 +26,16 @@ class Deliveries extends ZeCtrl
         $this->load->view('deliveries/form_comment');
     }
 
+    public function form_activity()
+    {
+        $this->load->view('deliveries/form_activity');
+    }
+
+    public function form_document()
+    {
+        $this->load->view('deliveries/form_document');
+    }
+
     public function lists()
     {
         $this->load->view('deliveries/lists');
@@ -44,16 +54,6 @@ class Deliveries extends ZeCtrl
     public function config()
     {
         $this->load->view('deliveries/config');
-    }
-
-    public function modal_activity()
-    {
-        $this->load->view('deliveries/modal_activity');
-    }
-
-    public function modal_document()
-    {
-        $this->load->view('deliveries/modal_document');
     }
 
 

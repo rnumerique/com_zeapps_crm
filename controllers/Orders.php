@@ -26,6 +26,16 @@ class Orders extends ZeCtrl
         $this->load->view('orders/form_comment');
     }
 
+    public function form_activity()
+    {
+        $this->load->view('orders/form_activity');
+    }
+
+    public function form_document()
+    {
+        $this->load->view('orders/form_document');
+    }
+
     public function lists()
     {
         $this->load->view('orders/lists');
@@ -44,16 +54,6 @@ class Orders extends ZeCtrl
     public function config()
     {
         $this->load->view('orders/config');
-    }
-
-    public function modal_activity()
-    {
-        $this->load->view('orders/modal_activity');
-    }
-
-    public function modal_document()
-    {
-        $this->load->view('orders/modal_document');
     }
 
 

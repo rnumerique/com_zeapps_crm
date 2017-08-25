@@ -26,6 +26,16 @@ class Invoices extends ZeCtrl
         $this->load->view('invoices/form_comment');
     }
 
+    public function form_activity()
+    {
+        $this->load->view('invoices/form_activity');
+    }
+
+    public function form_document()
+    {
+        $this->load->view('invoices/form_document');
+    }
+
     public function lists()
     {
         $this->load->view('invoices/lists');
@@ -44,16 +54,6 @@ class Invoices extends ZeCtrl
     public function config()
     {
         $this->load->view('invoices/config');
-    }
-
-    public function modal_activity()
-    {
-        $this->load->view('invoices/modal_activity');
-    }
-
-    public function modal_document()
-    {
-        $this->load->view('invoices/modal_document');
     }
 
 
