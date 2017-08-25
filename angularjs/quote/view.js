@@ -12,6 +12,8 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.quoteLineTplUrl = "/com_zeapps_crm/quotes/form_line";
         $scope.quoteCommentTplUrl = "/com_zeapps_crm/quotes/form_comment";
+        $scope.quoteActivityTplUrl = "/com_zeapps_crm/quotes/form_activity";
+        $scope.quoteDocumentTplUrl = "/com_zeapps_crm/quotes/form_document";
 		$scope.templateEdit = "/com_zeapps_crm/quotes/form_modal";
 
 		$scope.lines = [];
@@ -79,7 +81,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 					$scope.contact = response.data.contact;
 					$scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
-						activity.date = new Date(activity.date);
+						activity.deadline = new Date(activity.deadline);
 					});
 
 					$scope.documents = response.data.documents || [];
@@ -237,6 +239,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
                             price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
                             id_taxe: parseFloat(response.data.id_taxe),
                             value_taxe: parseFloat(response.data.value_taxe),
+                            accounting_number: parseFloat(response.data.accounting_number),
                             sort: $scope.lines.length
                         };
                         crmTotal.line.update(line);
@@ -275,6 +278,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 						price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
 						id_taxe: parseFloat(objReturn.id_taxe),
 						value_taxe: parseFloat(objReturn.value_taxe),
+                        accounting_number: parseFloat(objReturn.accounting_number),
 						sort: $scope.lines.length
 					};
                     crmTotal.line.update(line);
@@ -419,42 +423,32 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 			}
 		}
 
-		function addActivity(){
-            var options = {};
-            zeapps_modal.loadModule("com_zeapps_crm", "form_activity", options, function(objReturn) {
-                if (objReturn) {
-                    objReturn.id_quote = $scope.quote.id;
-                    var formatted_data = angular.toJson(objReturn);
+		function addActivity(activity){
+            var y = activity.deadline.getFullYear();
+            var M = activity.deadline.getMonth();
+            var d = activity.deadline.getDate();
 
-                    zhttp.crm.quote.activity.save(formatted_data).then(function(response){
-                        if(response.data && response.data != "false"){
-                            response.data.date = new Date(response.data.date);
-                            $scope.activities.push(response.data);
-                        }
-                    });
-                } else {
+            activity.deadline = new Date(Date.UTC(y, M, d));
+            activity.id_quote = $scope.quote.id;
+            var formatted_data = angular.toJson(activity);
+
+            zhttp.crm.quote.activity.save(formatted_data).then(function(response){
+                if(response.data && response.data != "false"){
+                    response.data.deadline = new Date(response.data.deadline);
+                    $scope.activities.push(response.data);
                 }
             });
 		}
 
 		function editActivity(activity){
-			delete activity.deleted_at;
-            var options = {
-                activity: angular.fromJson(angular.toJson(activity))
-            };
-            zeapps_modal.loadModule("com_zeapps_crm", "form_activity", options, function(objReturn) {
-                if (objReturn) {
-                    var formatted_data = angular.toJson(objReturn);
+            var y = activity.deadline.getFullYear();
+            var M = activity.deadline.getMonth();
+            var d = activity.deadline.getDate();
 
-                    zhttp.crm.quote.activity.save(formatted_data).then(function(response){
-                        if(response.data && response.data != "false"){
-                            response.data.date = new Date(response.data.date);
-                            $scope.activities[$scope.activities.indexOf(activity)] = response.data;
-                        }
-                    });
-                } else {
-                }
-            });
+            activity.deadline = new Date(Date.UTC(y, M, d));
+            var formatted_data = angular.toJson(activity);
+
+            zhttp.crm.quote.activity.save(formatted_data);
 		}
 
 		function deleteActivity(activity){
@@ -465,59 +459,43 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
             });
 		}
 
-		function addDocument() {
-            var options = {};
-            zeapps_modal.loadModule("com_zeapps_crm", "form_document", options, function(objReturn) {
-                if (objReturn) {
-                    Upload.upload({
-                        url: zhttp.crm.quote.document.upload() + $scope.quote.id,
-                        data: objReturn
-                    }).then(
-                        function(response){
-                            $scope.progress = false;
-                            if(response.data && response.data != "false"){
-                                response.data.date = new Date(response.data.date);
-                                response.data.id_user = $rootScope.user.id;
-                                response.data.name_user = $rootScope.user.firstname[0] + '. ' + $rootScope.user.lastname;
-                                $scope.documents.push(response.data);
-                                $rootScope.toasts.push({success: "Les documents ont bien été mis en ligne"});
-                            }
-                            else{
-                                $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise en ligne des documents"});
-                            }
-                        }
-                    );
-                } else {
+		function addDocument(document) {
+            Upload.upload({
+                url: zhttp.crm.quote.document.upload() + $scope.quote.id,
+                data: document
+            }).then(
+                function(response){
+                    $scope.progress = false;
+                    if(response.data && response.data != "false"){
+                        response.data.date = new Date(response.data.date);
+                        response.data.id_user = $rootScope.user.id;
+                        response.data.name_user = $rootScope.user.firstname[0] + '. ' + $rootScope.user.lastname;
+                        $scope.documents.push(response.data);
+                        $rootScope.toasts.push({success: "Les documents ont bien été mis en ligne"});
+                    }
+                    else{
+                        $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise en ligne des documents"});
+                    }
                 }
-            });
+            );
 		}
 
 		function editDocument(document) {
-            delete document.deleted_at;
-            var options = {
-                document: angular.fromJson(angular.toJson(document))
-            };
-            zeapps_modal.loadModule("com_zeapps_crm", "form_document", options, function(objReturn) {
-                if (objReturn) {
-                    Upload.upload({
-                        url: zhttp.crm.quote.document.upload() + $scope.quote.id,
-                        data: objReturn
-                    }).then(
-                        function(response){
-                            $scope.progress = false;
-                            if(response.data && response.data != "false"){
-                                response.data.date = new Date(response.data.date);
-                                $scope.documents[$scope.documents.indexOf(document)] = response.data;
-                                $rootScope.toasts.push({success: "Les documents ont bien été mis à jour"});
-                            }
-                            else{
-                                $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise à jour des documents"});
-                            }
-                        }
-                    );
-                } else {
+            Upload.upload({
+                url: zhttp.crm.quote.document.upload() + $scope.quote.id,
+                data: document
+            }).then(
+                function(response){
+                    $scope.progress = false;
+                    if(response.data && response.data != "false"){
+                        response.data.date = new Date(response.data.date);
+                        $rootScope.toasts.push({success: "Les documents ont bien été mis à jour"});
+                    }
+                    else{
+                        $rootScope.toasts.push({danger: "Il y a eu une erreur lors de la mise à jour des documents"});
+                    }
                 }
-            });
+            );
 		}
 
 		function deleteDocument(document){
