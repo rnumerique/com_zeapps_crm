@@ -155,6 +155,9 @@ app.config(["$provide",
 				accounting_number : {
 					modal : modal_accountingNumber,
 					save : save_accountingNumber
+				},
+				activity_types : {
+					all : all_activityTypes
 				}
 			};
 
@@ -545,6 +548,11 @@ app.config(["$provide",
             function save_accountingNumber(data){
                 return zeHttp.post("/com_zeapps_crm/accounting_numbers/save/", data)
             }
+
+            // ACTIVITY TYPES
+			function all_activityTypes(){
+            	return zeHttp.get("/com_zeapps_crm/activity_types/all/");
+			}
 
 
 			// CONFIG
