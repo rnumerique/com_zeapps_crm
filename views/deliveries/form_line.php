@@ -48,4 +48,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Compte comptable</label>
+            <span   ze-modalsearch="loadAccountingNumber"
+                    data-http="accountingNumberHttp"
+                    data-model="form.accounting_number"
+                    data-fields="accountingNumberFields"
+                    data-template-new="accountingNumberTplNew"
+                    data-title="Choisir un compte comptable"></span>
+        </div>
+    </div>
 </div>
