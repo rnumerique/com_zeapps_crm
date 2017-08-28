@@ -201,7 +201,7 @@ class Invoices extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($invoices = $this->invoices->limit($limit, $offset)->all($filters)){
+        if($invoices = $this->invoices->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($invoices);$i++){
                 $invoices[$i]->company = $this->invoice_companies->get(array('id_invoice'=>$invoices[$i]->id));
                 $invoices[$i]->contact = $this->invoice_contacts->get(array('id_invoice'=>$invoices[$i]->id));
@@ -234,7 +234,7 @@ class Invoices extends ZeCtrl
             $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        if(!$invoices = $this->invoices->limit($limit, $offset)->all($filters)){
+        if(!$invoices = $this->invoices->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $invoices = [];
         }
         $total = $this->invoices->count($filters);

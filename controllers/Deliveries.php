@@ -202,7 +202,7 @@ class Deliveries extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($deliveries = $this->deliveries->limit($limit, $offset)->all($filters)){
+        if($deliveries = $this->deliveries->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($deliveries);$i++){
                 $deliveries[$i]->company = $this->delivery_companies->get(array('id_delivery'=>$deliveries[$i]->id));
                 $deliveries[$i]->contact = $this->delivery_contacts->get(array('id_delivery'=>$deliveries[$i]->id));
@@ -235,7 +235,7 @@ class Deliveries extends ZeCtrl
             $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        if(!$deliveries = $this->deliveries->limit($limit, $offset)->all($filters)){
+        if(!$deliveries = $this->deliveries->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $deliveries = [];
         }
         $total = $this->deliveries->count($filters);

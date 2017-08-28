@@ -202,7 +202,7 @@ class Quotes extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($quotes = $this->quotes->limit($limit, $offset)->all($filters)){
+        if($quotes = $this->quotes->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($quotes);$i++){
                 $quotes[$i]->company = $this->quote_companies->get(array('id_quote'=>$quotes[$i]->id));
                 $quotes[$i]->contact = $this->quote_contacts->get(array('id_quote'=>$quotes[$i]->id));
@@ -235,7 +235,7 @@ class Quotes extends ZeCtrl
             $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        if(!$quotes = $this->quotes->limit($limit, $offset)->all($filters)){
+        if(!$quotes = $this->quotes->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $quotes = [];
         }
         $total = $this->quotes->count($filters);

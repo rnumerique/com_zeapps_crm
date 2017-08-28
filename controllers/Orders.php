@@ -202,7 +202,7 @@ class Orders extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($orders = $this->orders->limit($limit, $offset)->all($filters)){
+        if($orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($orders);$i++){
                 $orders[$i]->company = $this->order_companies->get(array('id_order'=>$orders[$i]->id));
                 $orders[$i]->contact = $this->order_contacts->get(array('id_order'=>$orders[$i]->id));
@@ -235,7 +235,7 @@ class Orders extends ZeCtrl
             $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        if(!$orders = $this->orders->limit($limit, $offset)->all($filters)){
+        if(!$orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $orders = [];
         }
         $total = $this->orders->count($filters);
