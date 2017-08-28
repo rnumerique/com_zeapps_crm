@@ -3,6 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Warehouse extends ZeCtrl
 {
+    public function user_hook(){
+        $this->load->view('stock/warehouse_user_hook');
+    }
 
     public function config()
     {
