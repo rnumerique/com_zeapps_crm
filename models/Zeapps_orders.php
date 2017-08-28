@@ -37,6 +37,8 @@ class Zeapps_orders extends ZeModel {
         $frequency = $this->_pLoad->ctrl->configs->get(array('id'=>'crm_order_frequency'))->value;
         $num = $this->get_numerotation($frequency);
         $src->numerotation = $this->parseFormat($format, $num);
+        $src->date_creation = date('Y-m-d');
+        $src->date_limit = date("Y-m-d", strtotime("+1 month", time()));
 
         $id = parent::insert($src);
 

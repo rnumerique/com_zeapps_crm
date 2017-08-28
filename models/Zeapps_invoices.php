@@ -21,12 +21,43 @@ class Zeapps_invoices extends ZeModel {
     public function createFrom($src){
         $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->_pLoad->model("Zeapps_modalities", "modalities");
 
         unset($src->id);
         unset($src->numerotation);
         unset($src->created_at);
         unset($src->updated_at);
         unset($src->deleted_at);
+
+        var_dump($src->id_modality);
+        var_dump($src->date_creation);
+        var_dump($src->date_limit);
+
+        $src->date_creation = date('Y-m-d');
+
+        if(isset($src->id_modality)) {
+            if($modality = $this->_pLoad->ctrl->modalities->get($src->id_modality)){
+                if($modality->settlement_type === '0'){
+                    $src->date_limit = date("Y-m-d", strtotime("+".$modality->settlement_delay." day", time()));
+                }
+                elseif($modality->settlement_type === '1'){
+                    $year = date("Y", strtotime("+".$modality->settlement_delay." day", time()));
+                    $month = date("m", strtotime("+".$modality->settlement_delay." day", time()));
+                    $day = date("d", strtotime("+".$modality->settlement_delay." day", time()));
+                    if(intval($day) <= $modality->settlement_date){
+                        $src->date_limit = $year."-".$month."-".$modality->settlement_date;
+                    }
+                    else{
+                        $date = date("Y-m", strtotime("+1 month", strtotime("+".$modality->settlement_delay." day", time())));
+                        $src->date_limit = $date."-".$modality->settlement_date;
+                    }
+                }
+            }
+        }
+
+        var_dump($src->id_modality);
+        var_dump($src->date_creation);
+        var_dump($src->date_limit);
 
         $id = parent::insert($src);
 
