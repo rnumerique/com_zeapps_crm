@@ -42,6 +42,7 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
 		$scope.loadCompany = loadCompany;
 		$scope.loadContact = loadContact;
         $scope.loadAccountingNumber = loadAccountingNumber;
+        $scope.updateModality = updateModality;
 
 		Initform();
 
@@ -55,6 +56,7 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
 			if($scope.form.id === undefined) {
                 $scope.form.id_user_account_manager = $rootScope.user.id;
                 $scope.form.name_user_account_manager = $rootScope.user.firstname + " " + $rootScope.user.lastname;
+                $scope.form.id_warehouse = $rootScope.user.id_warehouse;
                 $scope.form.status = "En cours";
                 $scope.form.date_creation = new Date();
                 $scope.form.date_limit = new Date();
@@ -175,5 +177,13 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
             } else {
                 $scope.$parent.form.accounting_number = "";
             }
+        }
+
+        function updateModality(){
+		    angular.forEach($scope.modalities, function(modality){
+		        if(modality.id === $scope.form.id_modality){
+		            $scope.form.label_modality = modality.label;
+                }
+            });
         }
 	}]);

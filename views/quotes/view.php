@@ -326,7 +326,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState=='condition'">
             <strong>Modalités de paiement :</strong>
-            {{ quote.modalities }}
+            {{ quote.label_modality }}
         </div>
 
         <div ng-show="navigationState=='activity'">

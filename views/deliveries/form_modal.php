@@ -109,8 +109,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-md-6">
             <div class="form-group">
                 <label>Modalités de règlement</label>
-                <select ng-model="form.modalities" class="form-control">
-                    <option ng-repeat="modality in modalities" value="{{modality.label}}">
+                <select ng-model="form.id_modality" class="form-control" ng-change="updateModality()">
+                    <option ng-repeat="modality in modalities" value="{{modality.id}}">
                         {{ modality.label }}
                     </option>
                 </select>
