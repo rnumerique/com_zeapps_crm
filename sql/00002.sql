@@ -15,11 +15,13 @@ ALTER TABLE `zeapps_quotes` ADD `total_tva` FLOAT(9,2) NOT NULL AFTER `total_ht`
 ALTER TABLE `zeapps_quotes` CHANGE `name_user` `name_user_account_manager` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_quotes` CHANGE `modalities` `label_modality` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_quotes` ADD `id_modality` INT UNSIGNED NOT NULL AFTER `date_limit`;
+ALTER TABLE `zeapps_quotes` CHANGE `id_user` `id_user_account_manager` INT(10) UNSIGNED NOT NULL;
 
 ALTER TABLE `zeapps_quote_lines` ADD `id_taxe` INT UNSIGNED NOT NULL AFTER `price_unit`;
 ALTER TABLE `zeapps_quote_lines` CHANGE `taxe` `value_taxe` FLOAT(4,2) NOT NULL;
 ALTER TABLE `zeapps_quote_lines` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
 ALTER TABLE `zeapps_quote_lines` ADD `ref` VARCHAR(255) NOT NULL AFTER `id_product`;
+
 
 
 
@@ -41,6 +43,7 @@ ALTER TABLE `zeapps_invoices` ADD `total_tva` FLOAT(9,2) NOT NULL AFTER `total_h
 ALTER TABLE `zeapps_invoices` CHANGE `name_user` `name_user_account_manager` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_invoices` CHANGE `modalities` `label_modality` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_invoices` ADD `id_modality` INT UNSIGNED NOT NULL AFTER `date_limit`;
+ALTER TABLE `zeapps_invoices` CHANGE `id_user` `id_user_account_manager` INT(10) UNSIGNED NOT NULL;
 
 ALTER TABLE `zeapps_invoice_lines` ADD `id_taxe` INT UNSIGNED NOT NULL AFTER `price_unit`;
 ALTER TABLE `zeapps_invoice_lines` CHANGE `taxe` `value_taxe` FLOAT(4,2) NOT NULL;
@@ -68,11 +71,13 @@ ALTER TABLE `zeapps_orders` ADD `total_tva` FLOAT(9,2) NOT NULL AFTER `total_ht`
 ALTER TABLE `zeapps_orders` CHANGE `name_user` `name_user_account_manager` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_orders` CHANGE `modalities` `label_modality` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_orders` ADD `id_modality` INT UNSIGNED NOT NULL AFTER `date_limit`;
+ALTER TABLE `zeapps_orders` CHANGE `id_user` `id_user_account_manager` INT(10) UNSIGNED NOT NULL;
 
 ALTER TABLE `zeapps_order_lines` ADD `id_taxe` INT UNSIGNED NOT NULL AFTER `price_unit`;
 ALTER TABLE `zeapps_order_lines` CHANGE `taxe` `value_taxe` FLOAT(4,2) NOT NULL;
 ALTER TABLE `zeapps_order_lines` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
 ALTER TABLE `zeapps_order_lines` ADD `ref` VARCHAR(255) NOT NULL AFTER `id_product`;
+
 
 
 
@@ -94,6 +99,7 @@ ALTER TABLE `zeapps_deliveries` ADD `total_tva` FLOAT(9,2) NOT NULL AFTER `total
 ALTER TABLE `zeapps_deliveries` CHANGE `name_user` `name_user_account_manager` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_deliveries` CHANGE `modalities` `label_modality` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 ALTER TABLE `zeapps_deliveries` ADD `id_modality` INT UNSIGNED NOT NULL AFTER `date_limit`;
+ALTER TABLE `zeapps_deliveries` CHANGE `id_user` `id_user_account_manager` INT(10) UNSIGNED NOT NULL;
 
 ALTER TABLE `zeapps_delivery_lines` ADD `id_taxe` INT UNSIGNED NOT NULL AFTER `price_unit`;
 ALTER TABLE `zeapps_delivery_lines` CHANGE `taxe` `value_taxe` FLOAT(4,2) NOT NULL;
