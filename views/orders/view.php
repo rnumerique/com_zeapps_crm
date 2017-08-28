@@ -192,7 +192,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {{ subtotalTTC($index) | currency:'€':2 }}
                                 </td>
 
-                                <td colspan="8" ng-if="line.type == 'comment'">
+                                <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">
                                     {{ line.designation_desc }}
                                 </td>
 
