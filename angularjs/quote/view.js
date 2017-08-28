@@ -55,10 +55,11 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.quotes == undefined || $rootScope.quotes[0] == undefined) {
+		if($rootScope.quotes == undefined || $rootScope.quotes.ids == undefined) {
 			zhttp.crm.quote.get_all("0", "quotes", 0, 0, true).then(function (response) {
 				if (response.status == 200) {
-					$rootScope.quotes = response.data.quotes;
+                    $rootScope.quotes = {};
+					$rootScope.quotes.ids = response.data.ids;
 					initNavigation();
 				}
 			});
@@ -149,7 +150,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function back(){
-            if ($rootScope.quotes.src === undefined) {
+            if ($rootScope.quotes.src === undefined || $rootScope.deliveries.src === "quotes") {
                 $location.path("/ng/com_zeapps_crm/quote/");
             }
             else if ($rootScope.quotes.src === 'company') {
@@ -519,7 +520,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 
 			// calcul le nombre de résultat
 			if($rootScope.quotes) {
-				$scope.nb_quotes = $rootScope.quotes.length;
+				$scope.nb_quotes = $rootScope.quotes.ids.length;
 
 
 				// calcul la position du résultat actuel
@@ -529,32 +530,32 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 				$scope.quote_next = 0;
 				$scope.quote_last = 0;
 
-				for (var i = 0; i < $rootScope.quotes.length; i++) {
-					if ($rootScope.quotes[i].id == $routeParams.id) {
+				for (var i = 0; i < $rootScope.quotes.ids.length; i++) {
+					if ($rootScope.quotes.ids[i] == $routeParams.id) {
 						$scope.quote_order = i + 1;
 						if (i > 0) {
-							$scope.quote_previous = $rootScope.quotes[i - 1].id;
+							$scope.quote_previous = $rootScope.quotes.ids[i - 1];
 						}
 
-						if ((i + 1) < $rootScope.quotes.length) {
-							$scope.quote_next = $rootScope.quotes[i + 1].id;
+						if ((i + 1) < $rootScope.quotes.ids.length) {
+							$scope.quote_next = $rootScope.quotes.ids[i + 1];
 						}
 					}
 				}
 
 				// recherche la première facture de la liste
-				if ($rootScope.quotes[0] != undefined) {
-					if ($rootScope.quotes[0].id != $routeParams.id) {
-						$scope.quote_first = $rootScope.quotes[0].id;
+				if ($rootScope.quotes.ids[0] != undefined) {
+					if ($rootScope.quotes.ids[0] != $routeParams.id) {
+						$scope.quote_first = $rootScope.quotes.ids[0];
 					}
 				}
 				else
 					$scope.quote_first = 0;
 
 				// recherche la dernière facture de la liste
-				if ($rootScope.quotes[$rootScope.quotes.length - 1] != undefined) {
-					if ($rootScope.quotes[$rootScope.quotes.length - 1].id != $routeParams.id) {
-						$scope.quote_last = $rootScope.quotes[$rootScope.quotes.length - 1].id;
+				if ($rootScope.quotes.ids[$rootScope.quotes.ids.length - 1] != undefined) {
+					if ($rootScope.quotes.ids[$rootScope.quotes.ids.length - 1] != $routeParams.id) {
+						$scope.quote_last = $rootScope.quotes.ids[$rootScope.quotes.ids.length - 1];
 					}
 				}
 				else

@@ -2,7 +2,7 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
 	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.orders)
-			$rootScope.orders = [];
+			$rootScope.orders = {};
 		$scope.id_company = 0;
 		$scope.filters = {
             main: [
@@ -140,17 +140,18 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
 
             zhttp.crm.order.get_all(src_id, src, $scope.pageSize, offset, context, formatted_filters).then(function (response) {
                 if (response.data && response.data != "false") {
-                    $rootScope.orders = response.data.orders;
+                    $scope.orders = response.data.orders;
 
                     for (var i = 0; i < $rootScope.orders.length; i++) {
-                        $rootScope.orders[i].date_creation = new Date($rootScope.orders[i].date_creation);
-                        $rootScope.orders[i].date_limit = new Date($rootScope.orders[i].date_limit);
-                        $rootScope.orders[i].global_discount = parseFloat($rootScope.orders[i].global_discount);
-                        $rootScope.orders[i].probability = parseFloat($rootScope.orders[i].probability);
+                        $scope.orders[i].date_creation = new Date($scope.orders[i].date_creation);
+                        $scope.orders[i].date_limit = new Date($scope.orders[i].date_limit);
+                        $scope.orders[i].global_discount = parseFloat($scope.orders[i].global_discount);
+                        $scope.orders[i].probability = parseFloat($scope.orders[i].probability);
                     }
 
                     $scope.total = response.data.total;
 
+                    $rootScope.orders.ids = response.data.ids;
                     $rootScope.orders.src_id = src_id;
                     $rootScope.orders.src = src;
                 }
@@ -161,6 +162,7 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
             var formatted_data = angular.toJson(order);
             zhttp.crm.order.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
+                    $rootScope.orders.ids.unshift(response.data);
                     $location.url("/ng/com_zeapps_crm/order/" + response.data);
                 }
             });
@@ -196,7 +198,8 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
 		function del(order){
 			zhttp.crm.order.del(order.id).then(function(response){
 				if(response.data && response.data != "false"){
-					$rootScope.orders.splice($rootScope.orders.indexOf(order), 1);
+                    $scope.orders.splice($scope.orders.indexOf(order), 1);
+                    $rootScope.orders.ids.splice($rootScope.orders.ids.indexOf(order.id));
 				}
 			});
 		}

@@ -2,7 +2,7 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.deliveries)
-			$rootScope.deliveries = [];
+			$rootScope.deliveries = {};
 		$scope.id_company = 0;
 		$scope.filters = {
             main: [
@@ -140,17 +140,18 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 
             zhttp.crm.delivery.get_all(src_id, src, $scope.pageSize, offset, context, formatted_filters).then(function (response) {
                 if (response.data && response.data != "false") {
-                    $rootScope.deliveries = response.data.deliveries;
+                    $scope.deliveries = response.data.deliveries;
 
-                    for (var i = 0; i < $rootScope.deliveries.length; i++) {
-                        $rootScope.deliveries[i].date_creation = new Date($rootScope.deliveries[i].date_creation);
-                        $rootScope.deliveries[i].date_limit = new Date($rootScope.deliveries[i].date_limit);
-                        $rootScope.deliveries[i].global_discount = parseFloat($rootScope.deliveries[i].global_discount);
-                        $rootScope.deliveries[i].probability = parseFloat($rootScope.deliveries[i].probability);
+                    for (var i = 0; i < $scope.deliveries.length; i++) {
+                        $scope.deliveries[i].date_creation = new Date($scope.deliveries[i].date_creation);
+                        $scope.deliveries[i].date_limit = new Date($scope.deliveries[i].date_limit);
+                        $scope.deliveries[i].global_discount = parseFloat($scope.deliveries[i].global_discount);
+                        $scope.deliveries[i].probability = parseFloat($scope.deliveries[i].probability);
                     }
 
                     $scope.total = response.data.total;
 
+                    $rootScope.deliveries.ids = response.data.ids;
                     $rootScope.deliveries.src_id = src_id;
                     $rootScope.deliveries.src = src;
                 }
@@ -161,6 +162,7 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
             var formatted_data = angular.toJson(delivery);
             zhttp.crm.delivery.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
+                    $rootScope.deliveries.ids.unshift(response.data);
                     $location.url("/ng/com_zeapps_crm/delivery/" + response.data);
                 }
             });
@@ -196,7 +198,8 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 		function del(delivery){
 			zhttp.crm.delivery.del(delivery.id).then(function(response){
 				if(response.data && response.data != "false"){
-					$rootScope.deliveries.splice($rootScope.deliveries.indexOf(delivery), 1);
+                    $scope.deliveries.splice($scope.deliveries.indexOf(delivery), 1);
+                    $rootScope.deliveries.ids.splice($rootScope.deliveries.ids.indexOf(delivery.id));
 				}
 			});
 		}

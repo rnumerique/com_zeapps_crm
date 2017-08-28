@@ -2,7 +2,7 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
 	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.invoices)
-			$rootScope.invoices = [];
+			$rootScope.invoices = {};
 		$scope.id_company = 0;
 		$scope.filters = {
             main: [
@@ -140,17 +140,18 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
 
             zhttp.crm.invoice.get_all(src_id, src, $scope.pageSize, offset, context, formatted_filters).then(function (response) {
                 if (response.data && response.data != "false") {
-                    $rootScope.invoices = response.data.invoices;
+                    $scope.invoices = response.data.invoices;
 
                     for (var i = 0; i < $rootScope.invoices.length; i++) {
-                        $rootScope.invoices[i].date_creation = new Date($rootScope.invoices[i].date_creation);
-                        $rootScope.invoices[i].date_limit = new Date($rootScope.invoices[i].date_limit);
-                        $rootScope.invoices[i].global_discount = parseFloat($rootScope.invoices[i].global_discount);
-                        $rootScope.invoices[i].probability = parseFloat($rootScope.invoices[i].probability);
+                        $scope.invoices[i].date_creation = new Date($scope.invoices[i].date_creation);
+                        $scope.invoices[i].date_limit = new Date($scope.invoices[i].date_limit);
+                        $scope.invoices[i].global_discount = parseFloat($scope.invoices[i].global_discount);
+                        $scope.invoices[i].probability = parseFloat($scope.invoices[i].probability);
                     }
 
                     $scope.total = response.data.total;
 
+                    $rootScope.invoices.ids = response.data.ids;
                     $rootScope.invoices.src_id = src_id;
                     $rootScope.invoices.src = src;
                 }
@@ -161,6 +162,7 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
             var formatted_data = angular.toJson(invoice);
             zhttp.crm.invoice.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
+                    $rootScope.invoices.ids.unshift(response.data);
                     $location.url("/ng/com_zeapps_crm/invoice/" + response.data);
                 }
             });
@@ -196,7 +198,8 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
 		function del(invoice){
 			zhttp.crm.invoice.del(invoice.id).then(function(response){
 				if(response.data && response.data != "false"){
-					$rootScope.invoices.splice($rootScope.invoices.indexOf(invoice), 1);
+                    $scope.invoices.splice($scope.invoices.indexOf(invoice), 1);
+                    $rootScope.invoices.ids.splice($rootScope.invoices.ids.indexOf(invoice.id));
 				}
 			});
 		}

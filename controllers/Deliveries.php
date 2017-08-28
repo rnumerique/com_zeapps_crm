@@ -212,7 +212,15 @@ class Deliveries extends ZeCtrl
         else{
             $deliveries = [];
         }
+
         $total = $this->deliveries->count($filters);
+
+        $ids = [];
+        if($rows = $this->deliveries->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
+            foreach($rows as $row){
+                array_push($ids, $row->id);
+            }
+        }
 
         if($context){
 
@@ -220,7 +228,8 @@ class Deliveries extends ZeCtrl
 
         echo json_encode(array(
             'deliveries' => $deliveries,
-            'total' => $total
+            'total' => $total,
+            'ids' => $ids
         ));
 
     }

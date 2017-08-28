@@ -213,13 +213,21 @@ class Invoices extends ZeCtrl
         }
         $total = $this->invoices->count($filters);
 
+        $ids = [];
+        if($rows = $this->invoices->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
+            foreach($rows as $row){
+                array_push($ids, $row->id);
+            }
+        }
+
         if($context){
 
         }
 
         echo json_encode(array(
             'invoices' => $invoices,
-            'total' => $total
+            'total' => $total,
+            'ids' => $ids
         ));
 
     }

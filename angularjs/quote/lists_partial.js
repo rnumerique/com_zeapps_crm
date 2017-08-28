@@ -2,7 +2,7 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.quotes)
-			$rootScope.quotes = [];
+			$rootScope.quotes = {};
 		$scope.id_company = 0;
 		$scope.filters = {
             main: [
@@ -140,17 +140,18 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 
             zhttp.crm.quote.get_all(src_id, src, $scope.pageSize, offset, context, formatted_filters).then(function (response) {
                 if (response.data && response.data != "false") {
-                    $rootScope.quotes = response.data.quotes;
+                    $scope.quotes = response.data.quotes;
 
                     for (var i = 0; i < $rootScope.quotes.length; i++) {
-                        $rootScope.quotes[i].date_creation = new Date($rootScope.quotes[i].date_creation);
-                        $rootScope.quotes[i].date_limit = new Date($rootScope.quotes[i].date_limit);
-                        $rootScope.quotes[i].global_discount = parseFloat($rootScope.quotes[i].global_discount);
-                        $rootScope.quotes[i].probability = parseFloat($rootScope.quotes[i].probability);
+                        $scope.quotes[i].date_creation = new Date($scope.quotes[i].date_creation);
+                        $scope.quotes[i].date_limit = new Date($scope.quotes[i].date_limit);
+                        $scope.quotes[i].global_discount = parseFloat($scope.quotes[i].global_discount);
+                        $scope.quotes[i].probability = parseFloat($scope.quotes[i].probability);
                     }
 
                     $scope.total = response.data.total;
 
+                    $rootScope.quotes.ids = response.data.ids;
                     $rootScope.quotes.src_id = src_id;
                     $rootScope.quotes.src = src;
                 }
@@ -161,6 +162,7 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
             var formatted_data = angular.toJson(quote);
             zhttp.crm.quote.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
+                    $rootScope.quotes.ids.unshift(response.data);
                     $location.url("/ng/com_zeapps_crm/quote/" + response.data);
                 }
             });
@@ -196,7 +198,8 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 		function del(quote){
 			zhttp.crm.quote.del(quote.id).then(function(response){
 				if(response.data && response.data != "false"){
-					$rootScope.quotes.splice($rootScope.quotes.indexOf(quote), 1);
+                    $scope.quotes.splice($rootScope.$scope.indexOf(quote), 1);
+                    $rootScope.quotes.ids.splice($rootScope.quotes.ids.indexOf(quote.id));
 				}
 			});
 		}

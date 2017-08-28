@@ -56,10 +56,11 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.deliveries == undefined || $rootScope.deliveries[0] == undefined) {
+		if($rootScope.deliveries == undefined || $rootScope.deliveries.ids == undefined) {
 			zhttp.crm.delivery.get_all("0", "deliveries", 0, 0, true).then(function (response) {
 				if (response.status == 200) {
-					$rootScope.deliveries = response.data.deliveries;
+					$rootScope.deliveries = {};
+					$rootScope.deliveries.ids = response.data.ids;
 					initNavigation();
 				}
 			});
@@ -150,7 +151,9 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		}
 
 		function back(){
-            if ($rootScope.deliveries.src === undefined) {
+			console.log($rootScope.deliveries);
+			console.log($rootScope.deliveries.src);
+            if ($rootScope.deliveries.src === undefined || $rootScope.deliveries.src === "deliveries") {
                 $location.path("/ng/com_zeapps_crm/delivery/");
             }
             else if ($rootScope.deliveries.src === 'company') {
@@ -529,7 +532,7 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 
 			// calcul le nombre de résultat
 			if($rootScope.deliveries) {
-				$scope.nb_deliveries = $rootScope.deliveries.length;
+				$scope.nb_deliveries = $rootScope.deliveries.ids.length;
 
 
 				// calcul la position du résultat actuel
@@ -539,32 +542,32 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 				$scope.delivery_next = 0;
 				$scope.delivery_last = 0;
 
-				for (var i = 0; i < $rootScope.deliveries.length; i++) {
-					if ($rootScope.deliveries[i].id == $routeParams.id) {
+				for (var i = 0; i < $rootScope.deliveries.ids.length; i++) {
+					if ($rootScope.deliveries.ids[i] == $routeParams.id) {
 						$scope.delivery_order = i + 1;
 						if (i > 0) {
-							$scope.delivery_previous = $rootScope.deliveries[i - 1].id;
+							$scope.delivery_previous = $rootScope.deliveries.ids[i - 1];
 						}
 
-						if ((i + 1) < $rootScope.deliveries.length) {
-							$scope.delivery_next = $rootScope.deliveries[i + 1].id;
+						if ((i + 1) < $rootScope.deliveries.ids.length) {
+							$scope.delivery_next = $rootScope.deliveries.ids[i + 1];
 						}
 					}
 				}
 
 				// recherche la première facture de la liste
-				if ($rootScope.deliveries[0] != undefined) {
-					if ($rootScope.deliveries[0].id != $routeParams.id) {
-						$scope.delivery_first = $rootScope.deliveries[0].id;
+				if ($rootScope.deliveries.ids[0] != undefined) {
+					if ($rootScope.deliveries.ids[0] != $routeParams.id) {
+						$scope.delivery_first = $rootScope.deliveries.ids[0];
 					}
 				}
 				else
 					$scope.delivery_first = 0;
 
 				// recherche la dernière facture de la liste
-				if ($rootScope.deliveries[$rootScope.deliveries.length - 1] != undefined) {
-					if ($rootScope.deliveries[$rootScope.deliveries.length - 1].id != $routeParams.id) {
-						$scope.delivery_last = $rootScope.deliveries[$rootScope.deliveries.length - 1].id;
+				if ($rootScope.deliveries.ids[$rootScope.deliveries.ids.length - 1] != undefined) {
+					if ($rootScope.deliveries.ids[$rootScope.deliveries.ids.length - 1] != $routeParams.id) {
+						$scope.delivery_last = $rootScope.deliveries.ids[$rootScope.deliveries.ids.length - 1];
 					}
 				}
 				else

@@ -56,10 +56,11 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.invoices == undefined || $rootScope.invoices[0] == undefined) {
+		if($rootScope.invoices == undefined || $rootScope.invoices.ids == undefined) {
 			zhttp.crm.invoice.get_all("0", "invoices", 0, 0, true).then(function (response) {
 				if (response.status == 200) {
-					$rootScope.invoices = response.data.invoices;
+                    $rootScope.invoices = {};
+					$rootScope.invoices.ids = response.data.ids;
 					initNavigation();
 				}
 			});
@@ -150,7 +151,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function back(){
-            if ($rootScope.invoices.src === undefined) {
+            if ($rootScope.invoices.src === undefined || $rootScope.deliveries.src === "invoices") {
                 $location.path("/ng/com_zeapps_crm/invoice/");
             }
             else if ($rootScope.invoices.src === 'company') {
@@ -529,7 +530,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 			// calcul le nombre de résultat
 			if($rootScope.invoices) {
-				$scope.nb_invoices = $rootScope.invoices.length;
+				$scope.nb_invoices = $rootScope.invoices.ids.length;
 
 
 				// calcul la position du résultat actuel
@@ -539,32 +540,32 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 				$scope.invoice_next = 0;
 				$scope.invoice_last = 0;
 
-				for (var i = 0; i < $rootScope.invoices.length; i++) {
-					if ($rootScope.invoices[i].id == $routeParams.id) {
+				for (var i = 0; i < $rootScope.invoices.ids.length; i++) {
+					if ($rootScope.invoices.ids[i] == $routeParams.id) {
 						$scope.invoice_order = i + 1;
 						if (i > 0) {
-							$scope.invoice_previous = $rootScope.invoices[i - 1].id;
+							$scope.invoice_previous = $rootScope.invoices.ids[i - 1];
 						}
 
-						if ((i + 1) < $rootScope.invoices.length) {
-							$scope.invoice_next = $rootScope.invoices[i + 1].id;
+						if ((i + 1) < $rootScope.invoices.ids.length) {
+							$scope.invoice_next = $rootScope.invoices.ids[i + 1];
 						}
 					}
 				}
 
 				// recherche la première facture de la liste
-				if ($rootScope.invoices[0] != undefined) {
-					if ($rootScope.invoices[0].id != $routeParams.id) {
-						$scope.invoice_first = $rootScope.invoices[0].id;
+				if ($rootScope.invoices.ids[0] != undefined) {
+					if ($rootScope.invoices.ids[0] != $routeParams.id) {
+						$scope.invoice_first = $rootScope.invoices[0];
 					}
 				}
 				else
 					$scope.invoice_first = 0;
 
 				// recherche la dernière facture de la liste
-				if ($rootScope.invoices[$rootScope.invoices.length - 1] != undefined) {
-					if ($rootScope.invoices[$rootScope.invoices.length - 1].id != $routeParams.id) {
-						$scope.invoice_last = $rootScope.invoices[$rootScope.invoices.length - 1].id;
+				if ($rootScope.invoices.ids[$rootScope.invoices.ids.length - 1] != undefined) {
+					if ($rootScope.invoices.ids[$rootScope.invoices.ids.length - 1].id != $routeParams.id) {
+						$scope.invoice_last = $rootScope.invoices.ids[$rootScope.invoices.ids.length - 1].id;
 					}
 				}
 				else

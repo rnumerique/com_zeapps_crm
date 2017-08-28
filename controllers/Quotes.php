@@ -214,13 +214,21 @@ class Quotes extends ZeCtrl
         }
         $total = $this->quotes->count($filters);
 
+        $ids = [];
+        if($rows = $this->quotes->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
+            foreach($rows as $row){
+                array_push($ids, $row->id);
+            }
+        }
+
         if($context){
 
         }
 
         echo json_encode(array(
             'quotes' => $quotes,
-            'total' => $total
+            'total' => $total,
+            'ids' => $ids
         ));
 
     }

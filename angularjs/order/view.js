@@ -56,10 +56,11 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.orders == undefined || $rootScope.orders[0] == undefined) {
+		if($rootScope.orders == undefined || $rootScope.orders.ids == undefined) {
 			zhttp.crm.order.get_all("0", "orders", 0, 0, true).then(function (response) {
 				if (response.status == 200) {
-					$rootScope.orders = response.data.orders;
+                    $rootScope.orders = {};
+					$rootScope.orders.ids = response.data.ids;
 					initNavigation();
 				}
 			});
@@ -150,7 +151,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function back(){
-            if ($rootScope.orders.src === undefined) {
+            if ($rootScope.orders.src === undefined || $rootScope.deliveries.src === "orders") {
                 $location.path("/ng/com_zeapps_crm/order/");
             }
             else if ($rootScope.orders.src === 'company') {
@@ -529,7 +530,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 			// calcul le nombre de résultat
 			if($rootScope.orders) {
-				$scope.nb_orders = $rootScope.orders.length;
+				$scope.nb_orders = $rootScope.orders.ids.length;
 
 
 				// calcul la position du résultat actuel
@@ -539,32 +540,32 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 				$scope.order_next = 0;
 				$scope.order_last = 0;
 
-				for (var i = 0; i < $rootScope.orders.length; i++) {
-					if ($rootScope.orders[i].id == $routeParams.id) {
+				for (var i = 0; i < $rootScope.orders.ids.length; i++) {
+					if ($rootScope.orders.ids[i] == $routeParams.id) {
 						$scope.order_order = i + 1;
 						if (i > 0) {
-							$scope.order_previous = $rootScope.orders[i - 1].id;
+							$scope.order_previous = $rootScope.orders.ids[i - 1];
 						}
 
-						if ((i + 1) < $rootScope.orders.length) {
-							$scope.order_next = $rootScope.orders[i + 1].id;
+						if ((i + 1) < $rootScope.orders.ids.length) {
+							$scope.order_next = $rootScope.orders.ids[i + 1];
 						}
 					}
 				}
 
 				// recherche la première facture de la liste
-				if ($rootScope.orders[0] != undefined) {
-					if ($rootScope.orders[0].id != $routeParams.id) {
-						$scope.order_first = $rootScope.orders[0].id;
+				if ($rootScope.orders.ids[0] != undefined) {
+					if ($rootScope.orders.ids[0] != $routeParams.id) {
+						$scope.order_first = $rootScope.orders.ids[0];
 					}
 				}
 				else
 					$scope.order_first = 0;
 
 				// recherche la dernière facture de la liste
-				if ($rootScope.orders[$rootScope.orders.length - 1] != undefined) {
-					if ($rootScope.orders[$rootScope.orders.length - 1].id != $routeParams.id) {
-						$scope.order_last = $rootScope.orders[$rootScope.orders.length - 1].id;
+				if ($rootScope.orders.ids[$rootScope.orders.ids.length - 1] != undefined) {
+					if ($rootScope.orders.ids[$rootScope.orders.ids.length - 1] != $routeParams.id) {
+						$scope.order_last = $rootScope.orders.ids[$rootScope.orders.ids.length - 1];
 					}
 				}
 				else
