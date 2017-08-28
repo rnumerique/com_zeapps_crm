@@ -31,6 +31,11 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 		$scope.delete_category = delete_category;
 		$scope.force_delete_category = force_delete_category;
 
+        var showSubCats = false;
+		$scope.isSubCatOpen = function(){ return showSubCats; };
+		$scope.openSubCats = function(){ showSubCats = true; };
+		$scope.closeSubCats = function(){ showSubCats = false; };
+
 		$scope.sortableOptions = {
 			stop: sortableStop
 		};

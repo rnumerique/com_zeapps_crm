@@ -14,6 +14,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-md-9">
             <div class="clearfix">
                 <div class="pull-right" ng-show="currentBranch.id != -1">
+                    <span ng-show="currentBranch.branches">
+                        <ze-btn fa="eye" color="info" hint="Montrer les sous-catégories" always-on="true" ng-hide="isSubCatOpen()" ng-click="openSubCats()"></ze-btn>
+                        <ze-btn fa="eye-slash" color="info" hint="Masquer les sous-catégories" always-on="true" ng-show="isSubCatOpen()" ng-click="closeSubCats()"></ze-btn>
+                    </span>
                     <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/product/new_category/{{ currentBranch.id || 0 }}'><span class='fa fa-plus' aria-hidden='true'></span> Sous-categorie</a>
                     <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/product/new_product/{{ currentBranch.id || 0 }}'><span class='fa fa-plus' aria-hidden='true'></span> Produit</a>
                     <a class='btn btn-xs btn-success' ng-href='/ng/com_zeapps_crm/product/new_product_compose/{{ currentBranch.id || 0 }}'><span class='fa fa-plus' aria-hidden='true'></span> Produit Compose</a>
@@ -27,19 +31,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <span class="fa fa-fw fa-trash"></span>
                     </button>
                 </h3>
-                <div class="row" ng-show="currentBranch.branches">
-                    <h5>Sous-Categories</h5>
-                    <ul ui-sortable="sortableOptions" id="sortable" class="branch-list list-unstyled col-md-4" ng-model="currentBranch.branches">
-                        <li id="{{ branch.id }}" class="branch branch-sortable" ng-repeat="branch in currentBranch.branches">
-                            <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
-                            {{ branch.name }} <i>({{ branch.nb_products }} produit<span ng-show="branch.nb_products > 1">s</span>)</i>
-                        </li>
-                    </ul>
+                <div class="row" ng-show="isSubCatOpen()">
+                    <div class="col-md-12">
+                        <h5>Sous-Categories</h5>
+                        <ul ui-sortable="sortableOptions" id="sortable" class="branch-list list-unstyled col-md-4" ng-model="currentBranch.branches">
+                            <li id="{{ branch.id }}" class="branch branch-sortable" ng-repeat="branch in currentBranch.branches">
+                                <span class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></span>
+                                {{ branch.name }} <i>({{ branch.nb_products }} produit<span ng-show="branch.nb_products > 1">s</span>)</i>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 clearfix">
+                        <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
                         <h5>
-                            <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
                             Produits
                         </h5>
 
