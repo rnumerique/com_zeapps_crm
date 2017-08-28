@@ -55,8 +55,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Compte Comptable <span class="required">*</span></label>
-                            <input type="text" ng-model="form.accounting_number" class="form-control" ng-required="true">
+                            <label>Compte Comptable</label>
+                            <span   ze-modalsearch="loadAccountingNumber"
+                                    data-http="accountingNumberHttp"
+                                    data-model="form.accounting_number"
+                                    data-fields="accountingNumberFields"
+                                    data-template-new="accountingNumberTplNew"
+                                    data-title="Choisir un compte comptable"></span>
                         </div>
                     </div>
                 </div>

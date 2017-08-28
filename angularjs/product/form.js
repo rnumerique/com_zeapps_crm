@@ -15,9 +15,18 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 			desc_long: 1000
 		};
 
+        $scope.accountingNumberHttp = zhttp.crm.accounting_number;
+        $scope.accountingNumberTplNew = '/com_zeapps_crm/accounting_numbers/form_modal/';
+        $scope.accountingNumberFields = [
+            {label:'Libelle',key:'label'},
+            {label:'Numero',key:'number'},
+            {label:'Type',key:'type_label'}
+        ];
+
 		$scope.update = update;
 		$scope.loadProductStock = loadProductStock;
 		$scope.removeProductStock = removeProductStock;
+        $scope.loadAccountingNumber = loadAccountingNumber;
 		$scope.updateTaxe = updateTaxe;
 		$scope.updatePrice = updatePrice;
 		$scope.descState = descState;
@@ -103,6 +112,14 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 			$scope.form.id_stock = 0;
 			$scope.form.name_stock = "";
 		}
+
+        function loadAccountingNumber(accounting_number) {
+            if (accounting_number) {
+                $scope.form.accounting_number = accounting_number.number;
+            } else {
+                $scope.form.accounting_number = "";
+            }
+        }
 
 		function updateTaxe(){
 			angular.forEach($rootScope.taxes, function(taxe){
