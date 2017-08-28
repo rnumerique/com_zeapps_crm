@@ -192,9 +192,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {{ subtotalTTC($index) | currency:'€':2 }}
                                 </td>
 
-                                <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">
-                                    {{ line.designation_desc }}
-                                </td>
+                                <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">{{ line.designation_desc }}</td>
 
                                 <td class="text-right">
                                     <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
