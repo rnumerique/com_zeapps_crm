@@ -72,9 +72,9 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 			var data = {
 				categories: []
 			};
-			for(var i=0; i < $scope.activeCategory.data.branches.length; i++){
-				$scope.activeCategory.data.branches[i].sort = i;
-				data.categories[i] = $scope.activeCategory.data.branches[i];
+			for(var i=0; i < $scope.currentBranch.branches.length; i++){
+				$scope.currentBranch.branches[i].sort = i;
+				data.categories[i] = $scope.currentBranch.branches[i];
 			}
 			zhttp.crm.category.update_order(data).then(function(response){
 				if (response.status != 200) {
@@ -160,7 +160,7 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 									$scope.force_delete_category(id);
 								}
 								else{
-									$scope.activeCategory.data = response.data;
+									$scope.currentBranch = response.data;
 									getTree();
 								}
 							}
@@ -208,14 +208,14 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 				} else if (selectedItem.action == "primary") {
 					zhttp.crm.category.del(id, false).then(function (response) {
 						if (response.status == 200) {
-							$scope.activeCategory.data = response.data;
+							$scope.currentBranch = response.data;
 							getTree();
 						}
 					});
 				} else if (selectedItem.action == "success") {
 					zhttp.crm.category.del(id, true).then(function (response) {
 						if (response.status == 200) {
-							$scope.activeCategory.data = response.data;
+							$scope.currentBranch = response.data;
 							getTree();
 						}
 					});
