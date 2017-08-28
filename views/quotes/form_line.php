@@ -2,7 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div class="row" ng-controller="ComZeappsCrmQuoteFormLineCtrl">
-    <div class="col-md-12">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Référence</label>
+            <input type="text" class="form-control" ng-model="form.ref">
+        </div>
+    </div>
+    <div class="col-md-8">
         <div class="form-group">
             <label>Désignation</label>
             <input type="text" class="form-control" ng-model="form.designation_title">
@@ -46,6 +52,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <input type="number" class="form-control" ng-model="form.discount">
                 <div class="input-group-addon">%</div>
             </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Compte comptable</label>
+            <span   ze-modalsearch="loadAccountingNumber"
+                    data-http="accountingNumberHttp"
+                    data-model="form.accounting_number"
+                    data-fields="accountingNumberFields"
+                    data-template-new="accountingNumberTplNew"
+                    data-title="Choisir un compte comptable"></span>
         </div>
     </div>
 </div>

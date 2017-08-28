@@ -2,7 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div class="row" ng-controller="ComZeappsCrmDeliveryFormLineCtrl">
-    <div class="col-md-12">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Référence</label>
+            <input type="text" class="form-control" ng-model="form.ref">
+        </div>
+    </div>
+    <div class="col-md-8">
         <div class="form-group">
             <label>Désignation</label>
             <input type="text" class="form-control" ng-model="form.designation_title">
