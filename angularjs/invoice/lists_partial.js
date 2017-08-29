@@ -204,7 +204,7 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
 			zhttp.crm.invoice.del(invoice.id).then(function(response){
 				if(response.data && response.data != "false"){
                     $scope.invoices.splice($scope.invoices.indexOf(invoice), 1);
-                    $rootScope.invoices.ids.splice($rootScope.invoices.ids.indexOf(invoice.id));
+                    $rootScope.invoices.ids.splice($rootScope.invoices.ids.indexOf(invoice.id), 1);
 				}
 			});
 		}

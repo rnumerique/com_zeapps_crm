@@ -204,7 +204,7 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 			zhttp.crm.delivery.del(delivery.id).then(function(response){
 				if(response.data && response.data != "false"){
                     $scope.deliveries.splice($scope.deliveries.indexOf(delivery), 1);
-                    $rootScope.deliveries.ids.splice($rootScope.deliveries.ids.indexOf(delivery.id));
+                    $rootScope.deliveries.ids.splice($rootScope.deliveries.ids.indexOf(delivery.id), 1);
 				}
 			});
 		}

@@ -204,7 +204,7 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
 			zhttp.crm.quote.del(quote.id).then(function(response){
 				if(response.data && response.data != "false"){
                     $scope.quotes.splice($rootScope.$scope.indexOf(quote), 1);
-                    $rootScope.quotes.ids.splice($rootScope.quotes.ids.indexOf(quote.id));
+                    $rootScope.quotes.ids.splice($rootScope.quotes.ids.indexOf(quote.id), 1);
 				}
 			});
 		}
