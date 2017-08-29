@@ -124,6 +124,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </span>
                     </span>
                     <ze-btn fa="tags" color="success" hint="produit" always-on="true" ng-click="addLine()"></ze-btn>
+
+                    <span ng-repeat="hook in hooks" ng-include="hook.template"></span>
+
                     <ze-btn fa="euro" color="info" hint="sous-total" always-on="true" ng-click="addSubTotal()"></ze-btn>
                     <ze-btn fa="commenting" color="warning" hint="commentaire" always-on="true"
                             ze-modalform="addComment"
