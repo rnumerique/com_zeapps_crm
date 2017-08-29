@@ -23,6 +23,7 @@ app.config(["$provide",
                     save : post_invoice,
                     del : del_invoice,
                     transform : transform_invoice,
+					finalize : finalize_invoice,
                     test : test_invoice,
                     line : {
                         save : save_line_invoice,
@@ -250,6 +251,9 @@ app.config(["$provide",
             }
             function transform_invoice(id, data){
                 return zeHttp.post("/com_zeapps_crm/invoices/transform/" + id, data);
+            }
+            function finalize_invoice(id){
+                return zeHttp.post("/com_zeapps_crm/invoices/finalize/" + id);
             }
             function save_line_invoice(data){
                 return zeHttp.post("/com_zeapps_crm/invoices/saveLine", data);
