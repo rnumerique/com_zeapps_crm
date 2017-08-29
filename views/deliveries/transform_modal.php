@@ -37,6 +37,6 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger" ng-click="cancel()" i8n="Annuler"></button>
+    <button type="button" class="btn btn-danger" ng-click="cancel()">Annuler</button>
     <button type="sumbit" class="btn btn-success" ng-click="transform()">Convertir</button>
 </div>

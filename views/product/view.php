@@ -62,12 +62,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <table class="table table-striped">
                             <tr>
                                 <th></th>
-                                <th i8n="Référence"></th>
-                                <th i8n="Nom du produit"></th>
-                                <th i8n="Prix HT"></th>
-                                <th>TVA (%)</th>
-                                <th i8n="Prix TTC"></th>
+                                <th>Référence</th>
+                                <th>Nom du produit</th>
                                 <th>Compte comptable</th>
+                                <th class="text-right">Prix HT</th>
+                                <th class="text-right">TVA (%)</th>
+                                <th class="text-right">Prix TTC</th>
                                 <th class="text-right">Actions</th>
                             </tr>
                             <tr class="leaf" ng-repeat="product in products | filter:quicksearch | orderBy: 'name'">

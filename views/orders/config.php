@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <div class="row">
         <div class="col-md-12">
-            <button type="button" class="btn btn-primary" ng-click="test()" i8n="Tester le format"></button> {{ result }}
+            <button type="button" class="btn btn-primary" ng-click="test()">Tester le format</button> {{ result }}
         </div>
     </div>
 
@@ -14,7 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label i8n="Format de numérotation des commandes"></label>
+                    <label>Format de numérotation des commandes</label>
                     <input class="form-control" type="text" ng-model="format">
                     <p class="help-block">
                         Les elements de formats sont encadrés par des crochets (ex: [xxxxx][dmY] ou [dmY-XXXXXX]) <br/>
@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="col-md-6">
                 {{ numerotation }}
                 <div class="form-group">
-                    <strong i8n="Frequence de remise a 0 de la numérotation des commandes"></strong>
+                    <strong>Frequence de remise a 0 de la numérotation des commandes</strong>
                     <div class="radio">
                         <label>
                             <input type="radio" value="lifetime" ng-model="frequency">

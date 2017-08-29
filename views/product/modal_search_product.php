@@ -36,9 +36,9 @@
             <table class="table table-striped table-condensed">
                 <tr>
                     <th></th>
-                    <th i8n="Référence"></th>
-                    <th i8n="Nom du produit"></th>
-                    <th i8n="Prix HT"></th>
+                    <th>Référence</th>
+                    <th>Nom du produit</th>
+                    <th>Prix HT</th>
                 </tr>
                 <tr class="leaf" ng-repeat="product in products | orderBy: 'name'" ng-click="select_product(product)">
                     <td>

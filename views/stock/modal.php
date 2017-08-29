@@ -16,8 +16,8 @@
             <table class="table table-bordered table-striped table-condensed table-responsive" ng-if="product_stocks.length > 0">
                 <thead>
                 <tr>
-                    <th i8n="Référence"></th>
-                    <th i8n="Libellé"></th>
+                    <th>Référence</th>
+                    <th>Libellé</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,6 +48,6 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger" ng-click="cancel()" i8n="Annuler"></button>
+    <button type="button" class="btn btn-danger" ng-click="cancel()">Annuler</button>
     <button type="sumbit" class="btn btn-success" ng-click="addProductStock()" ng-if="showForm" form="productStockForm" ng-disabled='formCtrl.productStockForm.$invalid'>Creer</button>
 </div>
