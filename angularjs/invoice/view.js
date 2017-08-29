@@ -18,6 +18,13 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 		$scope.lines = [];
 
+        $scope.sortable = {
+            connectWith: ".sortableContainer",
+            disabled: false,
+            axis: "y",
+            stop: sortableStop
+        };
+
 		$scope.setTab = setTab;
 
 		$scope.back = back;
@@ -26,10 +33,10 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		$scope.next_invoice = next_invoice;
 		$scope.last_invoice = last_invoice;
 
-		$scope.updateStatus = updateStatus;
         $scope.editInvoice = editInvoice;
 		$scope.updateInvoice = updateInvoice;
 		$scope.transform = transform;
+		$scope.finalize = finalize;
 
 		$scope.addFromCode = addFromCode;
         $scope.keyEventaddFromCode = keyEventaddFromCode;
@@ -38,7 +45,6 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		$scope.addSubTotal = addSubTotal;
 		$scope.addComment = addComment;
         $scope.editComment = editComment;
-
 		$scope.deleteLine = deleteLine;
 
 		$scope.subtotalHT = subtotalHT;
@@ -79,6 +85,11 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 			zhttp.crm.invoice.get($routeParams.id).then(function(response){
 				if(response.data && response.data != "false"){
 					$scope.invoice = response.data.invoice;
+
+					if($scope.invoice.finalized === '1'){
+						$scope.sortable.disabled = true;
+					}
+
 					$scope.company = response.data.company;
 					$scope.contact = response.data.contact;
 
@@ -127,13 +138,6 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 				}
 			});
 		}
-
-		$scope.sortable = {
-			connectWith: ".sortableContainer",
-			disabled: false,
-			axis: "y",
-			stop: sortableStop
-		};
 
 		//////////////////// FUNCTIONS ////////////////////
 
@@ -186,24 +190,6 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 			}
 		}
 
-        function updateStatus(){
-			var data = {};
-
-			data.id = $scope.invoice.id;
-			data.status = $scope.invoice.status;
-
-			var formatted_data = angular.toJson(data);
-
-			zhttp.crm.invoice.save(formatted_data).then(function(response){
-                if(response.data && response.data != "false"){
-                    toasts('success', "Le status du devis a bien été mis à jour.");
-                }
-                else{
-                    toasts('danger', "Il y a eu une erreur lors de la mise a jour du status du devis");
-                }
-            });
-		}
-
 		function transform(){
 			zeapps_modal.loadModule("com_zeapps_crm", "transform_invoice", {}, function(objReturn) {
 				if (objReturn) {
@@ -219,6 +205,17 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 			});
 		}
 
+		function finalize(){
+			zhttp.crm.invoice.finalize($scope.invoice.id).then(function(response){
+				if(response.data && response.data !== "false"){
+					$scope.invoice.numerotation = response.data.numerotation;
+					$scope.invoice.final_pdf = response.data.final_pdf;
+					$scope.invoice.finalized = '1';
+                    $scope.sortable.disabled = true;
+				}
+			})
+		}
+
         function keyEventaddFromCode($event){
             if($event.which === 13){
                 addFromCode();
@@ -226,7 +223,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
         }
 
 		function addFromCode(){
-			if($scope.codeProduct !== "") {
+			if($scope.codeProduct !== "" && $scope.invoice.finalized === '0') {
                 var code = $scope.codeProduct;
                 zhttp.crm.product.get_code(code).then(function (response) {
                     if (response.data && response.data != "false") {
@@ -266,107 +263,121 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function addLine(){
-			// charge la modal de la liste de produit
-			zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function(objReturn) {
-				if (objReturn) {
-					var line = {
-						id_invoice: $routeParams.id,
-						type: "product",
-						id_product: objReturn.id,
-						ref: objReturn.ref,
-						designation_title: objReturn.name,
-						designation_desc: objReturn.description,
-						qty: 1,
-						discount: 0.00,
-						price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
-						id_taxe: parseFloat(objReturn.id_taxe),
-						value_taxe: parseFloat(objReturn.value_taxe),
-                        accounting_number: parseFloat(objReturn.accounting_number),
-						sort: $scope.lines.length
-					};
-                    crmTotal.line.update(line);
+			if($scope.invoice.finalized === '0') {
+                // charge la modal de la liste de produit
+                zeapps_modal.loadModule("com_zeapps_crm", "search_product", {}, function (objReturn) {
+                    if (objReturn) {
+                        var line = {
+                            id_invoice: $routeParams.id,
+                            type: "product",
+                            id_product: objReturn.id,
+                            ref: objReturn.ref,
+                            designation_title: objReturn.name,
+                            designation_desc: objReturn.description,
+                            qty: 1,
+                            discount: 0.00,
+                            price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
+                            id_taxe: parseFloat(objReturn.id_taxe),
+                            value_taxe: parseFloat(objReturn.value_taxe),
+                            accounting_number: parseFloat(objReturn.accounting_number),
+                            sort: $scope.lines.length
+                        };
+                        crmTotal.line.update(line);
 
-					var formatted_data = angular.toJson(line);
-					zhttp.crm.invoice.line.save(formatted_data).then(function(response){
-						if(response.data && response.data != "false"){
-							line.id = response.data;
-							$scope.lines.push(line);
-                            updateInvoice();
-						}
-					});
-				}
-			});
+                        var formatted_data = angular.toJson(line);
+                        zhttp.crm.invoice.line.save(formatted_data).then(function (response) {
+                            if (response.data && response.data != "false") {
+                                line.id = response.data;
+                                $scope.lines.push(line);
+                                updateInvoice();
+                            }
+                        });
+                    }
+                });
+            }
 		}
 
 		function addSubTotal(){
-			var subTotal = {
-				id_invoice: $routeParams.id,
-				type: "subTotal",
-				sort: $scope.lines.length
-			};
-
-			var formatted_data = angular.toJson(subTotal);
-			zhttp.crm.invoice.line.save(formatted_data).then(function(response){
-				if(response.data && response.data != "false"){
-					subTotal.id = response.data;
-					$scope.lines.push(subTotal);
-                    updateInvoice();
-				}
-			});
-		}
-
-        function addComment(comment){
-            if(comment.designation_desc !== ""){
-                var comment = {
+            if($scope.invoice.finalized === '0') {
+                var subTotal = {
                     id_invoice: $routeParams.id,
-                    type: "comment",
-                    designation_desc: comment.designation_desc,
+                    type: "subTotal",
                     sort: $scope.lines.length
                 };
 
-                var formatted_data = angular.toJson(comment);
-                zhttp.crm.invoice.line.save(formatted_data).then(function(response){
-                    if(response.data && response.data != "false"){
-                        comment.id = response.data;
-                        $scope.lines.push(comment);
+                var formatted_data = angular.toJson(subTotal);
+                zhttp.crm.invoice.line.save(formatted_data).then(function (response) {
+                    if (response.data && response.data != "false") {
+                        subTotal.id = response.data;
+                        $scope.lines.push(subTotal);
+                        updateInvoice();
                     }
                 });
+            }
+		}
+
+        function addComment(comment){
+            if($scope.invoice.finalized === '0') {
+                if (comment.designation_desc !== "") {
+                    var comment = {
+                        id_invoice: $routeParams.id,
+                        type: "comment",
+                        designation_desc: comment.designation_desc,
+                        sort: $scope.lines.length
+                    };
+
+                    var formatted_data = angular.toJson(comment);
+                    zhttp.crm.invoice.line.save(formatted_data).then(function (response) {
+                        if (response.data && response.data != "false") {
+                            comment.id = response.data;
+                            $scope.lines.push(comment);
+                        }
+                    });
+                }
             }
         }
 
         function editComment(comment){
-            var formatted_data = angular.toJson(comment);
-            zhttp.crm.invoice.line.save(formatted_data);
+            if($scope.invoice.finalized === '0') {
+                var formatted_data = angular.toJson(comment);
+                zhttp.crm.invoice.line.save(formatted_data);
+            }
         }
 
         function editLine(){
-            updateInvoice();
+            if($scope.invoice.finalized === '0') {
+                updateInvoice();
+            }
         }
 
         function updateLine(line){
-            $rootScope.$broadcast("comZeappsCrm_invoiceEditTrigger",
-                {
-                    line : line
-                }
-            );
+            if($scope.invoice.finalized === '0') {
+                $rootScope.$broadcast("comZeappsCrm_invoiceEditTrigger",
+                    {
+                        line: line
+                    }
+                );
+            }
         }
 
 		function deleteLine(line){
-			if($scope.lines.indexOf(line) > -1){
-				zhttp.crm.invoice.line.del(line.id).then(function(response){
-					if(response.data && response.data != "false"){
-						$scope.lines.splice($scope.lines.indexOf(line), 1);
+            if($scope.invoice.finalized === '0') {
+                if ($scope.lines.indexOf(line) > -1) {
+                    zhttp.crm.invoice.line.del(line.id).then(function (response) {
+                        if (response.data && response.data != "false") {
+                            $scope.lines.splice($scope.lines.indexOf(line), 1);
 
-						$rootScope.$broadcast("comZeappsCrm_invoiceDeleteTrigger",
-							{
-								id_line : line.id
-							}
-						);
+                            $rootScope.$broadcast("comZeappsCrm_invoiceDeleteTrigger",
+                                {
+                                    id_line: line.id
+                                }
+                            );
 
-                        updateInvoice();
-					}
-				});
-			}
+                            updateInvoice();
+                        }
+                    });
+                }
+            }
 		}
 
 		function subtotalHT(index){
@@ -378,61 +389,65 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
         function editInvoice(invoice){
-            angular.forEach($scope.invoice, function(value, key){
-                if(invoice[key])
-                    $scope.invoice[key] = invoice[key];
-            });
+            if($scope.invoice.finalized === '0') {
+                angular.forEach($scope.invoice, function (value, key) {
+                    if (invoice[key])
+                        $scope.invoice[key] = invoice[key];
+                });
 
-            updateInvoice();
+                updateInvoice();
+            }
         }
 
 		function updateInvoice(){
-			if($scope.invoice) {
-                $scope.invoice.global_discount = $scope.invoice.global_discount || 0;
+            if($scope.invoice.finalized === '0') {
+                if ($scope.invoice) {
+                    $scope.invoice.global_discount = $scope.invoice.global_discount || 0;
 
-                angular.forEach($scope.lines, function(line){
-                    crmTotal.line.update(line);
-                    if(line.id){
-                        updateLine(line);
-                    }
-                    var formatted_data = angular.toJson(line);
-                    zhttp.crm.invoice.line.save(formatted_data)
-				});
+                    angular.forEach($scope.lines, function (line) {
+                        crmTotal.line.update(line);
+                        if (line.id) {
+                            updateLine(line);
+                        }
+                        var formatted_data = angular.toJson(line);
+                        zhttp.crm.invoice.line.save(formatted_data)
+                    });
 
-                crmTotal.init($scope.invoice, $scope.lines);
-                $scope.tvas = crmTotal.get.tvas;
-                var totals = crmTotal.get.totals;
-				$scope.invoice.total_prediscount_ht = totals.total_prediscount_ht;
-				$scope.invoice.total_prediscount_ttc = totals.total_prediscount_ttc;
-				$scope.invoice.total_discount = totals.total_discount;
-				$scope.invoice.total_ht = totals.total_ht;
-				$scope.invoice.total_tva = totals.total_tva;
-				$scope.invoice.total_ttc = totals.total_ttc;
+                    crmTotal.init($scope.invoice, $scope.lines);
+                    $scope.tvas = crmTotal.get.tvas;
+                    var totals = crmTotal.get.totals;
+                    $scope.invoice.total_prediscount_ht = totals.total_prediscount_ht;
+                    $scope.invoice.total_prediscount_ttc = totals.total_prediscount_ttc;
+                    $scope.invoice.total_discount = totals.total_discount;
+                    $scope.invoice.total_ht = totals.total_ht;
+                    $scope.invoice.total_tva = totals.total_tva;
+                    $scope.invoice.total_ttc = totals.total_ttc;
 
-                var data = $scope.invoice;
+                    var data = $scope.invoice;
 
-                var y = data.date_creation.getFullYear();
-                var M = data.date_creation.getMonth();
-                var d = data.date_creation.getDate();
+                    var y = data.date_creation.getFullYear();
+                    var M = data.date_creation.getMonth();
+                    var d = data.date_creation.getDate();
 
-                data.date_creation = new Date(Date.UTC(y, M, d));
+                    data.date_creation = new Date(Date.UTC(y, M, d));
 
-                var y = data.date_limit.getFullYear();
-                var M = data.date_limit.getMonth();
-                var d = data.date_limit.getDate();
+                    var y = data.date_limit.getFullYear();
+                    var M = data.date_limit.getMonth();
+                    var d = data.date_limit.getDate();
 
-                data.date_limit = new Date(Date.UTC(y, M, d));
+                    data.date_limit = new Date(Date.UTC(y, M, d));
 
-                var formatted_data = angular.toJson(data);
-                zhttp.crm.invoice.save(formatted_data).then(function(response){
-                    if(response.data && response.data != "false"){
-                        toasts('success', "Les informations du devis ont bien été mises a jour");
-                    }
-                    else{
-                        toasts('danger', "Il y a eu une erreur lors de la mise a jour des informations du devis");
-                    }
-                });
-			}
+                    var formatted_data = angular.toJson(data);
+                    zhttp.crm.invoice.save(formatted_data).then(function (response) {
+                        if (response.data && response.data != "false") {
+                            toasts('success', "Les informations du devis ont bien été mises a jour");
+                        }
+                        else {
+                            toasts('danger', "Il y a eu une erreur lors de la mise a jour des informations du devis");
+                        }
+                    });
+                }
+            }
 		}
 
 		function addActivity(activity){
@@ -519,11 +534,16 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function print(){
-			zhttp.crm.invoice.pdf.make($scope.invoice.id).then(function(response){
-				if(response.data && response.data != "false"){
-					window.document.location.href = zhttp.crm.invoice.pdf.get() + angular.fromJson(response.data);
-				}
-			});
+			if($scope.invoice.final_pdf === "") {
+                zhttp.crm.invoice.pdf.make($scope.invoice.id).then(function (response) {
+                    if (response.data && response.data != "false") {
+                        window.document.location.href = zhttp.crm.invoice.pdf.get() + angular.fromJson(response.data);
+                    }
+                });
+            }
+            else{
+                window.document.location.href = zhttp.crm.invoice.pdf.get() + $scope.invoice.final_pdf;
+			}
 		}
 
 		function initNavigation() {
@@ -556,7 +576,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 				// recherche la première facture de la liste
 				if ($rootScope.invoices.ids[0] != undefined) {
 					if ($rootScope.invoices.ids[0] != $routeParams.id) {
-						$scope.invoice_first = $rootScope.invoices[0];
+						$scope.invoice_first = $rootScope.invoices.ids[0];
 					}
 				}
 				else
@@ -564,8 +584,8 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 				// recherche la dernière facture de la liste
 				if ($rootScope.invoices.ids[$rootScope.invoices.ids.length - 1] != undefined) {
-					if ($rootScope.invoices.ids[$rootScope.invoices.ids.length - 1].id != $routeParams.id) {
-						$scope.invoice_last = $rootScope.invoices.ids[$rootScope.invoices.ids.length - 1].id;
+					if ($rootScope.invoices.ids[$rootScope.invoices.ids.length - 1] != $routeParams.id) {
+						$scope.invoice_last = $rootScope.invoices.ids[$rootScope.invoices.ids.length - 1];
 					}
 				}
 				else
@@ -577,25 +597,26 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function sortableStop( event, ui ) {
+            if($scope.invoice.finalized === '0') {
+                var data = {};
+                var pushedLine = false;
+                data.id = $(ui.item[0]).attr("data-id");
 
-			var data = {};
-			var pushedLine = false;
-			data.id = $(ui.item[0]).attr("data-id");
+                for (var i = 0; i < $scope.lines.length; i++) {
+                    if ($scope.lines[i].id == data.id && !pushedLine) {
+                        data.oldSort = $scope.lines[i].sort;
+                        data.sort = i;
+                        $scope.lines[i].sort = data.sort;
+                        pushedLine = true;
+                    }
+                    else if (pushedLine) {
+                        $scope.lines[i].sort++;
+                    }
+                }
 
-			for(var i=0; i<$scope.lines.length; i++){
-				if($scope.lines[i].id == data.id && !pushedLine){
-					data.oldSort = $scope.lines[i].sort;
-					data.sort = i;
-					$scope.lines[i].sort = data.sort;
-					pushedLine = true;
-				}
-				else if(pushedLine){
-					$scope.lines[i].sort++;
-				}
-			}
-
-			var formatted_data = angular.toJson(data);
-			zhttp.crm.invoice.line.position(formatted_data);
+                var formatted_data = angular.toJson(data);
+                zhttp.crm.invoice.line.position(formatted_data);
+            }
 		}
 
 	}]);

@@ -179,6 +179,104 @@ class Invoices extends ZeCtrl
         }
     }
 
+    public function finalize($id) {
+        if($id) {
+            $this->load->model("Zeapps_configs", "configs");
+            $this->load->model("Zeapps_invoices", "invoices");
+            $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_accounting_entries", "accounting_entries");
+            $this->load->model("Zeapps_taxes", "taxes");
+
+            $invoice = $this->invoices->get($id);
+            $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+
+            $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
+            $num = $this->invoices->get_numerotation();
+
+            $numerotation = $this->invoices->parseFormat($format, $num);
+
+            $pdf = $this->makePDF($id, false);
+
+            if($this->invoices->update(array(
+                'finalized' => 1,
+                'numerotation' => $numerotation,
+                'final_pdf' => $pdf
+            ), $id)) {
+
+                $label_entry = $numerotation . ' - ';
+                $label_entry .= $invoice->name_company ?: ($invoice->name_contact ?: "");
+
+                $tvas = [];
+                foreach($lines as $line){
+                    if($line->id_taxe !== '0'){
+                        if(!isset($tvas[$line->id_taxe])){
+                            $tvas[$line->id_taxe] = array(
+                                'ht' => 0,
+                                'value_taxe' => floatval($line->value_taxe)
+                            );
+                        }
+
+                        $tvas[$line->id_taxe]['ht'] += floatval($line->total_ht);
+                        $tvas[$line->id_taxe]['value'] = round(floatval($tvas[$line->id_taxe]['ht']) * ($tvas[$line->id_taxe]['value_taxe'] / 100), 2);
+                    }
+
+                    if(floatval($line->total_ht) > 0) {
+                        $entry = array(
+                            'id_invoice' => $id,
+                            'accounting_number' => $line->accounting_number,
+                            'label' => $label_entry,
+                            'credit' => $line->total_ht,
+                            'code' => 'VE',
+                            'date_writing' => $invoice->date_creation,
+                            'date_limit' => $invoice->date_limit
+                        );
+
+                        $this->accounting_entries->insert($entry);
+                    }
+                }
+
+                foreach($tvas as $id_taxe => $tva){
+                    $taxe = $this->taxes->get($id_taxe);
+
+                    $entry = array(
+                        'id_invoice' => $id,
+                        'accounting_number' => $taxe->accounting_number,
+                        'label' => $label_entry,
+                        'credit' => $tva['value'],
+                        'code' => 'VE',
+                        'date_writing' => $invoice->date_creation,
+                        'date_limit' => $invoice->date_limit
+                    );
+
+                    $this->accounting_entries->insert($entry);
+                }
+
+                $entry = array(
+                    'id_invoice' => $id,
+                    'accounting_number' => $invoice->accounting_number,
+                    'label' => $label_entry,
+                    'debit' => $invoice->total_ttc,
+                    'code' => 'VE',
+                    'date_writing' => $invoice->date_creation,
+                    'date_limit' => $invoice->date_limit
+                );
+
+                $this->accounting_entries->insert($entry);
+
+                echo json_encode(array(
+                    'numerotation' => $numerotation,
+                    'final_pdf' => $pdf
+                ));
+            }
+            else{
+                echo json_encode(false);
+            }
+        }
+        else{
+            echo json_encode(false);
+        }
+    }
+
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_invoices", "invoices");
         $this->load->model("Zeapps_invoice_companies", "invoice_companies");

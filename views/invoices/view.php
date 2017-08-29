@@ -12,18 +12,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="titleWell">
                         Facture : {{ invoice.libelle }}
                     </div>
-                    <p class="small">
+                    <p class="small" ng-show="invoice.numerotation !== ''">
                         n° {{ invoice.numerotation }}
-                    </p>
-                    <p>
-                        <span class="form-group form-inline">
-                            <select class="form-control input-sm" ng-model="invoice.status" ng-change="updateStatus()">
-                                <option>En cours</option>
-                                <option>Gagné</option>
-                                <option>Perdu</option>
-                            </select>
-                        </span>
-                        ({{ invoice.probability | number:2 }}%)
                     </p>
                     <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
                         {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
@@ -53,13 +43,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="col-md-4">
                     <div class="pull-right">
                         <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
-                        <ze-btn fa="pencil" color="info" hint="Editer"
+                        <ze-btn fa="pencil" color="info" hint="Editer" ng-show="invoice.finalized === '0'"
                                 ze-modalform="updateInvoice"
                                 data-edit="invoice"
                                 data-template="templateEdit"
                                 data-title="Modifier la facture"></ze-btn>
                         <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
                         <ze-btn fa="files-o" color="success" hint="Dupliquer" ng-click="transform()"></ze-btn>
+                        <ze-btn fa="lock" color="warning" hint="Clôturer" always-on="true" ng-click="finalize()" ng-if="invoice.finalized === '0'"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_invoices > 0">
                             <button type="button" class="btn btn-default" ng-class="invoice_first == 0 ? 'disabled' :''" ng-click="first_invoice()"><span class="fa fa-fw fa-fast-backward"></span></button>
@@ -113,7 +104,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <div ng-show="navigationState =='body'">
             <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="col-md-12 text-right" ng-if="invoice.finalized === '0'">
                     <span class="form-inline">
                         <label>Code produit :</label>
                         <span class="input-group">
@@ -142,7 +133,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th class="text-right">Remise</th>
                                 <th class="text-right">Montant HT</th>
                                 <th class="text-right">Montant TTC</th>
-                                <th></th>
+                                <th ng-if="invoice.finalized === '0'"></th>
                             </tr>
                         </thead>
                         <tbody ui-sortable="sortable" class="sortableContainer" ng-model="lines">
@@ -194,7 +185,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                 <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">{{ line.designation_desc }}</td>
 
-                                <td class="text-right">
+                                <td class="text-right" ng-if="invoice.finalized === '0'">
                                     <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
                                             ze-modalform="editLine"
                                             data-edit="line"
