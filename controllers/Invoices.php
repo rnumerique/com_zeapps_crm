@@ -60,16 +60,11 @@ class Invoices extends ZeCtrl
 
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         $data = [];
 
         $data['invoice'] = $this->invoices->get($id);
-
-        $data['company'] = $this->invoice_companies->get(array('id_invoice'=>$id));
-        $data['contact'] = $this->invoice_contacts->get(array('id_invoice'=>$id));
         $data['lines'] = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
 
         $data['showDiscount'] = false;
@@ -94,7 +89,7 @@ class Invoices extends ZeCtrl
         //load the view and saved it into $html variable
         $html = $this->load->view('invoices/PDF', $data, true);
 
-        $nomPDF = $data['company']->company_name.'_'.$data['invoice']->numerotation.'_'.$data['invoice']->libelle;
+        $nomPDF = $data['invoice']->name_company.'_'.$data['invoice']->numerotation.'_'.$data['invoice']->libelle;
         $nomPDF = preg_replace('/\W+/', '_', $nomPDF);
         $nomPDF = trim($nomPDF, '_');
 
@@ -288,13 +283,7 @@ class Invoices extends ZeCtrl
     }
 
     public function save() {
-        $this->load->model("Zeapps_configs", "configs");
-        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
-        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
-        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -305,98 +294,10 @@ class Invoices extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
+            $this->invoices->update($data, $data["id"]);
             $id = $data["id"];
-            $this->invoices->update($data, array('id' => $data["id"]));
         } else {
-
-            $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_invoice_frequency'))->value;
-            $num = $this->invoices->get_numerotation($frequency);
-            $data['numerotation'] = $this->invoices->parseFormat($format, $num);
-
-            if($data['id_company'] && $data['id_company'] > 0){
-                $company = $this->companies->get($data['id_company']);
-            }
-            if($data['id_contact'] && $data['id_contact'] > 0){
-                $contact = $this->contacts->get($data['id_contact']);
-            }
-            if($company){
-                if($company->delivery_address_1){
-                    $data['delivery_address_1'] = $company->delivery_address_1;
-                    $data['delivery_address_2'] = $company->delivery_address_2;
-                    $data['delivery_address_3'] = $company->delivery_address_3;
-                    $data['delivery_city'] = $company->delivery_city;
-                    $data['delivery_zipcode'] = $company->delivery_zipcode;
-                    $data['delivery_state'] = $company->delivery_state;
-                    $data['delivery_country_id'] = $company->delivery_country_id;
-                    $data['delivery_country_name'] = $company->delivery_country_name;
-                }
-                if($company->billing_address_1){
-                    $data['billing_address_1'] = $company->billing_address_1;
-                    $data['billing_address_2'] = $company->billing_address_2;
-                    $data['billing_address_3'] = $company->billing_address_3;
-                    $data['billing_city'] = $company->billing_city;
-                    $data['billing_zipcode'] = $company->billing_zipcode;
-                    $data['billing_state'] = $company->billing_state;
-                    $data['billing_country_id'] = $company->billing_country_id;
-                    $data['billing_country_name'] = $company->billing_country_name;
-
-                    if(!isset($data['delivery_address_1'])) {
-                        $data['delivery_address_1'] = $company->billing_address_1;
-                        $data['delivery_address_2'] = $company->billing_address_2;
-                        $data['delivery_address_3'] = $company->billing_address_3;
-                        $data['delivery_city'] = $company->billing_city;
-                        $data['delivery_zipcode'] = $company->billing_zipcode;
-                        $data['delivery_state'] = $company->billing_state;
-                        $data['delivery_country_id'] = $company->billing_country_id;
-                        $data['delivery_country_name'] = $company->billing_country_name;
-                    }
-                }
-            }
-
-            if($contact){
-                if($contact->address_1 && !isset($data['billing_address_1'])) {
-                    $data['billing_address_1'] = $contact->address_1;
-                    $data['billing_address_2'] = $contact->address_2;
-                    $data['billing_address_3'] = $contact->address_3;
-                    $data['billing_city'] = $contact->city;
-                    $data['billing_zipcode'] = $contact->zipcode;
-                    $data['billing_state'] = $contact->state;
-                    $data['billing_country_id'] = $contact->country_id;
-                    $data['billing_country_name'] = $contact->country_name;
-                }
-                if($contact->address_1 && !isset($data['delivery_address_1'])){
-                    $data['delivery_address_1'] = $contact->address_1;
-                    $data['delivery_address_2'] = $contact->address_2;
-                    $data['delivery_address_3'] = $contact->address_3;
-                    $data['delivery_city'] = $contact->city;
-                    $data['delivery_zipcode'] = $contact->zipcode;
-                    $data['delivery_state'] = $contact->state;
-                    $data['delivery_country_id'] = $contact->country_id;
-                    $data['delivery_country_name'] = $contact->country_name;
-                }
-            }
             $id = $this->invoices->insert($data);
-            if($id) {
-                if($company){
-                    $company->id_company = $company->id;
-                    unset($company->id);
-                    unset($company->created_at);
-                    unset($company->updated_at);
-                    unset($company->deleted_at);
-                    $company->id_invoice = $id;
-                    $this->invoice_companies->insert($company);
-                }
-                if($contact){
-                    $contact->id_contact = $contact->id;
-                    unset($contact->id);
-                    unset($contact->created_at);
-                    unset($contact->updated_at);
-                    unset($contact->deleted_at);
-                    $contact->id_invoice = $id;
-                    $this->invoice_contacts->insert($contact);
-                }
-            }
         }
 
         echo json_encode($id);
@@ -404,28 +305,10 @@ class Invoices extends ZeCtrl
 
     public function delete($id) {
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
         $this->invoices->delete($id);
-
-        $companies = $this->invoice_companies->all(array('id_invoice' => $id));
-
-        if($companies && is_array($companies)){
-            for($i=0;$i<sizeof($companies);$i++){
-                $this->invoice_companies->delete($companies[$i]->id);
-            }
-        }
-
-        $contacts = $this->invoice_contacts->all(array('id_invoice' => $id));
-
-        if($contacts && is_array($contacts)){
-            for($i=0;$i<sizeof($contacts);$i++){
-                $this->invoice_contacts->delete($contacts[$i]->id);
-            }
-        }
 
         $lines = $this->invoice_lines->all(array('id_invoice' => $id));
 

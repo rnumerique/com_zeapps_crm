@@ -60,16 +60,11 @@ class Deliveries extends ZeCtrl
 
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-        $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
 
         $data = [];
 
         $data['delivery'] = $this->deliveries->get($id);
-
-        $data['company'] = $this->delivery_companies->get(array('id_delivery'=>$id));
-        $data['contact'] = $this->delivery_contacts->get(array('id_delivery'=>$id));
         $data['lines'] = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
 
         $data['showDiscount'] = false;
@@ -94,7 +89,7 @@ class Deliveries extends ZeCtrl
         //load the view and saved it into $html variable
         $html = $this->load->view('deliveries/PDF', $data, true);
 
-        $nomPDF = $data['company']->company_name.'_'.$data['delivery']->numerotation.'_'.$data['delivery']->libelle;
+        $nomPDF = $data['delivery']->name_company.'_'.$data['delivery']->numerotation.'_'.$data['delivery']->libelle;
         $nomPDF = preg_replace('/\W+/', '_', $nomPDF);
         $nomPDF = trim($nomPDF, '_');
 
@@ -291,12 +286,7 @@ class Deliveries extends ZeCtrl
 
     public function save() {
         $this->load->model("Zeapps_configs", "configs");
-        $this->load->model("Zeapps_companies", "companies", "com_zeapps_contact");
-        $this->load->model("Zeapps_contacts", "contacts", "com_zeapps_contact");
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-        $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
-        $this->load->model("Zeapps_delivery_lines", "delivery_lines");
 
         // constitution du tableau
         $data = array() ;
@@ -316,89 +306,7 @@ class Deliveries extends ZeCtrl
             $num = $this->deliveries->get_numerotation($frequency);
             $data['numerotation'] = $this->deliveries->parseFormat($format, $num);
 
-            if($data['id_company'] && $data['id_company'] > 0){
-                $company = $this->companies->get($data['id_company']);
-            }
-            if($data['id_contact'] && $data['id_contact'] > 0){
-                $contact = $this->contacts->get($data['id_contact']);
-            }
-            if($company){
-                if($company->delivery_address_1){
-                    $data['delivery_address_1'] = $company->delivery_address_1;
-                    $data['delivery_address_2'] = $company->delivery_address_2;
-                    $data['delivery_address_3'] = $company->delivery_address_3;
-                    $data['delivery_city'] = $company->delivery_city;
-                    $data['delivery_zipcode'] = $company->delivery_zipcode;
-                    $data['delivery_state'] = $company->delivery_state;
-                    $data['delivery_country_id'] = $company->delivery_country_id;
-                    $data['delivery_country_name'] = $company->delivery_country_name;
-                }
-                if($company->billing_address_1){
-                    $data['billing_address_1'] = $company->billing_address_1;
-                    $data['billing_address_2'] = $company->billing_address_2;
-                    $data['billing_address_3'] = $company->billing_address_3;
-                    $data['billing_city'] = $company->billing_city;
-                    $data['billing_zipcode'] = $company->billing_zipcode;
-                    $data['billing_state'] = $company->billing_state;
-                    $data['billing_country_id'] = $company->billing_country_id;
-                    $data['billing_country_name'] = $company->billing_country_name;
-
-                    if(!isset($data['delivery_address_1'])) {
-                        $data['delivery_address_1'] = $company->billing_address_1;
-                        $data['delivery_address_2'] = $company->billing_address_2;
-                        $data['delivery_address_3'] = $company->billing_address_3;
-                        $data['delivery_city'] = $company->billing_city;
-                        $data['delivery_zipcode'] = $company->billing_zipcode;
-                        $data['delivery_state'] = $company->billing_state;
-                        $data['delivery_country_id'] = $company->billing_country_id;
-                        $data['delivery_country_name'] = $company->billing_country_name;
-                    }
-                }
-            }
-
-            if($contact){
-                if($contact->address_1 && !isset($data['billing_address_1'])) {
-                    $data['billing_address_1'] = $contact->address_1;
-                    $data['billing_address_2'] = $contact->address_2;
-                    $data['billing_address_3'] = $contact->address_3;
-                    $data['billing_city'] = $contact->city;
-                    $data['billing_zipcode'] = $contact->zipcode;
-                    $data['billing_state'] = $contact->state;
-                    $data['billing_country_id'] = $contact->country_id;
-                    $data['billing_country_name'] = $contact->country_name;
-                }
-                if($contact->address_1 && !isset($data['delivery_address_1'])){
-                    $data['delivery_address_1'] = $contact->address_1;
-                    $data['delivery_address_2'] = $contact->address_2;
-                    $data['delivery_address_3'] = $contact->address_3;
-                    $data['delivery_city'] = $contact->city;
-                    $data['delivery_zipcode'] = $contact->zipcode;
-                    $data['delivery_state'] = $contact->state;
-                    $data['delivery_country_id'] = $contact->country_id;
-                    $data['delivery_country_name'] = $contact->country_name;
-                }
-            }
             $id = $this->deliveries->insert($data);
-            if($id) {
-                if($company){
-                    $company->id_company = $company->id;
-                    unset($company->id);
-                    unset($company->created_at);
-                    unset($company->updated_at);
-                    unset($company->deleted_at);
-                    $company->id_delivery = $id;
-                    $this->delivery_companies->insert($company);
-                }
-                if($contact){
-                    $contact->id_contact = $contact->id;
-                    unset($contact->id);
-                    unset($contact->created_at);
-                    unset($contact->updated_at);
-                    unset($contact->deleted_at);
-                    $contact->id_delivery = $id;
-                    $this->delivery_contacts->insert($contact);
-                }
-            }
         }
 
         echo json_encode($id);
