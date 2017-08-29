@@ -66,10 +66,8 @@
         <td id="delivery_address">
             <b>Adresse de livraison</b><br>
             <?php
-            if($company)
-                echo $company->company_name . '<br>';
-            if($contact)
-                echo $contact->last_name . ' ' . $contact->first_name . '<br>';
+            echo $order->name_company . '<br>';
+            echo $order->last_name . '<br>';
             echo $order->delivery_address_1;
             echo $order->delivery_address_2 ? '<br>' : '';
             echo $order->delivery_address_2;
@@ -82,10 +80,8 @@
         <td id="billing_address">
             <b>Adresse de facturation</b><br>
             <?php
-            if($company)
-                echo $company->company_name . '<br>';
-            if($contact)
-                echo $contact->last_name . ' ' . $contact->first_name . '<br>';
+            echo $order->name_company . '<br>';
+            echo $order->last_name . '<br>';
             echo $order->billing_address_1;
             echo $order->billing_address_2 ? '<br>' : '';
             echo $order->billing_address_2;
