@@ -21,7 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-condensed table-responsive" ng-show="quotes.length">
+            <table class="table table-hover table-condensed table-responsive" ng-show="quotes.length">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -39,22 +39,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </thead>
                 <tbody>
                 <tr ng-repeat="quote in quotes">
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.numerotation}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.libelle}}</a></td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/quote/{{quote.id}}">
+                    <td ng-click="goTo(quote.id)">{{quote.numerotation}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.libelle}}</td>
+                    <td ng-click="goTo(quote.id)">
+                        
                             {{quote.name_company}}
                             <span ng-if="quote.name_company && quote.name_contact">-</span>
                             {{quote.name_contact ? quote.name_contact : ''}}
-                        </a>
+                        
                     </td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ht | currency:'€':2}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.total_ttc | currency:'€':2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_creation | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.date_limit | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.name_user_account_manager}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.probability | number:2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/quote/{{quote.id}}">{{quote.status}}</a></td>
+                    <td ng-click="goTo(quote.id)" class="text-right">{{quote.total_ht | currency:'€':2}}</td>
+                    <td ng-click="goTo(quote.id)" class="text-right">{{quote.total_ttc | currency:'€':2}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.date_creation | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.name_user_account_manager}}</td>
+                    <td ng-click="goTo(quote.id)" class="text-right">{{quote.probability | number:2}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.status}}</td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
                                 ze-modalform="edit"

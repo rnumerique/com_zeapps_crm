@@ -27,6 +27,10 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
         $scope.page = 1;
         $scope.pageSize = 15;
 
+
+        $scope.update = update;
+        $scope.loadList = loadList;
+        $scope.goTo = goTo;
 		$scope.delete = del;
 		$scope.delete_category = delete_category;
 		$scope.force_delete_category = force_delete_category;
@@ -41,9 +45,6 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
 		};
 
 		getTree();
-
-		$scope.update = update;
-		$scope.loadList = loadList;
 
 		function update(branch){
 			$scope.currentBranch = branch;
@@ -62,6 +63,11 @@ app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$route", "$routeParams
                 }
             });
 		}
+
+        function goTo(id, type){
+			var ctrlr = (type == 0 ? 'product' : 'product_compose');
+            $location.url('/ng/com_zeapps_crm/'+ctrlr+'/'+id);
+        }
 
 		function getTree() {
 			zhttp.crm.category.tree().then(function (response) {

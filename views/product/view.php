@@ -59,7 +59,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                         </div>
 
-                        <table class="table table-striped">
+                        <table class="table table-hover table-condensed table-responsive" ng-show="products.length > 0">
+                            <thead>
                             <tr>
                                 <th></th>
                                 <th>Référence</th>
@@ -70,23 +71,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th class="text-right">Prix TTC</th>
                                 <th class="text-right">Actions</th>
                             </tr>
+                            </thead>
+                            <tbody>
                             <tr class="leaf" ng-repeat="product in products | filter:quicksearch | orderBy: 'name'">
-                                <td>
+                                <td ng-click="goTo(product.id, product.compose)">
                                     <i class="fa fa-tag" ng-if="product.compose == 0"></i>
                                     <i class="fa fa-tags" ng-if="product.compose != 0"></i>
                                 </td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.ref }}</a></td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.name }}</a></td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.compose == 0 ? ( product.price_ht | currency ) : '-' }}</a></td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.compose == 0 ? ( product.value_taxe | currency ) : '-' }}</a></td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.price_ttc | currency }}</a></td>
-                                <td><a ng-href="/ng/com_zeapps_crm/{{ product.compose == 0 ? 'product' : 'product_compose' }}/{{ product.id }}">{{ product.accounting_number }}</a></td>
+                                <td ng-click="goTo(product.id, product.compose)">{{ product.ref }}</td>
+                                <td ng-click="goTo(product.id, product.compose)">{{ product.name }}</td>
+                                <td ng-click="goTo(product.id, product.compose)">{{ product.accounting_number }}</td>
+                                <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.compose == 0 ? ( product.price_ht | currency:'€':2 ) : '-' }}</td>
+                                <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.compose == 0 ? ( product.value_taxe | currency:'€':2 ) : '-' }}</td>
+                                <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.price_ttc | currency:'€':2 }}</td>
                                 <td class="text-right">
                                     <button type="button" class="btn btn-xs btn-danger" ng-click="delete(product)">
                                         <i class="fa fa-trash fa-fw"></i>
                                     </button>
                                 </td>
                             </tr>
+                            </tbody>
                         </table>
 
                         <div class="row">

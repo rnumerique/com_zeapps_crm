@@ -100,6 +100,7 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
         var src_id = 0;
 
         $scope.loadList = loadList;
+        $scope.goTo = goTo;
 		$scope.add = add;
 		$scope.edit = edit;
 		$scope.delete = del;
@@ -156,6 +157,10 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
                     $rootScope.invoices.src = src;
                 }
             });
+        }
+
+        function goTo(id){
+            $location.url('/ng/com_zeapps_crm/invoice/'+id);
         }
 
         function add(invoice) {

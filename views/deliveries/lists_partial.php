@@ -21,7 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-condensed table-responsive" ng-show="deliveries.length">
+            <table class="table table-hover table-condensed table-responsive" ng-show="deliveries.length">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -39,22 +39,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </thead>
                 <tbody>
                 <tr ng-repeat="delivery in deliveries">
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.numerotation}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.libelle}}</a></td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">
+                    <td ng-click="goTo(delivery.id)">{{delivery.numerotation}}</td>
+                    <td ng-click="goTo(delivery.id)">{{delivery.libelle}}</td>
+                    <td ng-click="goTo(delivery.id)">
+                        
                             {{delivery.name_company}}
                             <span ng-if="delivery.name_company && delivery.name_contact">-</span>
                             {{delivery.name_contact ? delivery.name_contact : ''}}
-                        </a>
+                        
                     </td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.total_ht | currency:'€':2}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.total_ttc | currency:'€':2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.date_creation | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.date_limit | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.name_user_account_manager}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.probability | number:2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/delivery/{{delivery.id}}">{{delivery.status}}</a></td>
+                    <td ng-click="goTo(delivery.id)" class="text-right">{{delivery.total_ht | currency:'€':2}}</td>
+                    <td ng-click="goTo(delivery.id)" class="text-right">{{delivery.total_ttc | currency:'€':2}}</td>
+                    <td ng-click="goTo(delivery.id)">{{delivery.date_creation | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(delivery.id)">{{delivery.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(delivery.id)">{{delivery.name_user_account_manager}}</td>
+                    <td ng-click="goTo(delivery.id)" class="text-right">{{delivery.probability | number:2}}</td>
+                    <td ng-click="goTo(delivery.id)">{{delivery.status}}</td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
                                 ze-modalform="edit"

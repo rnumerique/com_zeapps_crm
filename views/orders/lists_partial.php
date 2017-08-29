@@ -21,7 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-condensed table-responsive" ng-show="orders.length">
+            <table class="table table-hover table-condensed table-responsive" ng-show="orders.length">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -39,22 +39,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </thead>
                 <tbody>
                 <tr ng-repeat="order in orders">
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.numerotation}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.libelle}}</a></td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/order/{{order.id}}">
+                    <td ng-click="goTo(order.id)">{{order.numerotation}}</td>
+                    <td ng-click="goTo(order.id)">{{order.libelle}}</td>
+                    <td ng-click="goTo(order.id)">
+                        
                             {{order.name_company}}
                             <span ng-if="order.name_company && order.name_contact">-</span>
                             {{order.name_contact ? order.name_contact : ''}}
-                        </a>
+                        
                     </td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.total_ht | currency:'€':2}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.total_ttc | currency:'€':2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.date_creation | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.date_limit | date:'dd/MM/yyyy'}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.name_user_account_manager}}</a></td>
-                    <td class="text-right"><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.probability | number:2}}</a></td>
-                    <td><a href="/ng/com_zeapps_crm/order/{{order.id}}">{{order.status}}</a></td>
+                    <td ng-click="goTo(order.id)" class="text-right">{{order.total_ht | currency:'€':2}}</td>
+                    <td ng-click="goTo(order.id)" class="text-right">{{order.total_ttc | currency:'€':2}}</td>
+                    <td ng-click="goTo(order.id)">{{order.date_creation | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(order.id)">{{order.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(order.id)">{{order.name_user_account_manager}}</td>
+                    <td ng-click="goTo(order.id)" class="text-right">{{order.probability | number:2}}</td>
+                    <td ng-click="goTo(order.id)">{{order.status}}</td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"
                                 ze-modalform="edit"

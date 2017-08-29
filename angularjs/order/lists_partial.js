@@ -100,6 +100,7 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
         var src_id = 0;
 
         $scope.loadList = loadList;
+        $scope.goTo = goTo;
 		$scope.add = add;
 		$scope.edit = edit;
 		$scope.delete = del;
@@ -156,6 +157,10 @@ app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$route
                     $rootScope.orders.src = src;
                 }
             });
+        }
+
+        function goTo(id){
+            $location.url('/ng/com_zeapps_crm/order/'+id);
         }
 
         function add(order) {
