@@ -25,7 +25,7 @@ class Accounting_numbers extends ZeCtrl
 
         $total = $this->accounting_numbers->count($filters);
 
-        if(!$accounting_numbers = $this->accounting_numbers->limit($limit, $offset)->all($filters)){
+        if(!$accounting_numbers = $this->accounting_numbers->limit($limit, $offset)->order_by('number', 'ASC')->all($filters)){
             $accounting_numbers = [];
         }
 
