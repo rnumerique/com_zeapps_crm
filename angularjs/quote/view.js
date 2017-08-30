@@ -150,7 +150,7 @@ app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function back(){
-            if ($rootScope.quotes.src === undefined || $rootScope.deliveries.src === "quotes") {
+            if ($rootScope.quotes.src === undefined || $rootScope.quotes.src === "quotes") {
                 $location.path("/ng/com_zeapps_crm/quote/");
             }
             else if ($rootScope.quotes.src === 'company') {

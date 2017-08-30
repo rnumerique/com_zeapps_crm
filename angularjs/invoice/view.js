@@ -155,7 +155,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function back(){
-            if ($rootScope.invoices.src === undefined || $rootScope.deliveries.src === "invoices") {
+            if ($rootScope.invoices.src === undefined || $rootScope.invoices.src === "invoices") {
                 $location.path("/ng/com_zeapps_crm/invoice/");
             }
             else if ($rootScope.invoices.src === 'company') {

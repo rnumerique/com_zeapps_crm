@@ -151,7 +151,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function back(){
-            if ($rootScope.orders.src === undefined || $rootScope.deliveries.src === "orders") {
+            if ($rootScope.orders.src === undefined || $rootScope.orders.src === "orders") {
                 $location.path("/ng/com_zeapps_crm/order/");
             }
             else if ($rootScope.orders.src === 'company') {
@@ -576,7 +576,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 			}
 		}
 
-		function sortableStop( event, ui ) {
+		function sortableStop(event, ui) {
 
 			var data = {};
 			var pushedLine = false;
