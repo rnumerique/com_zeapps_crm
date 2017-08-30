@@ -2,7 +2,8 @@ app.factory("crmTotal", function(){
 
 	var doc = {};
 	var lines = [];
-    
+	var line_details = [];
+
 	var service = {
 		init: init,
         sub : {
@@ -19,9 +20,10 @@ app.factory("crmTotal", function(){
     
 	return service;
 
-	function init(d, l){
+	function init(d, l, l_d){
         doc = d;
 		lines = l;
+        line_details = l_d;
 
 		process();
 	}
@@ -34,7 +36,7 @@ app.factory("crmTotal", function(){
 	function makeTVAarray(){
 		var tmp = {};
 		angular.forEach(lines, function(line){
-			if(line !== undefined && line.type !== "subTotal" && line.type !== "comment") {
+			if(line !== undefined && line.type !== "subTotal" && line.type !== "comment" && line.has_detail !== "1") {
                 if (tmp[line.id_taxe] === undefined) {
                     tmp[line.id_taxe] = {
                         ht: 0,
@@ -45,6 +47,17 @@ app.factory("crmTotal", function(){
                 tmp[line.id_taxe].ht += round2(parseFloat(line.total_ht));
                 tmp[line.id_taxe].value = round2(parseFloat(tmp[line.id_taxe].ht) * (parseFloat(tmp[line.id_taxe].value_taxe) / 100));
             }
+		});
+		angular.forEach(line_details, function(line){
+			if (tmp[line.id_taxe] === undefined) {
+				tmp[line.id_taxe] = {
+					ht: 0,
+					value_taxe: round2(parseFloat(line.value_taxe))
+				};
+			}
+
+			tmp[line.id_taxe].ht += round2(parseFloat(line.total_ht));
+			tmp[line.id_taxe].value = round2(parseFloat(tmp[line.id_taxe].ht) * (parseFloat(tmp[line.id_taxe].value_taxe) / 100));
 		});
 
 		service.get.tvas = tmp;
@@ -62,9 +75,12 @@ app.factory("crmTotal", function(){
 	function calcTotalPreDiscountHT(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
-			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment" && lines[i].has_detail !== "1"){
 				t += round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty));
 			}
+		}
+		for(var i = 0; i < line_details.length; i++){
+			t += round2(parseFloat(line_details[i].price_unit) * parseFloat(line_details[i].qty));
 		}
 		service.get.totals.total_prediscount_ht = t;
 	}
@@ -72,9 +88,12 @@ app.factory("crmTotal", function(){
 	function calcTotalPreDiscountTTC(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
-			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment" && lines[i].has_detail !== "1"){
 				t += round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty) * ( 1 + (parseFloat(lines[i].value_taxe) / 100)));
 			}
+		}
+		for(var i = 0; i < line_details.length; i++){
+			t += round2(parseFloat(line_details[i].price_unit) * parseFloat(line_details[i].qty) * ( 1 + (parseFloat(line_details[i].value_taxe) / 100)));
 		}
         service.get.totals.total_prediscount_ttc = t;
 	}
@@ -83,10 +102,14 @@ app.factory("crmTotal", function(){
 		var discount = 0;
 		var t = 0;
 		for (var i = 0; i < lines.length; i++) {
-			if (lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment") {
+			if (lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment" && lines[i].has_detail !== "1") {
 				discount = round2(parseFloat(lines[i].price_unit) * parseFloat(lines[i].qty) * ( 1 -  ( 1 - parseFloat(lines[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) ));
 				t += discount;
 			}
+		}
+		for (var i = 0; i < line_details.length; i++) {
+			discount = round2(parseFloat(line_details[i].price_unit) * parseFloat(line_details[i].qty) * ( 1 -  ( 1 - parseFloat(line_details[i].discount) / 100) * ( 1 - parseFloat(doc.global_discount) / 100) ));
+			t += discount;
 		}
         service.get.totals.total_discount = t;
 	}
@@ -94,9 +117,12 @@ app.factory("crmTotal", function(){
 	function calcTotalHT(){
 		var t = 0;
 		for(var i = 0; i < lines.length; i++){
-			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment"){
+			if(lines[i] !== undefined && lines[i].type !== "subTotal" && lines[i].type !== "comment" && lines[i].has_detail !== "1"){
 				t += round2(parseFloat(lines[i].total_ht));
 			}
+		}
+		for(var i = 0; i < line_details.length; i++){
+			t += round2(parseFloat(line_details[i].total_ht));
 		}
         service.get.totals.total_ht = t;
 	}
