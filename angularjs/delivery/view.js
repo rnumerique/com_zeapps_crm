@@ -151,8 +151,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		}
 
 		function back(){
-			console.log($rootScope.deliveries);
-			console.log($rootScope.deliveries.src);
             if ($rootScope.deliveries.src === undefined || $rootScope.deliveries.src === "deliveries") {
                 $location.path("/ng/com_zeapps_crm/delivery/");
             }
@@ -244,7 +242,7 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
                             price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
                             id_taxe: parseFloat(response.data.id_taxe),
                             value_taxe: parseFloat(response.data.value_taxe),
-                            accounting_number: parseFloat(response.data.accounting_number),
+                            accounting_number: response.data.accounting_number,
                             sort: $scope.lines.length
                         };
                         crmTotal.line.update(line);
@@ -283,7 +281,7 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 						price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
 						id_taxe: parseFloat(objReturn.id_taxe),
 						value_taxe: parseFloat(objReturn.value_taxe),
-                        accounting_number: parseFloat(objReturn.accounting_number),
+                        accounting_number: objReturn.accounting_number,
 						sort: $scope.lines.length
 					};
                     crmTotal.line.update(line);
