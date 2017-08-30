@@ -56,6 +56,9 @@ app.config(["$provide",
                         position : update_linepos_order,
                         del : del_line_order
                     },
+                    line_detail : {
+                        save : save_lineDetail_order,
+                    },
                     activity : {
                         save : save_activity_order,
                         del : del_activity_order
@@ -316,6 +319,9 @@ app.config(["$provide",
             }
             function del_line_order(id){
                 return zeHttp.delete("/com_zeapps_crm/orders/deleteLine/" + id);
+            }
+            function save_lineDetail_order(data){
+                return zeHttp.post("/com_zeapps_crm/orders/saveLineDetail", data);
             }
             function save_activity_order(data){
                 return zeHttp.post("com_zeapps_crm/orders/activity", data);
