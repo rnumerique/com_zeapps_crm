@@ -17,7 +17,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
         <div class="col-md-4">
             <label>Compte Comptable</label>
-            <input type="text" class="form-control" ng-model="form.accounting_number" ng-required="true">
+            <span   ze-modalsearch="loadAccountingNumber"
+                    data-http="accountingNumberHttp"
+                    data-model="form.accounting_number"
+                    data-fields="accountingNumberFields"
+                    data-template-new="accountingNumberTplNew"
+                    data-title="Choisir un compte comptable"></span>
         </div>
         <div class="col-md-4">
             <label>
@@ -30,15 +35,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <thead>
             <tr>
                 <th>
-                    Label
-                </th>
-                <th>
-                    Taux (%)
-                </th>
-                <th>
                     Compte Comptable
                 </th>
                 <th>
+                    Label
+                </th>
+                <th class="text-right">
+                    Taux
+                </th>
+                <th class="text-center">
                     Active
                 </th>
                 <th></th>
@@ -47,24 +52,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <tbody>
             <tr ng-repeat="taxe in taxes">
                 <td>
-                    {{ taxe.label }}
-                </td>
-                <td>
-                    {{ taxe.value }}
-                </td>
-                <td>
                     {{ taxe.accounting_number }}
                 </td>
                 <td>
+                    {{ taxe.label }}
+                </td>
+                <td class="text-right">
+                    {{ taxe.value | currency:'%':2 }}
+                </td>
+                <td class="text-center">
                     <i class="fa fa-fw" ng-class="taxe.active == 1 ? 'fa-check text-success' : 'fa-times text-danger'"></i>
                 </td>
                 <td class="text-right">
-                    <button type="button" class="btn btn-xs btn-info" ng-click="edit(taxe)">
-                        <i class="fa fa-fw fa-pencil"></i>
-                    </button>
-                    <button type="button" class="btn btn-xs btn-danger" ng-click="delete(taxe)">
-                        <i class="fa fa-fw fa-trash"></i>
-                    </button>
+                    <ze-btn fa="pencil" color="info" hint="Editer" direction="left" ng-click="edit(taxe)"></ze-btn>
+                    <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(taxe)"></ze-btn>
                 </td>
             </tr>
             </tbody>
