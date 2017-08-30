@@ -195,7 +195,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">{{ line.designation_desc }}</td>
 
                                 <td class="text-right">
-                                    <span ng-if="line.type !== 'subTotal' && line.type !== 'comment'">
+                                    <span ng-if="line.type === 'product'">
                                         <ze-btn fa="pencil" color="info" direction="left" hint="editer"
                                                 ze-modalform="editLine"
                                                 data-edit="line"

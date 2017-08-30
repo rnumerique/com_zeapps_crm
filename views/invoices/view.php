@@ -186,16 +186,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td colspan="8" class="text-wrap" ng-if="line.type == 'comment'">{{ line.designation_desc }}</td>
 
                                 <td class="text-right" ng-if="invoice.finalized === '0'">
-                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type !== 'subTotal' && line.type !== 'comment'"
+                                    <span ng-if="line.type === 'product'">
+                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer"
                                             ze-modalform="editLine"
                                             data-edit="line"
                                             data-title="Editer la ligne de la facture"
                                             data-template="invoiceLineTplUrl"></ze-btn>
-                                    <ze-btn fa="pencil" color="info" direction="left" hint="editer" ng-if="line.type === 'comment'"
-                                            ze-modalform="editComment"
-                                            data-edit="line"
-                                            data-title="Modifier un commentaire"
-                                            data-template="invoiceCommentTplUrl"></ze-btn>
+                                    </span>
+                                    <span ng-show="line.type === 'comment'">
+                                        <ze-btn fa="pencil" color="info" direction="left" hint="editer"
+                                                ze-modalform="editComment"
+                                                data-edit="line"
+                                                data-title="Modifier un commentaire"
+                                                data-template="invoiceCommentTplUrl"></ze-btn>
+                                    </span>
                                     <ze-btn fa="trash" color="danger" direction="left" hint="Supprimer" ng-click="deleteLine(line)" ze-confirmation></ze-btn>
                                 </td>
                             </tr>
