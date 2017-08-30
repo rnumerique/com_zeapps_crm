@@ -76,8 +76,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row" ng-if="showDetailsEntreprise">
             <div class="col-md-12">
                 <div class="well">
-                    <strong>En cours :</strong> {{ (company.due || contact.due) | currency:'€':2 }}
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="(company.due_lines || contact.due_lines).length > 0">
+                    <strong>En cours :</strong> {{ (company_due || contact_due) | currency:'€':2 }}
+                    <table class="table table-stripped table-condensed table-responsive" ng-show="company_due_lines.length > 0 || contact_due_lines.length > 0">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -87,7 +87,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th></th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
+                        <tr ng-repeat="due_line in (company_due_lines.length > 0 ?  company_due_lines : contact_due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
                             <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
