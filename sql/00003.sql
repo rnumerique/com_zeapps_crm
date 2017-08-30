@@ -18,3 +18,13 @@ ALTER TABLE `zeapps_accounting_entries`
 
 ALTER TABLE `zeapps_accounting_entries`
   MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `zeapps_order_lines` ADD `has_detail` BOOLEAN NOT NULL AFTER `type`;
+ALTER TABLE `zeapps_quote_lines` ADD `has_detail` BOOLEAN NOT NULL AFTER `type`;
+ALTER TABLE `zeapps_invoice_lines` ADD `has_detail` BOOLEAN NOT NULL AFTER `type`;
+ALTER TABLE `zeapps_delivery_lines` ADD `has_detail` BOOLEAN NOT NULL AFTER `type`;
+
+ALTER TABLE `zeapps_order_line_details` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
+ALTER TABLE `zeapps_quote_line_details` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
+ALTER TABLE `zeapps_invoice_line_details` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
+ALTER TABLE `zeapps_delivery_line_details` ADD `accounting_number` VARCHAR(255) NOT NULL AFTER `value_taxe`;
