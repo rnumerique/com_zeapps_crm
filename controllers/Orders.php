@@ -61,11 +61,13 @@ class Orders extends ZeCtrl
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_orders", "orders");
         $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_line_details", "order_line_details");
 
         $data = [];
 
         $data['order'] = $this->orders->get($id);
         $data['lines'] = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
+        $line_details = $this->order_line_details->all(array('id_order'=>$id));
 
         $data['showDiscount'] = false;
         $data['tvas'] = [];
@@ -73,6 +75,19 @@ class Orders extends ZeCtrl
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
 
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
+        }
+        foreach($line_details as $line){
             if($line->id_taxe !== '0'){
                 if(!isset($data['tvas'][$line->id_taxe])){
                     $data['tvas'][$line->id_taxe] = array(
@@ -182,9 +197,8 @@ class Orders extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_orders", "orders");
-        $this->load->model("Zeapps_order_companies", "order_companies");
-        $this->load->model("Zeapps_order_contacts", "order_contacts");
         $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_line_details", "order_line_details");
 
         $filters = array() ;
 
@@ -199,9 +213,8 @@ class Orders extends ZeCtrl
 
         if($orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($orders);$i++){
-                $orders[$i]->company = $this->order_companies->get(array('id_order'=>$orders[$i]->id));
-                $orders[$i]->contact = $this->order_contacts->get(array('id_order'=>$orders[$i]->id));
                 $orders[$i]->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
+                $orders[$i]->line_details = $this->order_line_details->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
             }
         }
         else{
@@ -252,9 +265,8 @@ class Orders extends ZeCtrl
 
     public function get($id) {
         $this->load->model("Zeapps_orders", "orders");
-        $this->load->model("Zeapps_order_companies", "order_companies");
-        $this->load->model("Zeapps_order_contacts", "order_contacts");
         $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_line_details", "order_line_details");
         $this->load->model("Zeapps_order_documents", "order_documents");
         $this->load->model("Zeapps_order_activities", "order_activities");
         $this->load->model("Zeapps_invoices", "invoices");
@@ -263,22 +275,18 @@ class Orders extends ZeCtrl
 
         $data->order = $this->orders->get($id);
 
-        $data->company = $this->order_companies->get(array('id_order'=>$id));
-        $data->contact = $this->order_contacts->get(array('id_order'=>$id));
         $data->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$id));
+        $data->line_details = $this->order_line_details->all(array('id_order'=>$id));
         $data->documents = $this->order_documents->all(array('id_order'=>$id));
         $data->activities = $this->order_activities->all(array('id_order'=>$id));
 
-        if($data->company){
-            $res = $this->invoices->getDueOf('company', $data->order->id_company);
-            $data->company->due = $res['due'];
-            $data->company->due_lines = $res['due_lines'];
-        }
-        elseif($data->contact){
-            $res = $this->invoices->getDueOf('contact', $data->order->id_contact);
-            $data->contact->due = $res['due'];
-            $data->contact->due_lines = $res['due_lines'];
-        }
+        $res = $this->invoices->getDueOf('company', $data->order->id_company);
+        $data->company_due = $res['due'];
+        $data->company_due_lines = $res['due_lines'];
+
+        $res = $this->invoices->getDueOf('contact', $data->order->id_contact);
+        $data->contact_due = $res['due'];
+        $data->contact_due_lines = $res['due_lines'];
 
         echo json_encode($data);
     }
@@ -313,36 +321,14 @@ class Orders extends ZeCtrl
 
     public function delete($id) {
         $this->load->model("Zeapps_orders", "orders");
-        $this->load->model("Zeapps_order_companies", "order_companies");
-        $this->load->model("Zeapps_order_contacts", "order_contacts");
         $this->load->model("Zeapps_order_lines", "order_lines");
+        $this->load->model("Zeapps_order_line_details", "order_line_details");
         $this->load->model("Zeapps_order_documents", "order_documents");
 
         $this->orders->delete($id);
 
-        $companies = $this->order_companies->all(array('id_order' => $id));
-
-        if($companies && is_array($companies)){
-            for($i=0;$i<sizeof($companies);$i++){
-                $this->order_companies->delete($companies[$i]->id);
-            }
-        }
-
-        $contacts = $this->order_contacts->all(array('id_order' => $id));
-
-        if($contacts && is_array($contacts)){
-            for($i=0;$i<sizeof($contacts);$i++){
-                $this->order_contacts->delete($contacts[$i]->id);
-            }
-        }
-
-        $lines = $this->order_lines->all(array('id_order' => $id));
-
-        if($lines && is_array($lines)){
-            for($i=0;$i<sizeof($lines);$i++){
-                $this->order_lines->delete($lines[$i]->id);
-            }
-        }
+        $this->order_lines->delete(array('id_order' => $id));
+        $this->order_line_details->delete(array('id_order' => $id));
 
         $documents = $this->order_documents->all(array('id_order' => $id));
 
@@ -350,10 +336,11 @@ class Orders extends ZeCtrl
 
         if($documents && is_array($documents)){
             for($i=0;$i<sizeof($documents);$i++){
-                $this->order_documents->delete($documents[$i]->id);
                 unlink($path . $documents[$i]->path);
             }
         }
+
+        $this->order_documents->delete(array('id_order' => $id));
 
         echo json_encode("OK");
     }
@@ -404,14 +391,37 @@ class Orders extends ZeCtrl
     public function deleteLine($id = null){
         if($id){
             $this->load->model("Zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_order_line_details", "order_line_details");
 
             $line = $this->order_lines->get($id);
 
             $this->order_lines->updateOldTable($line->id_order, $line->sort);
 
+            $this->order_line_details->delete(array('id_order' => $line->id_order, 'id_line' => $id));
+
             echo json_encode($this->order_lines->delete($id));
 
         }
+    }
+
+    public function saveLineDetail(){
+        $this->load->model("Zeapps_order_line_details", "order_line_details");
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if (isset($data["id"]) && is_numeric($data["id"])) {
+            $id = $this->order_line_details->update($data, $data["id"]);
+        } else {
+            $id = $this->order_line_details->insert($data);
+        }
+
+        echo json_encode($id);
     }
 
     public function activity(){
