@@ -143,7 +143,7 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
                 if (response.data && response.data != "false") {
                     $scope.quotes = response.data.quotes;
 
-                    for (var i = 0; i < $rootScope.quotes.length; i++) {
+                    for (var i = 0; i < $scope.quotes.length; i++) {
                         $scope.quotes[i].date_creation = new Date($scope.quotes[i].date_creation);
                         $scope.quotes[i].date_limit = new Date($scope.quotes[i].date_limit);
                         $scope.quotes[i].global_discount = parseFloat($scope.quotes[i].global_discount);
@@ -164,7 +164,31 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
         }
 
         function add(quote) {
-            var formatted_data = angular.toJson(quote);
+            var data = quote;
+
+            if(data.date_creation) {
+                var y = data.date_creation.getFullYear();
+                var M = data.date_creation.getMonth();
+                var d = data.date_creation.getDate();
+
+                data.date_creation = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_creation = 0;
+            }
+
+            if(data.date_limit) {
+                var y = data.date_limit.getFullYear();
+                var M = data.date_limit.getMonth();
+                var d = data.date_limit.getDate();
+
+                data.date_limit = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_limit = 0;
+            }
+
+            var formatted_data = angular.toJson(data);
             zhttp.crm.quote.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
                     $rootScope.quotes.ids.unshift(response.data);
@@ -176,17 +200,27 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
         function edit(quote){
             var data = quote;
 
-            var y = data.date_creation.getFullYear();
-            var M = data.date_creation.getMonth();
-            var d = data.date_creation.getDate();
+            if(data.date_creation) {
+                var y = data.date_creation.getFullYear();
+                var M = data.date_creation.getMonth();
+                var d = data.date_creation.getDate();
 
-            data.date_creation = new Date(Date.UTC(y, M, d));
+                data.date_creation = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_creation = 0;
+            }
 
-            var y = data.date_limit.getFullYear();
-            var M = data.date_limit.getMonth();
-            var d = data.date_limit.getDate();
+            if(data.date_limit) {
+                var y = data.date_limit.getFullYear();
+                var M = data.date_limit.getMonth();
+                var d = data.date_limit.getDate();
 
-            data.date_limit = new Date(Date.UTC(y, M, d));
+                data.date_limit = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_limit = 0;
+            }
 
             var formatted_data = angular.toJson(data);
 

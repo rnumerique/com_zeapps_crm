@@ -164,7 +164,31 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
         }
 
         function add(delivery) {
-            var formatted_data = angular.toJson(delivery);
+            var data = delivery;
+
+            if(data.date_creation) {
+                var y = data.date_creation.getFullYear();
+                var M = data.date_creation.getMonth();
+                var d = data.date_creation.getDate();
+
+                data.date_creation = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_creation = 0;
+            }
+
+            if(data.date_limit) {
+                var y = data.date_limit.getFullYear();
+                var M = data.date_limit.getMonth();
+                var d = data.date_limit.getDate();
+
+                data.date_limit = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_limit = 0;
+            }
+
+            var formatted_data = angular.toJson(data);
             zhttp.crm.delivery.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
                     $rootScope.deliveries.ids.unshift(response.data);
@@ -176,17 +200,27 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
         function edit(delivery){
             var data = delivery;
 
-            var y = data.date_creation.getFullYear();
-            var M = data.date_creation.getMonth();
-            var d = data.date_creation.getDate();
+            if(data.date_creation) {
+                var y = data.date_creation.getFullYear();
+                var M = data.date_creation.getMonth();
+                var d = data.date_creation.getDate();
 
-            data.date_creation = new Date(Date.UTC(y, M, d));
+                data.date_creation = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_creation = 0;
+            }
 
-            var y = data.date_limit.getFullYear();
-            var M = data.date_limit.getMonth();
-            var d = data.date_limit.getDate();
+            if(data.date_limit) {
+                var y = data.date_limit.getFullYear();
+                var M = data.date_limit.getMonth();
+                var d = data.date_limit.getDate();
 
-            data.date_limit = new Date(Date.UTC(y, M, d));
+                data.date_limit = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_limit = 0;
+            }
 
             var formatted_data = angular.toJson(data);
 
