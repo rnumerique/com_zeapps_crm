@@ -5,10 +5,29 @@ app.controller("ComZeappsCrmTaxeConfigCtrl", ["$scope", "$route", "$routeParams"
 
 		$scope.form = {};
 
+        $scope.accountingNumberHttp = zhttp.crm.accounting_number;
+        $scope.accountingNumberTplNew = '/com_zeapps_crm/accounting_numbers/form_modal/';
+        $scope.accountingNumberFields = [
+            {label:'Numero',key:'number'},
+            {label:'Libelle',key:'label'},
+            {label:'Type',key:'type_label'}
+        ];
+
+        $scope.loadAccountingNumber = loadAccountingNumber;
 		$scope.success = success;
 		$scope.cancel = cancel;
 		$scope.edit = edit;
 		$scope.delete = del;
+
+
+
+        function loadAccountingNumber(accounting_number) {
+            if (accounting_number) {
+                $scope.form.accounting_number = accounting_number.number;
+            } else {
+                $scope.form.accounting_number = "";
+            }
+        }
         
 		function success(){
 
