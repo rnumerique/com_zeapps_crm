@@ -9,6 +9,18 @@ app.controller("ComZeappsCrmAccountingNumberFormCtrl", ["$scope",
             {
                 id: '2',
                 label: 'Fournisseur'
+            },
+            {
+                id: '3',
+                label: 'TVA'
+            },
+            {
+                id: '4',
+                label: 'Produit'
+            },
+            {
+                id: '5',
+                label: 'Achat'
             }
         ];
 
