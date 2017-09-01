@@ -24,6 +24,14 @@ class Stock extends ZeCtrl
         $this->load->view('stock/history');
     }
 
+    public function form_modal(){
+        $this->load->view('stock/form_modal');
+    }
+
+    public function form_mvt(){
+        $this->load->view('stock/form_mvt');
+    }
+
     public function modal()
     {
         $this->load->view('stock/modal');
@@ -76,27 +84,39 @@ class Stock extends ZeCtrl
         echo json_encode(array('product_stock' => $product_stock, 'warehouses' => $warehouses));
     }
 
-    public function getAll($id_warehouse = null){
+    public function getAll($limit = 15, $offset = 0, $context = false){
         $this->load->model('zeapps_stocks', 'stocks');
         $this->load->model('zeapps_warehouses', 'warehouses');
         $this->load->model('zeapps_stock_movements', 'stock_movements');
 
-        if($id_warehouse){
-            $where = array('id_warehouse' => $id_warehouse);
-        }
-        else{
-            $where = [];
+        $filters = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        $warehouses = $this->warehouses->all();
-        if($product_stocks = $this->stocks->all($where)){
+        if($context) {
+            $warehouses = $this->warehouses->all();
+        }
+        else{
+            $warehouses = null;
+        }
+
+        if($product_stocks = $this->stocks->all($filters, $limit, $offset)){
             foreach($product_stocks as $product_stock){
-                $where['id_stock'] = $product_stock->id_stock;
-                $product_stock->avg = $this->stock_movements->avg($where);
+                $filters['id_stock'] = $product_stock->id_stock;
+                $product_stock->avg = $this->stock_movements->avg($filters);
             }
         }
 
-        echo json_encode(array('product_stocks' => $product_stocks, 'warehouses' => $warehouses));
+        $total = $this->stocks->count($filters);
+
+        echo json_encode(array(
+            'product_stocks' => $product_stocks,
+            'warehouses' => $warehouses,
+            'total' => $total
+        ));
     }
 
     public function save($id_warehouse = null) {
