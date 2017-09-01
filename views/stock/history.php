@@ -3,45 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 
 <div class="row">
-    <div class="col-md-12 text-right" ng-show="selectedWarehouse > 0 && !isMvtFormOpen()">
-        <button type="button" class="btn btn-xs btn-success" ng-click="openMvtForm()">
-            <i class="fa fa-fw fa-plus"></i> Ajouter un mouvement de stock
-        </button>
-    </div>
-</div>
-
-<div class="well" ng-if="selectedWarehouse > 0 && isMvtFormOpen()">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="col-md-7">
-                <div class="form-group">
-                    <label>Libellé</label>
-                    <input class="form-control" type="text" ng-model="mvtForm.label">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Mouvement</label>
-                    <input class="form-control" type="number" ng-model="mvtForm.qty">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Date</label>
-                    <input class="form-control" type="datetime-local" ng-model="mvtForm.date_mvt">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <button type="button" class="btn btn-xs btn-default" ng-click="cancelMvt()">
-                Annuler
-            </button>
-            <button type="button" class="btn btn-xs btn-success" ng-click="addMvt()">
-                Ajouter
-            </button>
-        </div>
+    <div class="col-md-12 text-right" ng-show="filter_model.id_warehouse">
+        <ze-btn fa="plus" color="success" hint="Ajouter un mouvement de stock" always-on="true"
+                ze-modalform="addMvt"
+                data-template="templateMvt"
+                data-title="Ajouter un mouvement de stock"></ze-btn>
     </div>
 </div>
 
