@@ -30,6 +30,9 @@ app.config(["$provide",
                         position : update_linepos_invoice,
                         del : del_line_invoice
                     },
+                    line_detail : {
+                        save : save_lineDetail_invoice
+                    },
                     activity : {
                         save : save_activity_invoice,
                         del : del_activity_invoice
@@ -57,7 +60,7 @@ app.config(["$provide",
                         del : del_line_order
                     },
                     line_detail : {
-                        save : save_lineDetail_order,
+                        save : save_lineDetail_order
                     },
                     activity : {
                         save : save_activity_order,
@@ -85,6 +88,9 @@ app.config(["$provide",
                         position : update_linepos_delivery,
                         del : del_line_delivery
                     },
+                    line_detail : {
+                        save : save_lineDetail_delivery
+                    },
                     activity : {
                         save : save_activity_delivery,
                         del : del_activity_delivery
@@ -111,6 +117,9 @@ app.config(["$provide",
 						position : update_linepos_quote,
 						del : del_line_quote
 					},
+                    line_detail : {
+                        save : save_lineDetail_quote
+                    },
 					activity : {
 						save : save_activity_quote,
 						del : del_activity_quote
@@ -267,6 +276,9 @@ app.config(["$provide",
             function del_line_invoice(id){
                 return zeHttp.delete("/com_zeapps_crm/invoices/deleteLine/" + id);
             }
+            function save_lineDetail_invoice(data){
+                return zeHttp.post("/com_zeapps_crm/invoices/saveLineDetail", data);
+            }
             function save_activity_invoice(data){
                 return zeHttp.post("com_zeapps_crm/invoices/activity", data);
             }
@@ -376,6 +388,9 @@ app.config(["$provide",
             function del_line_delivery(id){
                 return zeHttp.delete("/com_zeapps_crm/deliveries/deleteLine/" + id);
             }
+            function save_lineDetail_delivery(data){
+                return zeHttp.post("/com_zeapps_crm/deliveries/saveLineDetail", data);
+            }
             function save_activity_delivery(data){
                 return zeHttp.post("com_zeapps_crm/deliveries/activity", data);
             }
@@ -429,6 +444,9 @@ app.config(["$provide",
 			function del_line_quote(id){
 				return zeHttp.delete("/com_zeapps_crm/quotes/deleteLine/" + id);
 			}
+            function save_lineDetail_quote(data){
+                return zeHttp.post("/com_zeapps_crm/quotes/saveLineDetail", data);
+            }
 			function save_activity_quote(data){
 				return zeHttp.post("com_zeapps_crm/quotes/activity", data);
 			}
@@ -513,10 +531,9 @@ app.config(["$provide",
 				id_warehouse = parseInt(id_warehouse) || "";
 				return zeHttp.get("/com_zeapps_crm/stock/get/"+id_stock+"/"+id_warehouse);
 			}
-			function getAll_product_stock(id){
-				id = id || "";
-				return zeHttp.get("/com_zeapps_crm/stock/getAll/" + id);
-			}
+            function getAll_product_stock(limit, offset, context, filters){
+                return zeHttp.post("/com_zeapps_crm/stock/getAll/" + limit + "/" + offset + "/" + context, filters);
+            }
 			function save_product_stock(data, id_warehouse){
 				id_warehouse = parseInt(id_warehouse) || "";
 				return zeHttp.post("/com_zeapps_crm/stock/save/"+id_warehouse, data);
