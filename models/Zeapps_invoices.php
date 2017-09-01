@@ -21,6 +21,7 @@ class Zeapps_invoices extends ZeModel {
     public function createFrom($src){
         $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->_pLoad->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->_pLoad->model("Zeapps_modalities", "modalities");
 
         unset($src->id);
@@ -29,11 +30,8 @@ class Zeapps_invoices extends ZeModel {
         unset($src->updated_at);
         unset($src->deleted_at);
 
-        var_dump($src->id_modality);
-        var_dump($src->date_creation);
-        var_dump($src->date_limit);
-
         $src->date_creation = date('Y-m-d');
+        $src->finalized = 0;
 
         if(isset($src->id_modality)) {
             if($modality = $this->_pLoad->ctrl->modalities->get($src->id_modality)){
@@ -55,14 +53,14 @@ class Zeapps_invoices extends ZeModel {
             }
         }
 
-        var_dump($src->id_modality);
-        var_dump($src->date_creation);
-        var_dump($src->date_limit);
-
         $id = parent::insert($src);
+
+        $new_id_lines = [];
 
         if(isset($src->lines) && is_array($src->lines)){
             foreach($src->lines as $line){
+                $old_id = $line->id;
+
                 unset($line->id);
                 unset($line->created_at);
                 unset($line->updated_at);
@@ -70,7 +68,23 @@ class Zeapps_invoices extends ZeModel {
 
                 $line->id_invoice = $id;
 
-                $this->_pLoad->ctrl->invoice_lines->insert($line);
+                $new_id = $this->_pLoad->ctrl->invoice_lines->insert($line);
+
+                $new_id_lines[$old_id] = $new_id;
+            }
+        }
+
+        if(isset($src->line_details) && is_array($src->line_details)){
+            foreach($src->line_details as $line){
+                unset($line->id);
+                unset($line->created_at);
+                unset($line->updated_at);
+                unset($line->deleted_at);
+
+                $line->id_invoice = $id;
+                $line->id_line = $new_id_lines[$line->id_line];
+
+                $this->_pLoad->ctrl->invoice_line_details->insert($line);
             }
         }
 

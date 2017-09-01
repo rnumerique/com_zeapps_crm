@@ -27,9 +27,23 @@ class Zeapps_deliveries extends ZeModel {
         }
     }
 
+    public function getDueOf($type, $id = null){
+        $total = 0;
+        $deliveries = $this->all(array('id_'.$type => $id, 'due >' => 0));
+
+        if($deliveries) {
+            foreach ($deliveries as $delivery){
+                $total += floatval($delivery->due);
+            }
+        }
+
+        return array('due' => $total, 'due_lines' => $deliveries);
+    }
+
     public function createFrom($src){
         $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->_pLoad->model("Zeapps_delivery_line_details", "delivery_line_details");
 
         unset($src->id);
         unset($src->numerotation);
@@ -46,8 +60,12 @@ class Zeapps_deliveries extends ZeModel {
 
         $id = parent::insert($src);
 
+        $new_id_lines = [];
+
         if(isset($src->lines) && is_array($src->lines)){
             foreach($src->lines as $line){
+                $old_id = $line->id;
+
                 unset($line->id);
                 unset($line->created_at);
                 unset($line->updated_at);
@@ -55,7 +73,23 @@ class Zeapps_deliveries extends ZeModel {
 
                 $line->id_delivery = $id;
 
-                $this->_pLoad->ctrl->delivery_lines->insert($line);
+                $new_id = $this->_pLoad->ctrl->delivery_lines->insert($line);
+
+                $new_id_lines[$old_id] = $new_id;
+            }
+        }
+
+        if(isset($src->line_details) && is_array($src->line_details)){
+            foreach($src->line_details as $line){
+                unset($line->id);
+                unset($line->created_at);
+                unset($line->updated_at);
+                unset($line->deleted_at);
+
+                $line->id_invoice = $id;
+                $line->id_line = $new_id_lines[$line->id_line];
+
+                $this->_pLoad->ctrl->delivery_line_details->insert($line);
             }
         }
 
