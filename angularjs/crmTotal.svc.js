@@ -170,7 +170,7 @@ app.factory("crmTotal", function(){
     	line.price_unit = line.price_unit || 0;
     	line.discount = line.discount || 0;
 
-        line.total_ht = round2(parseFloat(line.price_unit) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat(doc.global_discount) / 100) ));
+        line.total_ht = round2(round2(parseFloat(line.price_unit)) * parseFloat(line.qty) * ( 1 - (parseFloat(line.discount) / 100) ) * ( 1 - (parseFloat(doc.global_discount) / 100) ));
         line.total_ttc = round2(line.total_ht * ( 1 + (parseFloat(line.value_taxe) / 100) ));
     }
 
