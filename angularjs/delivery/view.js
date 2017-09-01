@@ -18,6 +18,13 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 
 		$scope.lines = [];
 
+        $scope.sortable = {
+            connectWith: ".sortableContainer",
+            disabled: false,
+            axis: "y",
+            stop: sortableStop
+        };
+
 		$scope.setTab = setTab;
 
 		$scope.back = back;
@@ -27,7 +34,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		$scope.last_delivery = last_delivery;
 
 		$scope.updateStatus = updateStatus;
-        $scope.editDelivery = editDelivery;
 		$scope.updateDelivery = updateDelivery;
 		$scope.transform = transform;
 
@@ -79,8 +85,11 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 			zhttp.crm.delivery.get($routeParams.id).then(function(response){
 				if(response.data && response.data != "false"){
 					$scope.delivery = response.data.delivery;
-					$scope.company = response.data.company;
-					$scope.contact = response.data.contact;
+
+                    $scope.company_due = response.data.company_due;
+                    $scope.company_due_lines = response.data.company_due_lines;
+                    $scope.contact_due = response.data.contact_due;
+                    $scope.contact_due_lines = response.data.contact_due_lines;
 
                     $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
@@ -115,7 +124,15 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 					});
 					$scope.lines = lines;
 
-                    crmTotal.init($scope.delivery, $scope.lines);
+                    var line_details = response.data.line_details || [];
+                    angular.forEach(line_details, function(line_detail){
+                        line_detail.price_unit = parseFloat(line_detail.price_unit);
+                        line_detail.qty = parseFloat(line_detail.qty);
+                        line_detail.discount = parseFloat(line_detail.discount);
+                    });
+                    $scope.line_details = line_details;
+
+                    crmTotal.init($scope.delivery, $scope.lines, $scope.line_details);
                     $scope.tvas = crmTotal.get.tvas;
                     var totals = crmTotal.get.totals;
                     $scope.delivery.total_prediscount_ht = totals.total_prediscount_ht;
@@ -127,13 +144,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 				}
 			});
 		}
-
-		$scope.sortable = {
-			connectWith: ".sortableContainer",
-			disabled: false,
-			axis: "y",
-			stop: sortableStop
-		};
 
 		//////////////////// FUNCTIONS ////////////////////
 
@@ -357,6 +367,13 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 					if(response.data && response.data != "false"){
 						$scope.lines.splice($scope.lines.indexOf(line), 1);
 
+                        for(var i = 0; i < $scope.line_details.length; i++){
+                            if($scope.line_details[i].id_line === line.id){
+                                $scope.line_details.splice(i, 1);
+                                i--;
+                            }
+                        }
+
 						$rootScope.$broadcast("comZeappsCrm_deliveryDeleteTrigger",
 							{
 								id_line : line.id
@@ -377,15 +394,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 			return crmTotal.sub.TTC($scope.lines, index);
 		}
 
-        function editDelivery(delivery){
-            angular.forEach($scope.delivery, function(value, key){
-                if(delivery[key])
-                    $scope.delivery[key] = delivery[key];
-            });
-
-            updateDelivery();
-        }
-
 		function updateDelivery(){
 			if($scope.delivery) {
                 $scope.delivery.global_discount = $scope.delivery.global_discount || 0;
@@ -399,7 +407,16 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
                     zhttp.crm.delivery.line.save(formatted_data)
 				});
 
-                crmTotal.init($scope.delivery, $scope.lines);
+                angular.forEach($scope.line_details, function(line){
+                    crmTotal.line.update(line);
+                    if(line.id){
+                        updateLine(line);
+                    }
+                    var formatted_data = angular.toJson(line);
+                    zhttp.crm.delivery.line_detail.save(formatted_data)
+                });
+
+                crmTotal.init($scope.delivery, $scope.lines, $scope.line_details);
                 $scope.tvas = crmTotal.get.tvas;
                 var totals = crmTotal.get.totals;
 				$scope.delivery.total_prediscount_ht = totals.total_prediscount_ht;

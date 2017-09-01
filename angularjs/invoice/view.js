@@ -33,7 +33,6 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		$scope.next_invoice = next_invoice;
 		$scope.last_invoice = last_invoice;
 
-        $scope.editInvoice = editInvoice;
 		$scope.updateInvoice = updateInvoice;
 		$scope.transform = transform;
 		$scope.finalize = finalize;
@@ -90,8 +89,10 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 						$scope.sortable.disabled = true;
 					}
 
-					$scope.company = response.data.company;
-					$scope.contact = response.data.contact;
+                    $scope.company_due = response.data.company_due;
+                    $scope.company_due_lines = response.data.company_due_lines;
+                    $scope.contact_due = response.data.contact_due;
+                    $scope.contact_due_lines = response.data.contact_due_lines;
 
                     $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
@@ -126,7 +127,15 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 					});
 					$scope.lines = lines;
 
-                    crmTotal.init($scope.invoice, $scope.lines);
+                    var line_details = response.data.line_details || [];
+                    angular.forEach(line_details, function(line_detail){
+                        line_detail.price_unit = parseFloat(line_detail.price_unit);
+                        line_detail.qty = parseFloat(line_detail.qty);
+                        line_detail.discount = parseFloat(line_detail.discount);
+                    });
+                    $scope.line_details = line_details;
+
+                    crmTotal.init($scope.invoice, $scope.lines, $scope.line_details);
                     $scope.tvas = crmTotal.get.tvas;
                     var totals = crmTotal.get.totals;
                     $scope.invoice.total_prediscount_ht = totals.total_prediscount_ht;
@@ -206,14 +215,24 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function finalize(){
-			zhttp.crm.invoice.finalize($scope.invoice.id).then(function(response){
-				if(response.data && response.data !== "false"){
-					$scope.invoice.numerotation = response.data.numerotation;
-					$scope.invoice.final_pdf = response.data.final_pdf;
-					$scope.invoice.finalized = '1';
-                    $scope.sortable.disabled = true;
-				}
-			})
+		    if($scope.invoice.id_modality !== '0') {
+                zhttp.crm.invoice.finalize($scope.invoice.id).then(function (response) {
+                    if (response.data && response.data !== "false") {
+                        if(response.data.error){
+                            toasts('danger', response.data.error);
+                        }
+                        else {
+                            $scope.invoice.numerotation = response.data.numerotation;
+                            $scope.invoice.final_pdf = response.data.final_pdf;
+                            $scope.invoice.finalized = '1';
+                            $scope.sortable.disabled = true;
+                        }
+                    }
+                });
+            }
+            else{
+		        toasts('warning', "Vous devez renseigner un moyen de paiement pour pouvoir clôturer une facture");
+            }
 		}
 
         function keyEventaddFromCode($event){
@@ -367,6 +386,13 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
                         if (response.data && response.data != "false") {
                             $scope.lines.splice($scope.lines.indexOf(line), 1);
 
+                            for(var i = 0; i < $scope.line_details.length; i++){
+                                if($scope.line_details[i].id_line === line.id){
+                                    $scope.line_details.splice(i, 1);
+                                    i--;
+                                }
+                            }
+
                             $rootScope.$broadcast("comZeappsCrm_invoiceDeleteTrigger",
                                 {
                                     id_line: line.id
@@ -413,7 +439,16 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
                         zhttp.crm.invoice.line.save(formatted_data)
                     });
 
-                    crmTotal.init($scope.invoice, $scope.lines);
+                    angular.forEach($scope.line_details, function(line){
+                        crmTotal.line.update(line);
+                        if(line.id){
+                            updateLine(line);
+                        }
+                        var formatted_data = angular.toJson(line);
+                        zhttp.crm.invoice.line_detail.save(formatted_data)
+                    });
+
+                    crmTotal.init($scope.invoice, $scope.lines, $scope.line_details);
                     $scope.tvas = crmTotal.get.tvas;
                     var totals = crmTotal.get.totals;
                     $scope.invoice.total_prediscount_ht = totals.total_prediscount_ht;

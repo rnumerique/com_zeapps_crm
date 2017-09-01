@@ -7,7 +7,7 @@ listModuleModalFunction.push({
 	size:"lg",
 	resolve:{
 		titre: function () {
-			return "Dupliquer le devis";
+			return "Dupliquer la facture";
 		}
 	}
 });

@@ -87,7 +87,7 @@ app.controller("ComZeappsCrmInvoiceFormCtrl", ["$scope", "$route", "$routeParams
                 $scope.form.id_user_account_manager = user.id;
                 $scope.form.name_user_account_manager = user.firstname + " " + user.lastname;
             } else {
-                $scope.form.id_user_account_manager = 0;
+                $scope.form.id_user_account_manager = "0";
                 $scope.form.name_user_account_manager = "";
             }
         }
@@ -120,7 +120,7 @@ app.controller("ComZeappsCrmInvoiceFormCtrl", ["$scope", "$route", "$routeParams
                     $scope.form.delivery_country_name = company.delivery_country_name || company.billing_country_name || "";
                 }
             } else {
-                $scope.form.id_company = 0;
+                $scope.form.id_company = "0";
                 $scope.form.name_company = "";
             }
         }
@@ -159,7 +159,7 @@ app.controller("ComZeappsCrmInvoiceFormCtrl", ["$scope", "$route", "$routeParams
 					})
 				}
             } else {
-                $scope.form.id_contact = 0;
+                $scope.form.id_contact = "0";
                 $scope.form.name_contact = "";
             }
         }

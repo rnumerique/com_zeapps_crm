@@ -18,6 +18,13 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.lines = [];
 
+        $scope.sortable = {
+            connectWith: ".sortableContainer",
+            disabled: false,
+            axis: "y",
+            stop: sortableStop
+        };
+
 		$scope.setTab = setTab;
 
 		$scope.back = back;
@@ -27,7 +34,6 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.last_order = last_order;
 
 		$scope.updateStatus = updateStatus;
-        $scope.editOrder = editOrder;
 		$scope.updateOrder = updateOrder;
 		$scope.transform = transform;
 
@@ -138,13 +144,6 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 				}
 			});
 		}
-
-		$scope.sortable = {
-			connectWith: ".sortableContainer",
-			disabled: false,
-			axis: "y",
-			stop: sortableStop
-		};
 
 		//////////////////// FUNCTIONS ////////////////////
 
@@ -394,15 +393,6 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		function subtotalTTC(index){
 			return crmTotal.sub.TTC($scope.lines, index);
 		}
-
-        function editOrder(order){
-            angular.forEach($scope.order, function(value, key){
-                if(order[key])
-                    $scope.order[key] = order[key];
-            });
-
-            updateOrder();
-        }
 
 		function updateOrder(){
 			if($scope.order) {
