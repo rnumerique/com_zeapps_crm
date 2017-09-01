@@ -6,138 +6,80 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <form>
 
     <div class="row">
-        <div class="col-md-10">
-            <select class="form-control" ng-change="updateWarehouse()" ng-model="$root.selectedWarehouse">
-                <option value="0">Stock Global</option>
-                <option ng-repeat="warehouse in warehouses" value="{{warehouse.id}}">
-                    {{warehouse.label}}
-                </option>
-            </select>
-        </div>
-        <div class="col-md-2 text-center">
-            <button type="button" class="btn btn-success btn-xs" ng-click="shownForm = !shownForm">
-                <i class="fa fa-fw fa-plus"></i> Produit stocké
-            </button>
+        <div class="col-md-12">
+            <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
+
+            <ze-btn fa="plus" hint="Produit stocké" always-on="true" color="success"
+                    ze-modalform="add"
+                    data-template="templateStock"
+                    data-title="Créer un nouveau produit stocké"></ze-btn>
         </div>
     </div>
 
-    <div class="well" ng-if="shownForm">
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Creer un nouveau produit stocké</h4>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label>Référence</label>
-                    <input class="form-control" type="text" ng-model="form.ref">
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <label>Libellé</label>
-                    <input class="form-control" type="text" ng-model="form.label">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label>Valeur unitaire</label>
-                    <input class="form-control" type="number" ng-model="form.value_ht">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn btn-sm btn-success" ng-click="success()">
-                    Créer
-                </button>
-            </div>
-        </div>
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            <span ng-click="shownFilter = !shownFilter">
-                <i class="fa fa-filter"></i> Filtres <i class="fa" ng-class="shownFilter ? 'fa-caret-up' : 'fa-caret-down'"></i>
-            </span>
-        </div>
-    </div>
-
-    <div class="well" ng-if="shownFilter">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox">
-                        Afficher les stocks à 0
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-striped table-condensed table-responsive" ng-show="product_stocks.length">
+            <table class="table table-hover table-condensed table-responsive" ng-show="product_stocks.length">
                 <thead>
                 <tr>
                     <th>Ref</th>
                     <th>Libellé</th>
-                    <th>Qté</th>
-                    <th>Valeur Unitaire</th>
-                    <th>Valeur du Stock</th>
-                    <th>Date Rupture</th>
-                    <th ng-if="selectedWarehouse > 0">Date Réapprovisionnement estimée</th>
+                    <th class="text-right">Qté</th>
+                    <th class="text-right">Valeur Unitaire</th>
+                    <th class="text-right">Valeur du Stock</th>
+                    <th class="text-right">Date Rupture</th>
+                    <th class="text-right" ng-if="filter_model.id_warehouse">Date Réapprovisionnement estimée</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="product_stock in product_stocks | orderBy:'-dateRupture'">
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
-                            {{product_stock.ref}}
-                        </a>
+                    <td ng-click="goTo(product_stock.id_stock)">
+                        {{product_stock.ref}}
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
-                            {{product_stock.label}}
-                        </a>
+                    <td ng-click="goTo(product_stock.id_stock)">
+                        {{product_stock.label}}
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.total < 0 ? 'text-danger' : (product_stock.total > 0 ? 'text-success' : 'text-info')">
+                    <td class="text-right" ng-click="goTo(product_stock.id_stock)">
+                        <span ng-class="product_stock.total < 0 ? 'text-danger' : (product_stock.total > 0 ? 'text-success' : 'text-info')">
                             {{product_stock.total || 0 | number:2}}
-                        </a>
+                        </span>
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
-                            {{product_stock.value_ht | currency}}
-                        </a>
+                    <td class="text-right" ng-click="goTo(product_stock.id_stock)">
+                        {{product_stock.value_ht | currency:'€':2}}
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}">
-                            {{product_stock.value_ht * product_stock.total | currency}}
-                        </a>
+                    <td class="text-right" ng-click="goTo(product_stock.id_stock)">
+                        {{product_stock.value_ht * product_stock.total | currency:'€':2}}
                     </td>
-                    <td>
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.classRupture">
+                    <td class="text-right" ng-click="goTo(product_stock.id_stock)">
+                        <span ng-class="product_stock.classRupture">
                             {{ product_stock.timeleft }}{{ product_stock.dateRupture ? ' (' +  product_stock.dateRupture + ')' : '' }}
-                        </a>
+                        </span>
                     </td>
-                    <td ng-if="selectedWarehouse > 0">
-                        <a href="/ng/com_zeapps_crm/stock/{{product_stock.id_stock}}" ng-class="product_stock.classResupply">
+                    <td class="text-right" ng-click="goTo(product_stock.id_stock)" ng-if="filter_model.id_warehouse">
+                        <span ng-class="product_stock.classResupply">
                             {{ product_stock.timeResupply }}{{ product_stock.dateResupply ? ' (' +  product_stock.dateResupply + ')' : '' }}
-                        </a>
+                        </span>
                     </td>
                     <td class="text-right">
-                        <button type="button" class="btn btn-danger btn-xs" ng-click="delete(product_stock)">
-                            <i class="fa fa-fw fa-trash"></i>
-                        </button>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(product_stock)" ze-confirmation></ze-btn>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="text-center" ng-show="total > pageSize">
+        <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+            class="pagination-sm" boundary-links="true" max-size="15"
+            previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+    </div>
+
 </form>
 </div>
