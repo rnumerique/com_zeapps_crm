@@ -164,6 +164,7 @@ class Orders extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_orders", "orders");
             $this->load->model("Zeapps_order_lines", "order_lines");
+            $this->load->model("Zeapps_order_line_details", "order_line_details");
 
             // constitution du tableau
             $data = array() ;
@@ -177,6 +178,7 @@ class Orders extends ZeCtrl
 
             if($src = $this->orders->get($id)){
                 $src->lines = $this->order_lines->all(array('id_order' => $id));
+                $src->line_details = $this->order_line_details->all(array('id_order' => $id));
 
                 if($data){
                     foreach($data as $document => $value){
@@ -214,7 +216,7 @@ class Orders extends ZeCtrl
         if($orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($orders);$i++){
                 $orders[$i]->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
-                $orders[$i]->line_details = $this->order_line_details->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
+                $orders[$i]->line_details = $this->order_line_details->all(array('id_order'=>$orders[$i]->id));
             }
         }
         else{
@@ -280,11 +282,11 @@ class Orders extends ZeCtrl
         $data->documents = $this->order_documents->all(array('id_order'=>$id));
         $data->activities = $this->order_activities->all(array('id_order'=>$id));
 
-        $res = $this->invoices->getDueOf('company', $data->order->id_company);
+        $res = $this->orders->getDueOf('company', $data->order->id_company);
         $data->company_due = $res['due'];
         $data->company_due_lines = $res['due_lines'];
 
-        $res = $this->invoices->getDueOf('contact', $data->order->id_contact);
+        $res = $this->orders->getDueOf('contact', $data->order->id_contact);
         $data->contact_due = $res['due'];
         $data->contact_due_lines = $res['due_lines'];
 
@@ -357,7 +359,8 @@ class Orders extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $id = $this->order_lines->update($data, $data["id"]);
+            $this->order_lines->update($data, $data["id"]);
+            $id = $data['id'];
         } else {
             $id = $this->order_lines->insert($data);
         }
@@ -416,7 +419,8 @@ class Orders extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $id = $this->order_line_details->update($data, $data["id"]);
+            $this->order_line_details->update($data, $data["id"]);
+            $id = $data['id'];
         } else {
             $id = $this->order_line_details->insert($data);
         }

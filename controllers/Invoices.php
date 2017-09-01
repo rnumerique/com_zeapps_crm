@@ -61,11 +61,13 @@ class Invoices extends ZeCtrl
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_invoices", "invoices");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
 
         $data = [];
 
         $data['invoice'] = $this->invoices->get($id);
         $data['lines'] = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+        $line_details = $this->invoice_line_details->all(array('id_order'=>$id));
 
         $data['showDiscount'] = false;
         $data['tvas'] = [];
@@ -73,6 +75,19 @@ class Invoices extends ZeCtrl
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
 
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
+        }
+        foreach($line_details as $line){
             if($line->id_taxe !== '0'){
                 if(!isset($data['tvas'][$line->id_taxe])){
                     $data['tvas'][$line->id_taxe] = array(
@@ -148,6 +163,7 @@ class Invoices extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_invoices", "invoices");
             $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
 
             // constitution du tableau
             $data = array() ;
@@ -161,6 +177,7 @@ class Invoices extends ZeCtrl
 
             if($src = $this->invoices->get($id)){
                 $src->lines = $this->invoice_lines->all(array('id_invoice' => $id));
+                $src->line_details = $this->invoice_line_details->all(array('id_invoice' => $id));
 
                 if($data){
                     foreach($data as $document => $value){
@@ -184,48 +201,95 @@ class Invoices extends ZeCtrl
             $this->load->model("Zeapps_configs", "configs");
             $this->load->model("Zeapps_invoices", "invoices");
             $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
             $this->load->model("Zeapps_accounting_entries", "accounting_entries");
             $this->load->model("Zeapps_taxes", "taxes");
 
-            $invoice = $this->invoices->get($id);
-            $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+            if($invoice = $this->invoices->get($id)){
+                if($invoice->id_modality === '0'){
+                    echo json_encode(array('error' => 'Modalité de paiement non renseignée'));
+                    return;
+                }
 
-            $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
-            $num = $this->invoices->get_numerotation();
 
-            $numerotation = $this->invoices->parseFormat($format, $num);
+                $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+                $line_details = $this->invoice_line_details->all(array('id_invoice'=>$id));
 
-            $pdf = $this->makePDF($id, false);
+                $format = $this->configs->get(array('id'=>'crm_invoice_format'))->value;
+                $num = $this->invoices->get_numerotation();
 
-            if($this->invoices->update(array(
-                'finalized' => 1,
-                'numerotation' => $numerotation,
-                'final_pdf' => $pdf
-            ), $id)) {
+                $numerotation = $this->invoices->parseFormat($format, $num);
 
-                $label_entry = $numerotation . ' - ';
-                $label_entry .= $invoice->name_company ?: ($invoice->name_contact ?: "");
+                $pdf = $this->makePDF($id, false);
 
-                $tvas = [];
-                foreach($lines as $line){
-                    if($line->id_taxe !== '0'){
-                        if(!isset($tvas[$line->id_taxe])){
-                            $tvas[$line->id_taxe] = array(
-                                'ht' => 0,
-                                'value_taxe' => floatval($line->value_taxe)
-                            );
+                if($this->invoices->update(array(
+                    'finalized' => 1,
+                    'numerotation' => $numerotation,
+                    'final_pdf' => $pdf
+                ), $id)) {
+
+                    $label_entry = $numerotation . ' - ';
+                    $label_entry .= $invoice->name_company ?: ($invoice->name_contact ?: "");
+
+                    $entries = [];
+                    $tvas = [];
+                    foreach ($lines as $line) {
+                        if ($line->has_detail === '0') {
+                            if (!isset($products[$line->accounting_number])) {
+                                $products[$line->accounting_number] = 0;
+                            }
+
+                            $products[$line->accounting_number] += floatval($line->total_ht);
+
+                            if ($line->id_taxe !== '0') {
+                                if (!isset($tvas[$line->id_taxe])) {
+                                    $tvas[$line->id_taxe] = array(
+                                        'ht' => 0,
+                                        'value_taxe' => floatval($line->value_taxe)
+                                    );
+                                }
+
+                                $tvas[$line->id_taxe]['ht'] += floatval($line->total_ht);
+                                $tvas[$line->id_taxe]['value'] = round(floatval($tvas[$line->id_taxe]['ht']) * ($tvas[$line->id_taxe]['value_taxe'] / 100), 2);
+                            }
+                        }
+                    }
+                    foreach ($line_details as $line) {
+                        if (!isset($entries[$line->accounting_number])) {
+                            $entries[$line->accounting_number] = 0;
                         }
 
-                        $tvas[$line->id_taxe]['ht'] += floatval($line->total_ht);
-                        $tvas[$line->id_taxe]['value'] = round(floatval($tvas[$line->id_taxe]['ht']) * ($tvas[$line->id_taxe]['value_taxe'] / 100), 2);
+                        $entries[$line->accounting_number] += floatval($line->total_ht);
+
+                        if ($line->id_taxe !== '0') {
+                            if (!isset($tvas[$line->id_taxe])) {
+                                $tvas[$line->id_taxe] = array(
+                                    'ht' => 0,
+                                    'value_taxe' => floatval($line->value_taxe)
+                                );
+                            }
+
+                            $tvas[$line->id_taxe]['ht'] += floatval($line->total_ht);
+                            $tvas[$line->id_taxe]['value'] = round(floatval($tvas[$line->id_taxe]['ht']) * ($tvas[$line->id_taxe]['value_taxe'] / 100), 2);
+                        }
                     }
 
-                    if(floatval($line->total_ht) > 0) {
+                    foreach ($tvas as $id_taxe => $tva) {
+                        $taxe = $this->taxes->get($id_taxe);
+
+                        if (!isset($entries[$taxe->accounting_number])) {
+                            $entries[$taxe->accounting_number] = 0;
+                        }
+
+                        $entries[$taxe->accounting_number] += floatval($tva['value']);
+                    }
+
+                    foreach ($entries as $accounting_number => $sum) {
                         $entry = array(
                             'id_invoice' => $id,
-                            'accounting_number' => $line->accounting_number,
+                            'accounting_number' => $accounting_number,
                             'label' => $label_entry,
-                            'credit' => $line->total_ht,
+                            'credit' => $sum,
                             'code' => 'VE',
                             'date_writing' => $invoice->date_creation,
                             'date_limit' => $invoice->date_limit
@@ -233,40 +297,24 @@ class Invoices extends ZeCtrl
 
                         $this->accounting_entries->insert($entry);
                     }
-                }
-
-                foreach($tvas as $id_taxe => $tva){
-                    $taxe = $this->taxes->get($id_taxe);
 
                     $entry = array(
                         'id_invoice' => $id,
-                        'accounting_number' => $taxe->accounting_number,
+                        'accounting_number' => $invoice->accounting_number,
                         'label' => $label_entry,
-                        'credit' => $tva['value'],
+                        'debit' => $invoice->total_ttc,
                         'code' => 'VE',
                         'date_writing' => $invoice->date_creation,
                         'date_limit' => $invoice->date_limit
                     );
 
                     $this->accounting_entries->insert($entry);
+
+                    echo json_encode(array(
+                        'numerotation' => $numerotation,
+                        'final_pdf' => $pdf
+                    ));
                 }
-
-                $entry = array(
-                    'id_invoice' => $id,
-                    'accounting_number' => $invoice->accounting_number,
-                    'label' => $label_entry,
-                    'debit' => $invoice->total_ttc,
-                    'code' => 'VE',
-                    'date_writing' => $invoice->date_creation,
-                    'date_limit' => $invoice->date_limit
-                );
-
-                $this->accounting_entries->insert($entry);
-
-                echo json_encode(array(
-                    'numerotation' => $numerotation,
-                    'final_pdf' => $pdf
-                ));
             }
             else{
                 echo json_encode(false);
@@ -279,9 +327,8 @@ class Invoices extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
 
         $filters = array() ;
 
@@ -296,9 +343,8 @@ class Invoices extends ZeCtrl
 
         if($invoices = $this->invoices->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($invoices);$i++){
-                $invoices[$i]->company = $this->invoice_companies->get(array('id_invoice'=>$invoices[$i]->id));
-                $invoices[$i]->contact = $this->invoice_contacts->get(array('id_invoice'=>$invoices[$i]->id));
                 $invoices[$i]->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$invoices[$i]->id));
+                $invoices[$i]->line_details = $this->invoice_line_details->all(array('id_invoice'=>$invoices[$i]->id));
             }
         }
         else{
@@ -349,9 +395,8 @@ class Invoices extends ZeCtrl
 
     public function get($id) {
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_companies", "invoice_companies");
-        $this->load->model("Zeapps_invoice_contacts", "invoice_contacts");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
         $this->load->model("Zeapps_invoice_activities", "invoice_activities");
         $this->load->model("Zeapps_invoices", "invoices");
@@ -360,22 +405,18 @@ class Invoices extends ZeCtrl
 
         $data->invoice = $this->invoices->get($id);
 
-        $data->company = $this->invoice_companies->get(array('id_invoice'=>$id));
-        $data->contact = $this->invoice_contacts->get(array('id_invoice'=>$id));
         $data->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+        $data->line_details = $this->invoice_line_details->all(array('id_invoice'=>$id));
         $data->documents = $this->invoice_documents->all(array('id_invoice'=>$id));
         $data->activities = $this->invoice_activities->all(array('id_invoice'=>$id));
 
-        if($data->company){
-            $res = $this->invoices->getDueOf('company', $data->invoice->id_company);
-            $data->company->due = $res['due'];
-            $data->company->due_lines = $res['due_lines'];
-        }
-        elseif($data->contact){
-            $res = $this->invoices->getDueOf('contact', $data->invoice->id_contact);
-            $data->contact->due = $res['due'];
-            $data->contact->due_lines = $res['due_lines'];
-        }
+        $res = $this->invoices->getDueOf('company', $data->invoice->id_company);
+        $data->company_due = $res['due'];
+        $data->company_due_lines = $res['due_lines'];
+
+        $res = $this->invoices->getDueOf('contact', $data->invoice->id_contact);
+        $data->contact_due = $res['due'];
+        $data->contact_due_lines = $res['due_lines'];
 
         echo json_encode($data);
     }
@@ -404,17 +445,13 @@ class Invoices extends ZeCtrl
     public function delete($id) {
         $this->load->model("Zeapps_invoices", "invoices");
         $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
         $this->invoices->delete($id);
 
-        $lines = $this->invoice_lines->all(array('id_invoice' => $id));
-
-        if($lines && is_array($lines)){
-            for($i=0;$i<sizeof($lines);$i++){
-                $this->invoice_lines->delete($lines[$i]->id);
-            }
-        }
+        $this->invoice_lines->delete(array('id_invoice' => $id));
+        $this->invoice_line_details->delete(array('id_invoice' => $id));
 
         $documents = $this->invoice_documents->all(array('id_invoice' => $id));
 
@@ -422,10 +459,11 @@ class Invoices extends ZeCtrl
 
         if($documents && is_array($documents)){
             for($i=0;$i<sizeof($documents);$i++){
-                $this->invoice_documents->delete($documents[$i]->id);
                 unlink($path . $documents[$i]->path);
             }
         }
+
+        $this->invoice_documents->delete(array('id_invoice' => $id));
 
         echo json_encode("OK");
     }
@@ -442,7 +480,8 @@ class Invoices extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $id = $this->invoice_lines->update($data, $data["id"]);
+            $this->invoice_lines->update($data, $data["id"]);
+            $id = $data['id'];
         } else {
             $id = $this->invoice_lines->insert($data);
         }
@@ -476,14 +515,38 @@ class Invoices extends ZeCtrl
     public function deleteLine($id = null){
         if($id){
             $this->load->model("Zeapps_invoice_lines", "invoice_lines");
+            $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
 
             $line = $this->invoice_lines->get($id);
 
             $this->invoice_lines->updateOldTable($line->id_invoice, $line->sort);
 
+            $this->invoice_line_details->delete(array('id_invoice' => $line->id_invoice, 'id_line' => $id));
+
             echo json_encode($this->invoice_lines->delete($id));
 
         }
+    }
+
+    public function saveLineDetail(){
+        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if (isset($data["id"]) && is_numeric($data["id"])) {
+            $this->invoice_line_details->update($data, $data["id"]);
+            $id = $data['id'];
+        } else {
+            $id = $this->invoice_line_details->insert($data);
+        }
+
+        echo json_encode($id);
     }
 
     public function activity(){

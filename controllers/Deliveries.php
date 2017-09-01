@@ -61,11 +61,13 @@ class Deliveries extends ZeCtrl
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_deliveries", "deliveries");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
 
         $data = [];
 
         $data['delivery'] = $this->deliveries->get($id);
         $data['lines'] = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
+        $line_details = $this->delivery_line_details->all(array('id_order'=>$id));
 
         $data['showDiscount'] = false;
         $data['tvas'] = [];
@@ -73,6 +75,19 @@ class Deliveries extends ZeCtrl
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
 
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
+        }
+        foreach($line_details as $line){
             if($line->id_taxe !== '0'){
                 if(!isset($data['tvas'][$line->id_taxe])){
                     $data['tvas'][$line->id_taxe] = array(
@@ -149,6 +164,7 @@ class Deliveries extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_deliveries", "deliveries");
             $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+            $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
 
             // constitution du tableau
             $data = array() ;
@@ -162,6 +178,7 @@ class Deliveries extends ZeCtrl
 
             if($src = $this->deliveries->get($id)){
                 $src->lines = $this->delivery_lines->all(array('id_delivery' => $id));
+                $src->line_details = $this->delivery_line_details->all(array('id_delivery' => $id));
 
                 if($data){
                     foreach($data as $document => $value){
@@ -182,9 +199,8 @@ class Deliveries extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-        $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
 
         $filters = array() ;
 
@@ -199,9 +215,8 @@ class Deliveries extends ZeCtrl
 
         if($deliveries = $this->deliveries->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($deliveries);$i++){
-                $deliveries[$i]->company = $this->delivery_companies->get(array('id_delivery'=>$deliveries[$i]->id));
-                $deliveries[$i]->contact = $this->delivery_contacts->get(array('id_delivery'=>$deliveries[$i]->id));
                 $deliveries[$i]->lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$deliveries[$i]->id));
+                $deliveries[$i]->line_details = $this->delivery_line_details->all(array('id_delivery'=>$deliveries[$i]->id));
             }
         }
         else{
@@ -253,9 +268,8 @@ class Deliveries extends ZeCtrl
 
     public function get($id) {
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-        $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
         $this->load->model("Zeapps_delivery_documents", "delivery_documents");
         $this->load->model("Zeapps_delivery_activities", "delivery_activities");
         $this->load->model("Zeapps_invoices", "invoices");
@@ -264,22 +278,18 @@ class Deliveries extends ZeCtrl
 
         $data->delivery = $this->deliveries->get($id);
 
-        $data->company = $this->delivery_companies->get(array('id_delivery'=>$id));
-        $data->contact = $this->delivery_contacts->get(array('id_delivery'=>$id));
         $data->lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
+        $data->line_details = $this->delivery_line_details->all(array('id_delivery'=>$id));
         $data->documents = $this->delivery_documents->all(array('id_delivery'=>$id));
         $data->activities = $this->delivery_activities->all(array('id_delivery'=>$id));
 
-        if($data->company){
-            $res = $this->invoices->getDueOf('company', $data->delivery->id_company);
-            $data->company->due = $res['due'];
-            $data->company->due_lines = $res['due_lines'];
-        }
-        elseif($data->contact){
-            $res = $this->invoices->getDueOf('contact', $data->delivery->id_contact);
-            $data->contact->due = $res['due'];
-            $data->contact->due_lines = $res['due_lines'];
-        }
+        $res = $this->deliveries->getDueOf('company', $data->delivery->id_company);
+        $data->company_due = $res['due'];
+        $data->company_due_lines = $res['due_lines'];
+
+        $res = $this->deliveries->getDueOf('contact', $data->delivery->id_contact);
+        $data->contact_due = $res['due'];
+        $data->contact_due_lines = $res['due_lines'];
 
         echo json_encode($data);
     }
@@ -314,36 +324,14 @@ class Deliveries extends ZeCtrl
 
     public function delete($id) {
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_companies", "delivery_companies");
-        $this->load->model("Zeapps_delivery_contacts", "delivery_contacts");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
         $this->load->model("Zeapps_delivery_documents", "delivery_documents");
 
         $this->deliveries->delete($id);
 
-        $companies = $this->delivery_companies->all(array('id_delivery' => $id));
-
-        if($companies && is_array($companies)){
-            for($i=0;$i<sizeof($companies);$i++){
-                $this->delivery_companies->delete($companies[$i]->id);
-            }
-        }
-
-        $contacts = $this->delivery_contacts->all(array('id_delivery' => $id));
-
-        if($contacts && is_array($contacts)){
-            for($i=0;$i<sizeof($contacts);$i++){
-                $this->delivery_contacts->delete($contacts[$i]->id);
-            }
-        }
-
-        $lines = $this->delivery_lines->all(array('id_delivery' => $id));
-
-        if($lines && is_array($lines)){
-            for($i=0;$i<sizeof($lines);$i++){
-                $this->delivery_lines->delete($lines[$i]->id);
-            }
-        }
+        $this->delivery_lines->delete(array('id_delivery' => $id));
+        $this->delivery_line_details->delete(array('id_delivery' => $id));
 
         $documents = $this->delivery_documents->all(array('id_delivery' => $id));
 
@@ -351,10 +339,11 @@ class Deliveries extends ZeCtrl
 
         if($documents && is_array($documents)){
             for($i=0;$i<sizeof($documents);$i++){
-                $this->delivery_documents->delete($documents[$i]->id);
                 unlink($path . $documents[$i]->path);
             }
         }
+
+        $this->delivery_documents->delete(array('id_delivery' => $id));
 
         echo json_encode("OK");
     }
@@ -371,7 +360,8 @@ class Deliveries extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $id = $this->delivery_lines->update($data, $data["id"]);
+            $this->delivery_lines->update($data, $data["id"]);
+            $id = $data['id'];
         } else {
             $id = $this->delivery_lines->insert($data);
         }
@@ -405,14 +395,38 @@ class Deliveries extends ZeCtrl
     public function deleteLine($id = null){
         if($id){
             $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+            $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
 
             $line = $this->delivery_lines->get($id);
 
             $this->delivery_lines->updateOldTable($line->id_delivery, $line->sort);
 
+            $this->delivery_line_details->delete(array('id_delivery' => $line->id_delivery, 'id_line' => $id));
+
             echo json_encode($this->delivery_lines->delete($id));
 
         }
+    }
+
+    public function saveLineDetail(){
+        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if (isset($data["id"]) && is_numeric($data["id"])) {
+            $this->delivery_line_details->update($data, $data["id"]);
+            $id = $data['id'];
+        } else {
+            $id = $this->delivery_line_details->insert($data);
+        }
+
+        echo json_encode($id);
     }
 
     public function activity(){

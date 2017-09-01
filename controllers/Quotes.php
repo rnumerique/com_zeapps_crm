@@ -61,11 +61,13 @@ class Quotes extends ZeCtrl
     public function makePDF($id, $echo = true){
         $this->load->model("Zeapps_quotes", "quotes");
         $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
 
         $data = [];
 
         $data['quote'] = $this->quotes->get($id);
         $data['lines'] = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
+        $line_details = $this->quote_line_details->all(array('id_order'=>$id));
 
         $data['showDiscount'] = false;
         $data['tvas'] = [];
@@ -73,6 +75,19 @@ class Quotes extends ZeCtrl
             if(floatval($line->discount) > 0)
                 $data['showDiscount'] = true;
 
+            if($line->id_taxe !== '0'){
+                if(!isset($data['tvas'][$line->id_taxe])){
+                    $data['tvas'][$line->id_taxe] = array(
+                        'ht' => 0,
+                        'value_taxe' => floatval($line->value_taxe)
+                    );
+                }
+
+                $data['tvas'][$line->id_taxe]['ht'] += floatval($line->total_ht);
+                $data['tvas'][$line->id_taxe]['value'] = round(floatval($data['tvas'][$line->id_taxe]['ht']) * ($data['tvas'][$line->id_taxe]['value_taxe'] / 100), 2);
+            }
+        }
+        foreach($line_details as $line){
             if($line->id_taxe !== '0'){
                 if(!isset($data['tvas'][$line->id_taxe])){
                     $data['tvas'][$line->id_taxe] = array(
@@ -149,6 +164,7 @@ class Quotes extends ZeCtrl
         if($id) {
             $this->load->model("Zeapps_quotes", "quotes");
             $this->load->model("Zeapps_quote_lines", "quote_lines");
+            $this->load->model("Zeapps_quote_line_details", "quote_line_details");
 
             // constitution du tableau
             $data = array() ;
@@ -162,6 +178,7 @@ class Quotes extends ZeCtrl
 
             if($src = $this->quotes->get($id)){
                 $src->lines = $this->quote_lines->all(array('id_quote' => $id));
+                $src->line_details = $this->quote_line_details->all(array('id_quote' => $id));
 
                 if($data){
                     foreach($data as $document => $value){
@@ -182,9 +199,8 @@ class Quotes extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_quotes", "quotes");
-        $this->load->model("Zeapps_quote_companies", "quote_companies");
-        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
         $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
 
         $filters = array() ;
 
@@ -199,9 +215,8 @@ class Quotes extends ZeCtrl
 
         if($quotes = $this->quotes->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             for($i=0;$i<sizeof($quotes);$i++){
-                $quotes[$i]->company = $this->quote_companies->get(array('id_quote'=>$quotes[$i]->id));
-                $quotes[$i]->contact = $this->quote_contacts->get(array('id_quote'=>$quotes[$i]->id));
                 $quotes[$i]->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$quotes[$i]->id));
+                $quotes[$i]->line_details = $this->quote_line_details->all(array('id_quote'=>$quotes[$i]->id));
             }
         }
         else{
@@ -252,9 +267,8 @@ class Quotes extends ZeCtrl
 
     public function get($id) {
         $this->load->model("Zeapps_quotes", "quotes");
-        $this->load->model("Zeapps_quote_companies", "quote_companies");
-        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
         $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
         $this->load->model("Zeapps_quote_documents", "quote_documents");
         $this->load->model("Zeapps_quote_activities", "quote_activities");
         $this->load->model("Zeapps_invoices", "invoices");
@@ -263,22 +277,18 @@ class Quotes extends ZeCtrl
 
         $data->quote = $this->quotes->get($id);
 
-        $data->company = $this->quote_companies->get(array('id_quote'=>$id));
-        $data->contact = $this->quote_contacts->get(array('id_quote'=>$id));
         $data->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
+        $data->line_details = $this->quote_line_details->all(array('id_quote'=>$id));
         $data->documents = $this->quote_documents->all(array('id_quote'=>$id));
         $data->activities = $this->quote_activities->all(array('id_quote'=>$id));
 
-        if($data->company){
-            $res = $this->invoices->getDueOf('company', $data->quote->id_company);
-            $data->company->due = $res['due'];
-            $data->company->due_lines = $res['due_lines'];
-        }
-        elseif($data->contact){
-            $res = $this->invoices->getDueOf('contact', $data->quote->id_contact);
-            $data->contact->due = $res['due'];
-            $data->contact->due_lines = $res['due_lines'];
-        }
+        $res = $this->quotes->getDueOf('company', $data->quote->id_company);
+        $data->company_due = $res['due'];
+        $data->company_due_lines = $res['due_lines'];
+
+        $res = $this->quotes->getDueOf('contact', $data->quote->id_contact);
+        $data->contact_due = $res['due'];
+        $data->contact_due_lines = $res['due_lines'];
 
         echo json_encode($data);
     }
@@ -313,36 +323,14 @@ class Quotes extends ZeCtrl
 
     public function delete($id) {
         $this->load->model("Zeapps_quotes", "quotes");
-        $this->load->model("Zeapps_quote_companies", "quote_companies");
-        $this->load->model("Zeapps_quote_contacts", "quote_contacts");
         $this->load->model("Zeapps_quote_lines", "quote_lines");
+        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
         $this->load->model("Zeapps_quote_documents", "quote_documents");
 
         $this->quotes->delete($id);
 
-        $companies = $this->quote_companies->all(array('id_quote' => $id));
-
-        if($companies && is_array($companies)){
-            for($i=0;$i<sizeof($companies);$i++){
-                $this->quote_companies->delete($companies[$i]->id);
-            }
-        }
-
-        $contacts = $this->quote_contacts->all(array('id_quote' => $id));
-
-        if($contacts && is_array($contacts)){
-            for($i=0;$i<sizeof($contacts);$i++){
-                $this->quote_contacts->delete($contacts[$i]->id);
-            }
-        }
-
-        $lines = $this->quote_lines->all(array('id_quote' => $id));
-
-        if($lines && is_array($lines)){
-            for($i=0;$i<sizeof($lines);$i++){
-                $this->quote_lines->delete($lines[$i]->id);
-            }
-        }
+        $this->quote_lines->delete(array('id_quote' => $id));
+        $this->quote_line_details->delete(array('id_quote' => $id));
 
         $documents = $this->quote_documents->all(array('id_quote' => $id));
 
@@ -350,10 +338,11 @@ class Quotes extends ZeCtrl
 
         if($documents && is_array($documents)){
             for($i=0;$i<sizeof($documents);$i++){
-                $this->quote_documents->delete($documents[$i]->id);
                 unlink($path . $documents[$i]->path);
             }
         }
+
+        $this->quote_documents->delete(array('id_quote' => $id));
 
         echo json_encode("OK");
     }
@@ -370,7 +359,8 @@ class Quotes extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $id = $this->quote_lines->update($data, $data["id"]);
+            $this->quote_lines->update($data, $data["id"]);
+            $id = $data['id'];
         } else {
             $id = $this->quote_lines->insert($data);
         }
@@ -404,14 +394,38 @@ class Quotes extends ZeCtrl
     public function deleteLine($id = null){
         if($id){
             $this->load->model("Zeapps_quote_lines", "quote_lines");
+            $this->load->model("Zeapps_quote_line_details", "quote_line_details");
 
             $line = $this->quote_lines->get($id);
 
             $this->quote_lines->updateOldTable($line->id_quote, $line->sort);
 
+            $this->quote_line_details->delete(array('id_quote' => $line->id_quote, 'id_line' => $id));
+
             echo json_encode($this->quote_lines->delete($id));
 
         }
+    }
+
+    public function saveLineDetail(){
+        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if (isset($data["id"]) && is_numeric($data["id"])) {
+            $this->quote_line_details->update($data, $data["id"]);
+            $id = $data['id'];
+        } else {
+            $id = $this->quote_line_details->insert($data);
+        }
+
+        echo json_encode($id);
     }
 
     public function activity(){
