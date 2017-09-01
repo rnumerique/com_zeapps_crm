@@ -3,7 +3,21 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
-		$scope.shownForm = false;
+        $scope.filters = {
+            main: [
+                {
+                    format: 'select',
+                    field: 'id_warehouse',
+                    type: 'text',
+                    label: 'Entrepôt',
+                    options: []
+                }
+            ]
+        };
+        $scope.filter_model = {};
+        $scope.templateStock = '/com_zeapps_crm/stock/form_modal';
+        $scope.templateMvt = '/com_zeapps_crm/stock/form_mvt';
+
 		$scope.shownMvtForm = false;
 		var scales = {
 			month : [],
@@ -16,71 +30,85 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 		$scope.data = [
 			[]
 		];
-		$scope.form = {};
 		$scope.navigationState = "chart";
-        
-		if($rootScope.selectedWarehouse === undefined)
-			$rootScope.selectedWarehouse = "0";
 
-		if($routeParams.id) {
-			getStocks($routeParams.id, $rootScope.selectedWarehouse);
-		}
+		$scope.postits = [];
 
-		$scope.success = success;
+		getStocks();
+
+        $scope.getStocks = getStocks;
 		$scope.edit = edit;
-		$scope.cancel = cancel;
-		$scope.updateWarehouse = updateWarehouse;
 		$scope.changeScaleTo = changeScaleTo;
 		$scope.backgroundOf = backgroundOf;
 		$scope.setIgnoredTo = setIgnoredTo;
-		$scope.openMvtForm = openMvtForm;
-		$scope.isMvtFormOpen = isMvtFormOpen;
 		$scope.addMvt = addMvt;
-		$scope.cancelMvt = cancelMvt;
 
 
+        function getStocks(){
+            var id_warehouse = $scope.filter_model.id_warehouse || "";
 
-		function openMvtForm(){
-			$scope.mvtForm = {
-				date_mvt : new Date()
-			};
-			$scope.shownMvtForm = true;
-		}
+            zhttp.crm.product_stock.get($routeParams.id, id_warehouse).then(function (response) {
+                if (response.data && response.data != "false") {
+                    $scope.product_stock = response.data.product_stock;
+                    $scope.product_stock.value_ht = parseFloat(response.data.product_stock.value_ht);
+                    $scope.product_stock.resupply_delay = parseInt(response.data.product_stock.resupply_delay);
 
-		function isMvtFormOpen(){
-			return $scope.shownMvtForm;
-		}
+                    $scope.filters.main[0].options = response.data.warehouses;
 
-		function addMvt(){
-			var data = {};
+                    angular.forEach($scope.product_stock.movements, function(mvt){
+                        mvt.date_mvt = new Date(mvt.date_mvt);
+                    });
 
-			data.label = $scope.mvtForm.label;
-			data.qty = $scope.mvtForm.qty;
-			data.date_mvt = $scope.mvtForm.date_mvt;
+                    calcTimeLeft($scope.product_stock.total, $scope.product_stock.avg);
+                    parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
 
-			data.id_stock = $scope.product_stock.id_stock;
-			data.id_warehouse = $rootScope.selectedWarehouse;
-			data.name_table = "zeapps_stock_movements";
-			data.id_table = 0;
+                    generatePostits();
+                }
+            });
+        }
 
-			var formatted_data = angular.toJson(data);
+        function edit(){
+            var formatted_data = angular.toJson($scope.product_stock);
+
+            zhttp.crm.product_stock.save(formatted_data).then(function(response){
+            	if(response.data && response.data != "false"){
+                    calcTimeLeft($scope.product_stock.total, $scope.product_stock.avg);
+                    parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
+
+                    generatePostits();
+				}
+			});
+        }
+
+		function addMvt(stock_mvt){
+
+            stock_mvt.id_warehouse = $scope.filter_model.id_warehouse;
+            stock_mvt.id_stock = $scope.product_stock.id_stock;
+            stock_mvt.id_table = "0";
+            stock_mvt.name_table = "zeapps_stock_movements";
+
+        	if(stock_mvt.date_mvt){
+                var y = stock_mvt.date_mvt.getFullYear();
+                var M = stock_mvt.date_mvt.getMonth();
+                var d = stock_mvt.date_mvt.getDate();
+
+                stock_mvt.date_mvt = new Date(Date.UTC(y, M, d));
+			}
+
+			var formatted_data = angular.toJson(stock_mvt);
 
 			zhttp.crm.product_stock.add_mvt(formatted_data).then(function(response){
 				if(response.data && response.data != "false"){
 					$scope.shownMvtForm = false;
-					getStocks($routeParams.id, $rootScope.selectedWarehouse);
+					getStocks();
 				}
 			});
-		}
-
-		function cancelMvt(){
-			$scope.shownMvtForm = false;
 		}
 
 		function setIgnoredTo(mvt, value){
 			mvt.ignored = value;
 
-			zhttp.crm.product_stock.ignore_mvt(mvt.id, value, $scope.product_stock.id, $rootScope.selectedWarehouse).then(function(response){
+			zhttp.crm.product_stock.ignore_mvt(mvt.id, value, $scope.product_stock.id, $scope.filter_model.id_warehouse).then(function(response){
 				if(response.data && response.data != "false"){
 					$scope.product_stock.avg = response.data;
 					calcTimeLeft($scope.product_stock.total, $scope.product_stock.avg);
@@ -95,54 +123,6 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 		function changeScaleTo(scale){
 			$scope.selectedScale = scale;
 			parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
-		}
-
-		function updateWarehouse(){
-			getStocks($routeParams.id, $rootScope.selectedWarehouse);
-		}
-
-		function edit(){
-			$scope.form.ref = $scope.product_stock.ref;
-			$scope.form.label = $scope.product_stock.label;
-			$scope.form.value_ht = $scope.product_stock.value_ht;
-
-			$scope.shownForm = true;
-		}
-
-		function cancel(){
-			$scope.shownForm = false;
-		}
-
-		function success(){
-			var formatted_data = angular.toJson($scope.form);
-
-			zhttp.crm.product_stock.save(formatted_data).then(function(response){
-				if(response.data && response.data != "false")
-					$scope.product_stock.ref = $scope.form.ref;
-				$scope.product_stock.label = $scope.form.label;
-				$scope.product_stock.value_ht = $scope.form.value_ht;
-
-				$scope.shownForm = false;
-			});
-		}
-
-		function getStocks(id_stock, id_warehouse){
-			zhttp.crm.product_stock.get(id_stock, id_warehouse).then(function (response) {
-				if (response.data && response.data != "false") {
-					$scope.product_stock = response.data.product_stock;
-					$scope.product_stock.value_ht = parseFloat(response.data.product_stock.value_ht);
-					$scope.product_stock.resupply_delay = parseInt(response.data.product_stock.resupply_delay);
-
-					$scope.warehouses = response.data.warehouses;
-
-					angular.forEach($scope.product_stock.movements, function(mvt){
-						mvt.date_mvt = new Date(mvt.date_mvt);
-					});
-
-					calcTimeLeft($scope.product_stock.total, $scope.product_stock.avg);
-					parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
-				}
-			});
 		}
 
 		function calcTimeLeft(total, avg){
@@ -160,7 +140,7 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 					$scope.product_stock.classRupture = "text-danger";
 				}
 
-				if($rootScope.selectedWarehouse > 0) {
+				if($scope.filter_model.id_warehouse > 0) {
 					$scope.product_stock.timeResupply = moment().to(moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit));
 					$scope.product_stock.dateResupply = moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit).format("DD/MM/YYYY");
 					$scope.product_stock.classResupply = moment().isBefore(moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), "day") ? "" : "text-danger";
@@ -232,4 +212,39 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 				scales.days.push(moment().day(moment().get("day") - count).format("dddd Do"));
 			}
 		}
+
+        function generatePostits(){
+            $scope.postits = [
+                {
+                    value: $scope.product_stock.total || 0,
+                    legend: 'Stock',
+                    filter: 'number'
+                },
+                {
+                    value: $scope.product_stock.value_ht,
+                    legend: 'Valeur Unitaire',
+                    filter: 'currency'
+                },
+                {
+                    value: $scope.product_stock.value_ht * $scope.product_stock.total,
+                    legend: 'Valeur totale du stock',
+                    filter: 'currency'
+                },
+                {
+                    value: $scope.product_stock.timeleft + "<small>" + ($scope.product_stock.dateRupture ? ' (' +  $scope.product_stock.dateRupture + ')' : '') + "</small>",
+                    legend: 'Date prévisionnelle de rupture',
+                    filter: 'currency'
+                }
+            ];
+
+			if($scope.filter_model.id_warehouse){
+            	$scope.postits.push(
+                    {
+                        value: $scope.product_stock.timeResupply + "<small>" + ($scope.product_stock.dateResupply ? ' (' +  $scope.product_stock.dateResupply + ')' : '') + "</small>",
+                        legend: 'Commande fournisseur avant',
+                        filter: 'currency'
+                    }
+				);
+			}
+        }
 	}]);
