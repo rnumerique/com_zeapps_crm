@@ -8,9 +8,9 @@ class Modalities extends ZeCtrl
         $this->load->view('modalities/config');
     }
 
-    public function config_form()
+    public function form_modal()
     {
-        $this->load->view('modalities/config_form');
+        $this->load->view('modalities/form_modal');
     }
 
 

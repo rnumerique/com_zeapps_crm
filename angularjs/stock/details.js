@@ -14,7 +14,9 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
                 }
             ]
         };
-        $scope.filter_model = {};
+        $scope.filter_model = {
+            'id_warehouse': $rootScope.user.id_warehouse
+        };
         $scope.templateStock = '/com_zeapps_crm/stock/form_modal';
         $scope.templateMvt = '/com_zeapps_crm/stock/form_mvt';
 
@@ -129,21 +131,22 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 			if(avg > 0) {
 				var timeleft = total / avg;
 
+
 				if(timeleft > 0) {
 					$scope.product_stock.timeleft = moment().to(moment().add(timeleft, "days"));
 					$scope.product_stock.dateRupture = moment().add(timeleft, "days").format("DD/MM/YYYY");
-					$scope.product_stock.classRupture = "";
+					$scope.product_stock.colorRupture = "";
 				}
 				else{
 					$scope.product_stock.timeleft = "En rupture";
 					$scope.product_stock.dateRupture = moment().add(timeleft, "days").format("DD/MM/YYYY");
-					$scope.product_stock.classRupture = "text-danger";
+					$scope.product_stock.colorRupture = "#cd0000";
 				}
 
 				if($scope.filter_model.id_warehouse > 0) {
 					$scope.product_stock.timeResupply = moment().to(moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit));
 					$scope.product_stock.dateResupply = moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit).format("DD/MM/YYYY");
-					$scope.product_stock.classResupply = moment().isBefore(moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), "day") ? "" : "text-danger";
+					$scope.product_stock.colorResupply = moment().isBefore(moment().add(timeleft, "days").subtract($scope.product_stock.resupply_delay, $scope.product_stock.resupply_unit), "day") ? "" : "#cd0000";
 				}
 			}
 			else{
@@ -151,8 +154,8 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 				$scope.product_stock.dateRupture = "";
 				$scope.product_stock.timeResupply = "-";
 				$scope.product_stock.dateResupply = "";
-				$scope.product_stock.classRupture = "";
-				$scope.product_stock.classResupply = "";
+				$scope.product_stock.colorRupture = "";
+				$scope.product_stock.colorResupply = "";
 			}
 		}
 
@@ -214,6 +217,8 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 		}
 
         function generatePostits(){
+            console.log($scope.product_stock.timeleft);
+            console.log(typeof $scope.product_stock.timeleft);
             $scope.postits = [
                 {
                     value: $scope.product_stock.total || 0,
@@ -231,18 +236,20 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
                     filter: 'currency'
                 },
                 {
-                    value: $scope.product_stock.timeleft + "<small>" + ($scope.product_stock.dateRupture ? ' (' +  $scope.product_stock.dateRupture + ')' : '') + "</small>",
-                    legend: 'Date prévisionnelle de rupture',
-                    filter: 'currency'
+                    value: 	$scope.product_stock.timeleft +
+							"<small>" + ($scope.product_stock.dateRupture ? ' (' +  $scope.product_stock.dateRupture + ')' : '') + "</small>",
+					color: $scope.product_stock.colorRupture,
+                    legend: 'Date prévisionnelle de rupture'
                 }
             ];
 
 			if($scope.filter_model.id_warehouse){
             	$scope.postits.push(
                     {
-                        value: $scope.product_stock.timeResupply + "<small>" + ($scope.product_stock.dateResupply ? ' (' +  $scope.product_stock.dateResupply + ')' : '') + "</small>",
-                        legend: 'Commande fournisseur avant',
-                        filter: 'currency'
+                        value: 	$scope.product_stock.timeResupply +
+								"<small>" + ($scope.product_stock.dateResupply ? ' (' +  $scope.product_stock.dateResupply + ')' : '') + "</small>",
+                        color: $scope.product_stock.colorResupply,
+                        legend: 'Commande fournisseur avant'
                     }
 				);
 			}

@@ -12,6 +12,11 @@ class Warehouse extends ZeCtrl
         $this->load->view('stock/warehouse_config');
     }
 
+    public function form_modal()
+    {
+        $this->load->view('stock/warehouse_form_modal');
+    }
+
 
 
     public function get($id){

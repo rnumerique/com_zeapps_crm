@@ -5,9 +5,11 @@ class Taxes extends ZeCtrl
 {
     public function config()
     {
-        $data = array() ;
+        $this->load->view('taxes/config');
+    }
 
-        $this->load->view('taxes/config', $data);
+    public function form_modal(){
+        $this->load->view('taxes/form_modal');
     }
 
 

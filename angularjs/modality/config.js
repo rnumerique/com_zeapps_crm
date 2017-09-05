@@ -3,47 +3,32 @@ app.controller("ComZeappsCrmModalityConfigCtrl", ["$scope", "$route", "$routePar
 
 		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_modalities");
 
-		$scope.form = {};
+        $scope.templateForm = "/com_zeapps_crm/modalities/form_modal";
 
+        $scope.add = add;
+        $scope.edit = edit;
 		$scope.delete = del;
 
+        function add(modality){
+            var formatted_data = angular.toJson(modality);
+            zhttp.crm.modality.save(formatted_data).then(function(response){
+                if(response.data && response.data != "false"){
+                    modality.id = response.data;
+                    $rootScope.modalities.push(modality);
+                }
+            });
+        }
+
+        function edit(modality){
+            var formatted_data = angular.toJson(modality);
+            zhttp.crm.modality.save(formatted_data);
+        }
+
 		function del(modality){
-			var modalInstance = $uibModal.open({
-				animation: true,
-				templateUrl: "/assets/angular/popupModalDeBase.html",
-				controller: "ZeAppsPopupModalDeBaseCtrl",
-				size: "lg",
-				resolve: {
-					titre: function () {
-						return "Attention";
-					},
-					msg: function () {
-						return "Souhaitez-vous supprimer définitivement cette modalitée de paiement ?";
-					},
-					action_danger: function () {
-						return "Annuler";
-					},
-					action_primary: function () {
-						return false;
-					},
-					action_success: function () {
-						return "Je confirme la suppression";
-					}
-				}
-			});
-
-			modalInstance.result.then(function (selectedItem) {
-				if (selectedItem.action == "danger") {
-
-				} else if (selectedItem.action == "success") {
-					zhttp.crm.modality.del(modality.id).then(function (response) {
-						if (response.status == 200) {
-							$rootScope.modalities.splice($rootScope.modalities.indexOf(modality), 1);
-						}
-					});
-				}
-
-			}, function () {
-			});
+            zhttp.crm.modality.del(modality.id).then(function (response) {
+                if (response.status == 200) {
+                    $rootScope.modalities.splice($rootScope.modalities.indexOf(modality), 1);
+                }
+            });
 		}
 	}]);

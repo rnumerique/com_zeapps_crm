@@ -15,16 +15,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <p class="small">
                         n° {{ delivery.numerotation }}
                     </p>
-                    <p>
-                        <span class="form-group form-inline">
-                            <select class="form-control input-sm" ng-model="delivery.status" ng-change="updateStatus()">
-                                <option>En cours</option>
-                                <option>Gagné</option>
-                                <option>Perdu</option>
-                            </select>
-                        </span>
-                        ({{ delivery.probability | number:2 }}%)
-                    </p>
                     <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
                         {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
                     </button>

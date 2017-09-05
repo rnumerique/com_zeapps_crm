@@ -18,6 +18,12 @@ class Zeapps_invoices extends ZeModel {
         return array('due' => $total, 'due_lines' => $invoices);
     }
 
+    public function getByMonth($year = 0, $month = 0){
+        $query = "SELECT * FROM zeapps_invoices WHERE YEAR(date_limit) = ".$year." AND MONTH(date_limit) = ".$month." AND finalized = 1 AND deleted_at IS NULL";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
     public function createFrom($src){
         $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_invoice_lines", "invoice_lines");

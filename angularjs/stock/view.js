@@ -6,6 +6,18 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
         $scope.filters = {
             main: [
                 {
+                    format: 'input',
+                    field: 'ref LIKE',
+                    type: 'text',
+                    label: 'Référence'
+                },
+                {
+                    format: 'input',
+                    field: 'label LIKE',
+                    type: 'text',
+                    label: 'Libellé'
+                },
+                {
                     format: 'select',
                     field: 'id_warehouse',
                     type: 'text',
@@ -14,7 +26,9 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
                 }
             ]
         };
-        $scope.filter_model = {};
+        $scope.filter_model = {
+        	'id_warehouse': $rootScope.user.id_warehouse
+		};
         $scope.page = 1;
         $scope.pageSize = 15;
         $scope.total = 0;
@@ -43,7 +57,7 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
                     $scope.total = response.data.total;
 
                     if(context){
-                        $scope.filters.main[0].options = response.data.warehouses;
+                        $scope.filters.main[2].options = response.data.warehouses;
                     }
                 }
             });
@@ -92,7 +106,7 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
 					product_stock.classRupture = "text-danger";
 				}
 
-				if($rootScope.id_warehouse > 0) {
+				if($scope.filter_model.id_warehouse > 0) {
 					product_stock.timeResupply = moment().to(moment().add(timeleft, "days").subtract(product_stock.resupply_delay, product_stock.resupply_unit));
 					product_stock.dateResupply = moment().add(timeleft, "days").subtract(product_stock.resupply_delay, product_stock.resupply_unit).format("DD/MM/YYYY");
 					product_stock.classResupply = moment().isBefore(moment().add(timeleft, "days").subtract(product_stock.resupply_delay, product_stock.resupply_unit), "day") ? "text-success" : "text-danger";

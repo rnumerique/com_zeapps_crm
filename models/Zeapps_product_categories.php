@@ -119,4 +119,19 @@ class Zeapps_product_categories extends ZeModel {
         }
         return false;
     }
+
+    public function getSubCatIds_r($id = null){
+        $ids = [];
+        $ids[] = $id;
+
+        if($categories = parent::all(array('id_parent' => $id))){
+            foreach($categories as $category){
+                if($tmp = $this->getSubCatIds_r($category->id)){
+                    $ids = array_merge($ids, $tmp);
+                }
+            }
+        }
+
+        return $ids;
+    }
 }

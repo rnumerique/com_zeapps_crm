@@ -4,6 +4,9 @@ app.run(function(zeHttp, $rootScope){
 			$rootScope.modalities = response.data;
 			angular.forEach($rootScope.modalities, function(modality){
 				modality.sort = parseInt(modality.sort);
+                modality.settlement_date = parseInt(modality.settlement_date);
+                modality.settlement_delay = parseInt(modality.settlement_delay);
+                modality.sort = parseInt(modality.sort);
 			});
 		}
 	});

@@ -366,6 +366,8 @@ class Deliveries extends ZeCtrl
             $id = $this->delivery_lines->insert($data);
         }
 
+        $this->_updateStocks($id);
+
         echo json_encode($id);
     }
 
@@ -531,5 +533,30 @@ class Deliveries extends ZeCtrl
         }
 
         echo 'OK';
+    }
+
+    public function _updateStocks($id){
+        $this->load->model("Zeapps_deliveries", "deliveries");
+        $this->load->model("Zeapps_delivery_lines", "delivery_lines");
+        $this->load->model("Zeapps_product_products", "product");
+        $this->load->model("Zeapps_product_products", "product");
+        $this->load->model("Zeapps_stock_movements", "stock_movements");
+
+        if($line = $this->delivery_lines->get($id)){
+            if($line->type === 'product'){
+                $delivery = $this->deliveries->get($line->id_delivery);
+                $product = $this->product->get($line->id_product);
+                $this->stock_movements->write(array(
+                    "id_warehouse" => $delivery->id_warehouse,
+                    "id_stock" => $product->id_stock,
+                    "label" => "Bon de livraison n°".$delivery->numerotation,
+                    "qty" => -1 * floatval($line->qty),
+                    "id_table" => $delivery->id,
+                    "name_table" => "zeapps_deliveries",
+                    "date_mvt" => $delivery->date_limit,
+                    "ignored" => 0
+                ));
+            }
+        }
     }
 }

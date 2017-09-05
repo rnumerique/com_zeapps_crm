@@ -32,6 +32,11 @@ class Product extends ZeCtrl
         $this->load->view('product/config');
     }
 
+    public function config_modal()
+    {
+        $this->load->view('product/config_modal');
+    }
+
 
 
 
@@ -100,6 +105,7 @@ class Product extends ZeCtrl
 
     public function modal($id = '0', $limit = 15, $offset = 0){
         $this->load->model("Zeapps_product_products", "products");
+        $this->load->model("Zeapps_product_categories", "categories");
 
         $filters = array() ;
 
@@ -109,7 +115,7 @@ class Product extends ZeCtrl
         }
 
         if($id !== "0")
-            $filters['id_cat'] = $this->_getSubCatIds_r($id);
+            $filters['id_cat'] = $this->categories->getSubCatIds_r($id);
 
         $total = $this->products->count($filters);
 
@@ -218,22 +224,5 @@ class Product extends ZeCtrl
                 $this->products->update(array('price_ht'=>$price_ht, 'price_ttc'=>$price_ttc), $id);
             }
         }
-    }
-
-    private function _getSubCatIds_r($id = null){
-        $this->load->model("Zeapps_product_categories", "categories");
-
-        $ids = [];
-        $ids[] = $id;
-
-        if($categories = $this->categories->all(array('id_parent' => $id))){
-            foreach($categories as $category){
-                if($tmp = $this->_getSubCatIds_r($category->id)){
-                    $ids = array_merge($ids, $tmp);
-                }
-            }
-        }
-
-        return $ids;
     }
 }

@@ -1,6 +1,19 @@
 <?php
 class Zeapps_stock_movements extends ZeModel{
 
+    public function write($data = array()){
+        if($mvt = parent::get(array(
+            "id_table" => $data['id_table'],
+            "name_table" => $data['name_table'],
+            "id_stock" => $data['id_stock'],
+        ))){
+            return parent::update($data, $mvt->id);
+        }
+        else{
+            return parent::insert($data);
+        }
+    }
+
     public function avg($where = array()){
         $query = "select sum(zeapps_stock_movements.qty) as average 
                   from zeapps_stock_movements 

@@ -3,67 +3,47 @@ app.controller("ComZeappsCrmWarehouseConfigCtrl", ["$scope", "$route", "$routePa
 
 		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_warehouses");
 
-		var warehouses = [];
+        $scope.templateForm = "/com_zeapps_crm/warehouse/form_modal";
 
-		$scope.form = {};
-		$scope.newLine = {};
+        $scope.resupply_label = {
+			'days' : 'jours',
+			'weeks' : 'semaines',
+			'months' : 'mois',
+			'hours' : 'heures'
+		};
 
-		$scope.createLine = createLine;
-		$scope.cancelLine = cancelLine;
-		$scope.delete = del;
-		$scope.cancel = cancel;
-		$scope.success = success;
+        $scope.add = add;
+        $scope.edit = edit;
+        $scope.delete = del;
 
 		zhttp.crm.warehouse.get_all().then(function(response){
 			if(response.data && response.data != "false"){
-				warehouses = response.data;
-
-				angular.forEach(warehouses, function(warehouse){
-					warehouse.resupply_delay = parseInt(warehouse.resupply_delay);
-				});
-
-				$scope.form.warehouses = angular.fromJson(angular.toJson(response.data));
+				$scope.warehouses = response.data;
+                angular.forEach($scope.warehouses, function(warehouse){
+                    warehouse.resupply_delay = parseInt(warehouse.resupply_delay);
+                });
 			}
 		});
 
-
-
-
-		function createLine(){
-			var formatted_data = angular.toJson($scope.newLine);
+		function add(warehouse){
+			var formatted_data = angular.toJson(warehouse);
 			zhttp.crm.warehouse.save(formatted_data).then(function(response){
 				if(response.data && response.data != "false"){
-					$scope.newLine.id = response.data;
-					$scope.form.warehouses.push(angular.fromJson(angular.toJson($scope.newLine)));
-					warehouses.push($scope.newLine);
-					$scope.newLine = {};
+                    warehouse.id = response.data;
+					$scope.warehouses.push(warehouse);
 				}
 			});
 		}
 
-		function cancelLine(){
-			$scope.newLine = {};
-		}
+        function edit(warehouse){
+            var formatted_data = angular.toJson(warehouse);
+            zhttp.crm.warehouse.save(formatted_data);
+        }
 
-		function del(index){
-			var id = $scope.form.warehouses[index].id;
-			zhttp.crm.warehouse.del(id).then(function(response){
+		function del(warehouse){
+			zhttp.crm.warehouse.del(warehouse.id).then(function(response){
 				if(response.data && response.data != "false"){
-					$scope.form.warehouses.splice(index, 1);
-					warehouses.splice(index, 1);
-				}
-			});
-		}
-
-		function cancel(){
-			$scope.form.warehouses = angular.fromJson(angular.toJson(warehouses));
-		}
-
-		function success(){
-			var formatted_data = angular.toJson($scope.form.warehouses);
-			zhttp.crm.warehouse.save_all(formatted_data).then(function(response){
-				if(response.data && response.data != "false"){
-					warehouses = angular.fromJson(angular.toJson($scope.form.warehouses));
+					$scope.warehouses.splice($scope.warehouses.indexOf(warehouse), 1);
 				}
 			});
 		}

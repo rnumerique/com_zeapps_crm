@@ -399,7 +399,7 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
         $this->load->model("Zeapps_invoice_activities", "invoice_activities");
-        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_crm_origins", "crm_origins");
 
         $data = new stdClass();
 
