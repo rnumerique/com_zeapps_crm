@@ -55,6 +55,8 @@ class Zeapps_deliveries extends ZeModel {
         $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_delivery_lines", "delivery_lines");
         $this->_pLoad->model("Zeapps_delivery_line_details", "delivery_line_details");
+        $this->_pLoad->model("Zeapps_stock_movements", "stock_movements");
+        $this->_pLoad->model("Zeapps_product_products", "product");
 
         unset($src->id);
         unset($src->numerotation);
@@ -87,6 +89,20 @@ class Zeapps_deliveries extends ZeModel {
                 $new_id = $this->_pLoad->ctrl->delivery_lines->insert($line);
 
                 $new_id_lines[$old_id] = $new_id;
+
+                if($line->type === 'product'){
+                    $product = $this->_pLoad->ctrl->product->get($line->id_product);
+                    $this->_pLoad->ctrl->stock_movements->write(array(
+                        "id_warehouse" => $src->id_warehouse,
+                        "id_stock" => $product->id_stock,
+                        "label" => "Bon de livraison n°".$src->numerotation,
+                        "qty" => -1 * floatval($line->qty),
+                        "id_table" => $src->id,
+                        "name_table" => "zeapps_deliveries",
+                        "date_mvt" => $src->date_limit,
+                        "ignored" => 0
+                    ));
+                }
             }
         }
 
@@ -101,6 +117,20 @@ class Zeapps_deliveries extends ZeModel {
                 $line->id_line = $new_id_lines[$line->id_line];
 
                 $this->_pLoad->ctrl->delivery_line_details->insert($line);
+
+                if($line->type === 'product'){
+                    $product = $this->_pLoad->ctrl->product->get($line->id_product);
+                    $this->_pLoad->ctrl->stock_movements->write(array(
+                        "id_warehouse" => $src->id_warehouse,
+                        "id_stock" => $product->id_stock,
+                        "label" => "Bon de livraison n°".$src->numerotation,
+                        "qty" => -1 * floatval($line->qty),
+                        "id_table" => $src->id,
+                        "name_table" => "zeapps_deliveries",
+                        "date_mvt" => $src->date_limit,
+                        "ignored" => 0
+                    ));
+                }
             }
         }
 
