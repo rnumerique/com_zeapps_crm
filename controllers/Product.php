@@ -128,7 +128,6 @@ class Product extends ZeCtrl
 
     public function save() {
         $this->load->model("Zeapps_product_products", "products");
-        $this->load->model("Zeapps_product_categories", "categories");
         $this->load->model("Zeapps_product_lines", "lines");
 
         $error = NULL;
@@ -147,17 +146,9 @@ class Product extends ZeCtrl
             }
 
             if (isset($data["id"])) {
-                $legacy = $this->products->get($data["id"]);
                 $this->products->update($data, $data["id"]);
-
-                if($data["id_cat"] != $legacy->id_cat) {
-                    $this->categories->newProductIn($data['id_cat']);
-                    if($legacy->id_cat > 0)
-                        $this->categories->removeProductIn($legacy->id_cat);
-                }
             } else {
                 $data['id'] = $this->products->insert($data);
-                $this->categories->newProductIn($data['id_cat']);
             }
 
             if(isset($data['compose']) && $data['compose'] == '1' && $lines){
