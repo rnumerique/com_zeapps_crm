@@ -199,8 +199,6 @@ class Deliveries extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_deliveries", "deliveries");
-        $this->load->model("Zeapps_delivery_lines", "delivery_lines");
-        $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
 
         $filters = array() ;
 
@@ -213,22 +211,18 @@ class Deliveries extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($deliveries = $this->deliveries->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            for($i=0;$i<sizeof($deliveries);$i++){
-                $deliveries[$i]->lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$deliveries[$i]->id));
-                $deliveries[$i]->line_details = $this->delivery_line_details->all(array('id_delivery'=>$deliveries[$i]->id));
-            }
-        }
-        else{
+        if(!$deliveries = $this->deliveries->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $deliveries = [];
         }
 
         $total = $this->deliveries->count($filters);
 
         $ids = [];
-        if($rows = $this->deliveries->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            foreach($rows as $row){
-                array_push($ids, $row->id);
+        if($total < 500) {
+            if ($rows = $this->deliveries->get_ids($filters)) {
+                foreach ($rows as $row) {
+                    array_push($ids, $row->id);
+                }
             }
         }
 
@@ -538,7 +532,6 @@ class Deliveries extends ZeCtrl
     public function _updateStocks($id){
         $this->load->model("Zeapps_deliveries", "deliveries");
         $this->load->model("Zeapps_delivery_lines", "delivery_lines");
-        $this->load->model("Zeapps_product_products", "product");
         $this->load->model("Zeapps_product_products", "product");
         $this->load->model("Zeapps_stock_movements", "stock_movements");
 

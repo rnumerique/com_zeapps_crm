@@ -199,8 +199,6 @@ class Quotes extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_quotes", "quotes");
-        $this->load->model("Zeapps_quote_lines", "quote_lines");
-        $this->load->model("Zeapps_quote_line_details", "quote_line_details");
 
         $filters = array() ;
 
@@ -213,21 +211,17 @@ class Quotes extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($quotes = $this->quotes->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            for($i=0;$i<sizeof($quotes);$i++){
-                $quotes[$i]->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$quotes[$i]->id));
-                $quotes[$i]->line_details = $this->quote_line_details->all(array('id_quote'=>$quotes[$i]->id));
-            }
-        }
-        else{
+        if(!$quotes = $this->quotes->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $quotes = [];
         }
         $total = $this->quotes->count($filters);
 
         $ids = [];
-        if($rows = $this->quotes->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            foreach($rows as $row){
-                array_push($ids, $row->id);
+        if($total < 500) {
+            if ($rows = $this->quotes->get_ids($filters)) {
+                foreach ($rows as $row) {
+                    array_push($ids, $row->id);
+                }
             }
         }
 

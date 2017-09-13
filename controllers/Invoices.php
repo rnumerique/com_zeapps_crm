@@ -327,8 +327,6 @@ class Invoices extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_invoices", "invoices");
-        $this->load->model("Zeapps_invoice_lines", "invoice_lines");
-        $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
 
         $filters = array() ;
 
@@ -341,21 +339,17 @@ class Invoices extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($invoices = $this->invoices->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            for($i=0;$i<sizeof($invoices);$i++){
-                $invoices[$i]->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$invoices[$i]->id));
-                $invoices[$i]->line_details = $this->invoice_line_details->all(array('id_invoice'=>$invoices[$i]->id));
-            }
-        }
-        else{
+        if(!$invoices = $this->invoices->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $invoices = [];
         }
         $total = $this->invoices->count($filters);
 
         $ids = [];
-        if($rows = $this->invoices->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            foreach($rows as $row){
-                array_push($ids, $row->id);
+        if($total < 500) {
+            if ($rows = $this->invoices->get_ids($filters)) {
+                foreach ($rows as $row) {
+                    array_push($ids, $row->id);
+                }
             }
         }
 

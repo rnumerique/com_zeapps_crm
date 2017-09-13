@@ -199,8 +199,6 @@ class Orders extends ZeCtrl
 
     public function getAll($id = '0', $type = 'company', $limit = 15, $offset = 0, $context = false) {
         $this->load->model("Zeapps_orders", "orders");
-        $this->load->model("Zeapps_order_lines", "order_lines");
-        $this->load->model("Zeapps_order_line_details", "order_line_details");
 
         $filters = array() ;
 
@@ -213,21 +211,18 @@ class Orders extends ZeCtrl
             $filters['id_' . $type] = $id;
         }
 
-        if($orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            for($i=0;$i<sizeof($orders);$i++){
-                $orders[$i]->lines = $this->order_lines->order_by('sort')->all(array('id_order'=>$orders[$i]->id));
-                $orders[$i]->line_details = $this->order_line_details->all(array('id_order'=>$orders[$i]->id));
-            }
-        }
-        else{
+        if(!$orders = $this->orders->limit($limit, $offset)->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
             $orders = [];
         }
+
         $total = $this->orders->count($filters);
 
         $ids = [];
-        if($rows = $this->orders->order_by(array('date_creation', 'id'), 'DESC')->all($filters)){
-            foreach($rows as $row){
-                array_push($ids, $row->id);
+        if($total < 500) {
+            if ($rows = $this->orders->get_ids($filters)) {
+                foreach ($rows as $row) {
+                    array_push($ids, $row->id);
+                }
             }
         }
 
