@@ -30,7 +30,6 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 		$scope.updateTaxe = updateTaxe;
 		$scope.updatePrice = updatePrice;
 		$scope.descState = descState;
-		$scope.delete = del;
 		$scope.success = success;
 		$scope.cancel = cancel;
 
@@ -149,53 +148,6 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 				return "text-warning";
 			else
 				return "text-success";
-
-		}
-
-		function del(id) {
-			var modalInstance = $uibModal.open({
-				animation: true,
-				templateUrl: "/assets/angular/popupModalDeBase.html",
-				controller: "ZeAppsPopupModalDeBaseCtrl",
-				size: "lg",
-				resolve: {
-					titre: function () {
-						return "Attention";
-					},
-					msg: function () {
-						return "Souhaitez-vous supprimer définitivement ce produit ?";
-					},
-					action_danger: function () {
-						return "Annuler";
-					},
-					action_primary: function () {
-						return false;
-					},
-					action_success: function () {
-						return "Je confirme la suppression";
-					}
-				}
-			});
-
-			modalInstance.result.then(function (selectedItem) {
-				if (selectedItem.action == "danger") {
-
-				} else if (selectedItem.action == "success") {
-					zhttp.crm.product.del(id).then(function (response) {
-						if (response.status == 200) {
-							// pour que la page puisse être redirigé
-							if ($routeParams.url_retour) {
-								$location.path($routeParams.url_retour.replace(charSepUrlSlashRegExp, "/"));
-							} else {
-								$location.path("/ng/com_zeapps_crm/product/category/" + $scope.form.id_cat);
-							}
-						}
-					});
-				}
-
-			}, function () {
-				//console.log("rien");
-			});
 
 		}
 
