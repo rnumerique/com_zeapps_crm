@@ -3,6 +3,8 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
+        $rootScope.current_warehouse = $rootScope.current_warehouse || $rootScope.user.id_warehouse;
+
         $scope.filters = {
             main: [
                 {
@@ -15,7 +17,7 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
             ]
         };
         $scope.filter_model = {
-            'id_warehouse': $rootScope.user.id_warehouse
+            'id_warehouse': $rootScope.current_warehouse
         };
         $scope.templateStock = '/com_zeapps_crm/stock/form_modal';
         $scope.templateMvt = '/com_zeapps_crm/stock/form_mvt';
@@ -48,6 +50,8 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 
         function getStocks(){
             var id_warehouse = $scope.filter_model.id_warehouse || "";
+
+            $rootScope.current_warehouse = $scope.filter_model.id_warehouse;
 
             zhttp.crm.product_stock.get($routeParams.id, id_warehouse).then(function (response) {
                 if (response.data && response.data != "false") {

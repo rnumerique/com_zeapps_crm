@@ -3,6 +3,8 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
+		$rootScope.current_warehouse = $rootScope.current_warehouse || $rootScope.user.id_warehouse;
+
         $scope.filters = {
             main: [
                 {
@@ -27,7 +29,7 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
             ]
         };
         $scope.filter_model = {
-        	'id_warehouse': $rootScope.user.id_warehouse
+        	'id_warehouse': $rootScope.current_warehouse
 		};
         $scope.page = 1;
         $scope.pageSize = 15;
@@ -45,6 +47,8 @@ app.controller("ComZeappsCrmStockViewCtrl", ["$scope", "$route", "$routeParams",
             context = context || "";
             var offset = ($scope.page - 1) * $scope.pageSize;
             var formatted_filters = angular.toJson($scope.filter_model);
+
+            $rootScope.current_warehouse = $scope.filter_model.id_warehouse;
 
             zhttp.crm.product_stock.get_all($scope.pageSize, offset, context, formatted_filters).then(function(response){
                 if(response.data && response.data != "false"){
