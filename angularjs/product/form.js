@@ -76,8 +76,10 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 							$scope.form = response.data;
 							$scope.form.price_ht = parseFloat($scope.form.price_ht);
 							$scope.form.value_taxe = parseFloat($scope.form.value_taxe);
-							$scope.form.price_ttc = parseFloat($scope.form.price_ttc);
-							$scope.form.extra = angular.fromJson($scope.form.extra);
+                            updatePrice('ttc');
+							if($scope.form.extra !== "") {
+                                $scope.form.extra = angular.fromJson($scope.form.extra);
+                            }
 							zhttp.crm.category.openTree($scope.tree, $scope.form.id_cat);
 							zhttp.crm.category.get($scope.form.id_cat).then(function (response) {
 								if (response.status == 200) {
@@ -132,10 +134,10 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 		function updatePrice(price){
 			if($scope.form.value_taxe && $scope.form.value_taxe > 0) {
 				if (price === "ht") {
-					$scope.form.price_ht = parseFloat($scope.form.price_ttc / ( 1 + $scope.form.value_taxe / 100).toFixed(2));
+					$scope.form.price_ht = round2(parseFloat($scope.form.price_ttc) / ( 1 + parseFloat($scope.form.value_taxe) / 100));
 				}
 				if (price === "ttc") {
-					$scope.form.price_ttc = parseFloat($scope.form.price_ht * ( 1 + $scope.form.value_taxe / 100).toFixed(2));
+					$scope.form.price_ttc = round2(parseFloat($scope.form.price_ht) * ( 1 + parseFloat($scope.form.value_taxe) / 100));
 				}
 			}
 		}
@@ -240,4 +242,8 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 				$location.path("/ng/com_zeapps_crm/product/category/" + $scope.form.id_cat);
 			}
 		}
+
+        function round2(num) {
+            return +(Math.round(num + "e+2")  + "e-2");
+        }
 	}]);

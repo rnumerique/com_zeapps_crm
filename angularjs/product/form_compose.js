@@ -127,13 +127,13 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 			var total = 0;
 
 			angular.forEach($scope.form.lines, function(line){
-				total += parseFloat(line.product.price_ttc) * parseFloat(line.quantite);
+				total += round2(parseFloat(line.product.price_ttc) * parseFloat(line.quantite));
 			});
 
 			if(!$scope.form.price_ttc)
 				$scope.form.price_ttc = 0;
 
-			var prorata = (parseFloat($scope.form.price_ttc) * 100 / total).toFixed(2);
+			var prorata = round2(parseFloat($scope.form.price_ttc) * 100 / total);
 
 			angular.forEach($scope.form.lines, function(line){
 				line.prorata = prorata;
@@ -215,4 +215,8 @@ app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$rout
 				$location.path("/ng/com_zeapps_crm/product/category/" + $scope.form.id_cat);
 			}
 		}
+
+        function round2(num) {
+            return +(Math.round(num + "e+2")  + "e-2");
+        }
 	}]);
