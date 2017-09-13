@@ -27,6 +27,17 @@ class Zeapps_deliveries extends ZeModel {
         }
     }
 
+    public function get_ids($where = array()){
+
+        $where['deleted_at'] = null;
+
+        return $this->database()->select('id')
+            ->where($where)
+            ->order_by(array('date_creation', 'id'), 'DESC')
+            ->table('zeapps_deliveries')
+            ->result();
+    }
+
     public function getDueOf($type, $id = null){
         $total = 0;
         $deliveries = $this->all(array('id_'.$type => $id, 'due >' => 0));

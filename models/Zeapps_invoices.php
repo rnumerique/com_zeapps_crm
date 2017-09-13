@@ -5,6 +5,16 @@ class Zeapps_invoices extends ZeModel {
         return sizeof($this->database()->customQuery($query)->result()) + 1;
     }
 
+    public function get_ids($where = array()){
+
+        $where['deleted_at'] = null;
+
+        return $this->database()->select('id')
+            ->where($where)
+            ->order_by(array('date_creation', 'id'), 'DESC')
+            ->table('zeapps_invoices')
+            ->result();
+    }
     public function getDueOf($type, $id = null){
         $total = 0;
         $invoices = $this->all(array('id_'.$type => $id, 'due >' => 0));
