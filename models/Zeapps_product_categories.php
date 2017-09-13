@@ -27,6 +27,64 @@ class Zeapps_product_categories extends ZeModel {
         return;
     }
 
+    public function turnover($year = null, $where = array()){
+        $query = "SELECT SUM(l.total_ht) as total_ht,
+                         YEAR(i.date_limit) as year
+                  FROM zeapps_product_categories ca
+                  LEFT JOIN zeapps_product_products p ON p.id_cat = ca.id
+                  LEFT JOIN zeapps_invoice_lines l ON l.id_product = p.id
+                  LEFT JOIN zeapps_invoices i ON i.id = l.id_invoice
+                  WHERE i.finalized = '1'
+                        AND l.type = 'product'
+                        AND i.deleted_at IS NULL
+                        AND l.deleted_at IS NULL
+                        AND YEAR(i.date_limit) in (".($year - 1).",".$year.")";
+
+        if(isset($where['id_origin'])){
+            $query .= " AND i.id_origin = ".$where['id_origin'];
+        }
+        if(isset($where['id_cat'])){
+            $query .= " AND ca.id IN (".implode(',', $where['id_cat']).")";
+        }
+        if(isset($where['country_id'])){
+            $query .= " AND i.country_id IN (".implode(',', $where['country_id']).")";
+        }
+
+        $query .= " GROUP BY YEAR(i.date_limit)";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
+    public function turnover_details($year = null, $where = array()){
+        $query = "SELECT SUM(l.total_ht) as total_ht,
+                         YEAR(i.date_limit) as year,
+                         i.id_origin as id_origin,
+                         ca.id as id_cat
+                  FROM zeapps_product_categories ca
+                  LEFT JOIN zeapps_product_products p ON p.id_cat = ca.id
+                  LEFT JOIN zeapps_invoice_lines l ON l.id_product = p.id
+                  LEFT JOIN zeapps_invoices i ON i.id = l.id_invoice
+                  WHERE i.finalized = '1'
+                        AND l.type = 'product'
+                        AND i.deleted_at IS NULL
+                        AND l.deleted_at IS NULL
+                        AND YEAR(i.date_limit) in (".($year - 1).",".$year.")";
+
+        if(isset($where['id_origin'])){
+            $query .= " AND i.id_origin = ".$where['id_origin'];
+        }
+        if(isset($where['id_cat'])){
+            $query .= " AND ca.id IN (".implode(',', $where['id_cat']).")";
+        }
+        if(isset($where['country_id'])){
+            $query .= " AND i.country_id IN (".implode(',', $where['country_id']).")";
+        }
+
+        $query .= " GROUP BY YEAR(i.date_limit), i.id_origin, ca.id";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
     public function get($where = array()){
         if($where == 0){
             return $this->root;
