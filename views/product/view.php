@@ -82,7 +82,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td ng-click="goTo(product.id, product.compose)">{{ product.name }}</td>
                                 <td ng-click="goTo(product.id, product.compose)">{{ product.accounting_number }}</td>
                                 <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.compose == 0 ? ( product.price_ht | currency:'€':2 ) : '-' }}</td>
-                                <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.compose == 0 ? ( product.value_taxe | currency:'€':2 ) : '-' }}</td>
+                                <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.compose == 0 ? ( product.value_taxe | currency:'%':2 ) : '-' }}</td>
                                 <td ng-click="goTo(product.id, product.compose)" class="text-right">{{ product.price_ttc | currency:'€':2 }}</td>
                                 <td class="text-right">
                                     <button type="button" class="btn btn-xs btn-danger" ng-click="delete(product)">
