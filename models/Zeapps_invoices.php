@@ -15,23 +15,45 @@ class Zeapps_invoices extends ZeModel {
             ->table('zeapps_invoices')
             ->result();
     }
+
+    public function turnover($year = null, $where = array()){
+        $query = "SELECT SUM(l.total_ht) as total_ht,
+                         YEAR(i.date_limit) as year,
+                         MONTH(i.date_limit) as month
+                  FROM zeapps_invoices i
+                  LEFT JOIN zeapps_invoice_lines l ON i.id = l.id_invoice
+                  WHERE i.finalized = '1'
+                        AND i.deleted_at IS NULL
+                        AND l.deleted_at IS NULL
+                        AND YEAR(i.date_limit) in (".($year - 1).",".$year.")
+                        AND MONTH(i.date_limit) in (1,2,3,4,5,6,7,8,9,10,11,12)";
+
+        if(isset($where['id_origin'])){
+            $query .= " AND i.id_origin = ".$where['id_origin'];
+        }
+        if(isset($where['id_invoice'])){
+            $query .= " AND i.id = ".$where['id_invoice'];
+        }
+        if(isset($where['country_id'])){
+            $query .= " AND i.country_id IN (".implode(',', $where['country_id']).")";
+        }
+
+        $query .= " GROUP BY YEAR(i.date_limit),MONTH(i.date_limit)";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
     public function getDueOf($type, $id = null){
         $total = 0;
         $invoices = $this->all(array('id_'.$type => $id, 'due >' => 0));
 
-        if($invoices) {
-            foreach ($invoices as $invoice){
+        if($invoices){
+            foreach($invoices as $invoice){
                 $total += floatval($invoice->due);
             }
         }
 
         return array('due' => $total, 'due_lines' => $invoices);
-    }
-
-    public function getByMonth($year = 0, $month = 0){
-        $query = "SELECT * FROM zeapps_invoices WHERE YEAR(date_limit) = ".$year." AND MONTH(date_limit) = ".$month." AND finalized = 1 AND deleted_at IS NULL";
-
-        return $this->database()->customQuery($query)->result();
     }
 
     public function createFrom($src){
