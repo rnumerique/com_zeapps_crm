@@ -22,20 +22,6 @@ class Invoices extends ZeCtrl
         $this->load->view('invoices/form_line');
     }
 
-    public function form_comment(){
-        $this->load->view('invoices/form_comment');
-    }
-
-    public function form_activity()
-    {
-        $this->load->view('invoices/form_activity');
-    }
-
-    public function form_document()
-    {
-        $this->load->view('invoices/form_document');
-    }
-
     public function lists()
     {
         $this->load->view('invoices/lists');
@@ -44,11 +30,6 @@ class Invoices extends ZeCtrl
     public function lists_partial()
     {
         $this->load->view('invoices/lists_partial');
-    }
-
-    public function transform_modal()
-    {
-        $this->load->view('invoices/transform_modal');
     }
 
     public function config()
@@ -114,7 +95,7 @@ class Invoices extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/invoices/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['invoice']->numerotation.'|C. Compta : '.$data['invoice']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Facture €<br>n° : '.$data['invoice']->numerotation.'|C. Compta : '.$data['invoice']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
@@ -152,7 +133,7 @@ class Invoices extends ZeCtrl
         }
 
         $format = $data['format'];
-        $num = $this->invoices->get_numerotation();
+        $num = $data['numerotation'];
 
         $result = $this->invoices->parseFormat($format, $num);
 

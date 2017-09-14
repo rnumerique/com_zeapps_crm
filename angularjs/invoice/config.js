@@ -4,7 +4,7 @@ app.controller("ComZeappsCrmInvoiceConfigCtrl", ["$scope", "$route", "$routePara
 		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_invoices");
 
 		$scope.format = "";
-		$scope.frequency = "";
+		$scope.numerotation = "";
 
 		$scope.success = success;
 		$scope.test = test;
@@ -15,9 +15,9 @@ app.controller("ComZeappsCrmInvoiceConfigCtrl", ["$scope", "$route", "$routePara
 			}
 		});
 
-		zhttp.config.invoice.get.frequency().then(function(response){
+		zhttp.config.invoice.get.numerotation().then(function(response){
 			if(response.data && response.data != "false"){
-				$scope.frequency = response.data.value;
+                $scope.numerotation = parseInt(response.data.value);
 			}
 		});
 
@@ -30,8 +30,8 @@ app.controller("ComZeappsCrmInvoiceConfigCtrl", ["$scope", "$route", "$routePara
 				value: $scope.format
 			};
 			data[1] = {
-				id: "crm_invoice_frequency",
-				value: $scope.frequency
+				id: "crm_invoice_numerotation",
+				value: $scope.numerotation
 			};
 
 			var formatted_data = angular.toJson(data);
@@ -43,7 +43,7 @@ app.controller("ComZeappsCrmInvoiceConfigCtrl", ["$scope", "$route", "$routePara
 			var data = {};
 
 			data["format"] = $scope.format;
-			data["frequency"] = $scope.frequency;
+			data["numerotation"] = $scope.numerotation;
 
 			var formatted_data = angular.toJson(data);
 			zhttp.crm.invoice.test(formatted_data).then(function(response){

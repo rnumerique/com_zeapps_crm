@@ -1,4 +1,4 @@
-<div ng-controller="ZeAppsCrmModalQuoteDocumentCtrl">
+<div ng-controller="ZeAppsCrmModalFormDocumentCtrl">
     <button type="button" class="btn btn-xs btn-success" ngf-select="upload($files)" >
         Choisissez un document
     </button>

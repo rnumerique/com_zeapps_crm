@@ -4,7 +4,7 @@ app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routePar
 		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_deliveries");
 
 		$scope.format = "";
-		$scope.frequency = "";
+		$scope.numerotation = 1;
 
 		$scope.success = success;
 		$scope.test = test;
@@ -15,9 +15,9 @@ app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routePar
 			}
 		});
 
-		zhttp.config.delivery.get.frequency().then(function(response){
+		zhttp.config.delivery.get.numerotation().then(function(response){
 			if(response.data && response.data != "false"){
-				$scope.frequency = response.data.value;
+				$scope.numerotation = parseInt(response.data.value);
 			}
 		});
 
@@ -30,8 +30,8 @@ app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routePar
 				value: $scope.format
 			};
 			data[1] = {
-				id: "crm_delivery_frequency",
-				value: $scope.frequency
+				id: "crm_delivery_numerotation",
+				value: $scope.numerotation
 			};
 
 			var formatted_data = angular.toJson(data);
@@ -43,7 +43,7 @@ app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routePar
 			var data = {};
 
 			data["format"] = $scope.format;
-			data["frequency"] = $scope.frequency;
+			data["numerotation"] = $scope.numerotation;
 
 			var formatted_data = angular.toJson(data);
 			zhttp.crm.delivery.test(formatted_data).then(function(response){

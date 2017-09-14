@@ -1,25 +1,14 @@
 <?php
 class Zeapps_orders extends ZeModel {
-    public function get_numerotation($frequency = null){
-        if($frequency){
-            $query = 'SELECT * FROM zeapps_orders WHERE';
-            switch ($frequency){
-                case 'week':
-                    $query .= ' week(created_at) = '.date('W').' AND';
-                case 'month':
-                    $query .= ' month(created_at) = '.date('m').' AND';
-                case 'year':
-                    $query .= ' year(created_at) = '.date('Y').' AND';
-                case 'lifetime':
-                    $query .= ' 1';
-                    break;
-                default:
-                    $query .= ' 0';
-            }
-            return sizeof($this->database()->customQuery($query)->result()) + 1;
+    public function get_numerotation($test = false){
+        $this->_pLoad->model("Zeapps_configs", "configs");
+        if($numerotation = $this->_pLoad->ctrl->configs->get('crm_order_numerotation')) {
+            if(!$test) $this->_pLoad->ctrl->configs->update(array('value' => $numerotation->value + 1), 'crm_order_numerotation');
+            return $numerotation->value;
         }
         else{
-            return false;
+            if(!$test) $this->_pLoad->ctrl->configs->insert(array('id' => 'crm_order_numerotation', 'value' => 2));
+            return 1;
         }
     }
 
@@ -59,8 +48,7 @@ class Zeapps_orders extends ZeModel {
         unset($src->deleted_at);
 
         $format = $this->_pLoad->ctrl->configs->get(array('id'=>'crm_order_format'))->value;
-        $frequency = $this->_pLoad->ctrl->configs->get(array('id'=>'crm_order_frequency'))->value;
-        $num = $this->get_numerotation($frequency);
+        $num = $this->get_numerotation();
         $src->numerotation = $this->parseFormat($format, $num);
         $src->date_creation = date('Y-m-d');
         $src->date_limit = date("Y-m-d", strtotime("+1 month", time()));
@@ -100,7 +88,10 @@ class Zeapps_orders extends ZeModel {
             }
         }
 
-        return $id;
+        return array(
+            "id" =>$id,
+            "numerotation" => $src->numerotation
+        );
     }
 
     public function parseFormat($result = null, $num = null)

@@ -1,8 +1,15 @@
 <?php
 class Zeapps_invoices extends ZeModel {
-    public function get_numerotation(){
-        $query = 'SELECT * FROM zeapps_invoices';
-        return sizeof($this->database()->customQuery($query)->result()) + 1;
+    public function get_numerotation($test = false){
+        $this->_pLoad->model("Zeapps_configs", "configs");
+        if($numerotation = $this->_pLoad->ctrl->configs->get('crm_invoice_numerotation')) {
+            if(!$test) $this->_pLoad->ctrl->configs->update(array('value' => $numerotation->value + 1), 'crm_invoice_numerotation');
+            return $numerotation->value;
+        }
+        else{
+            if(!$test) $this->_pLoad->ctrl->configs->insert(array('id' => 'crm_invoice_numerotation', 'value' => 2));
+            return 1;
+        }
     }
 
     public function get_ids($where = array()){
@@ -57,7 +64,6 @@ class Zeapps_invoices extends ZeModel {
     }
 
     public function createFrom($src){
-        $this->_pLoad->model("Zeapps_configs", "configs");
         $this->_pLoad->model("Zeapps_invoice_lines", "invoice_lines");
         $this->_pLoad->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->_pLoad->model("Zeapps_modalities", "modalities");
@@ -126,7 +132,10 @@ class Zeapps_invoices extends ZeModel {
             }
         }
 
-        return $id;
+        return array(
+            "id" =>$id,
+            "numerotation" => $src->numerotation
+        );
     }
 
     public function parseFormat($result = null, $num = null)

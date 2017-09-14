@@ -4,7 +4,6 @@ app.controller("ComZeappsCrmQuoteConfigCtrl", ["$scope", "$route", "$routeParams
 		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_quotes");
 
 		$scope.format = "";
-		$scope.frequency = "";
 
 		$scope.success = success;
 		$scope.test = test;
@@ -15,9 +14,9 @@ app.controller("ComZeappsCrmQuoteConfigCtrl", ["$scope", "$route", "$routeParams
 			}
 		});
 
-		zhttp.config.quote.get.frequency().then(function(response){
+		zhttp.config.quote.get.numerotation().then(function(response){
 			if(response.data && response.data != "false"){
-				$scope.frequency = response.data.value;
+                $scope.numerotation = parseInt(response.data.value);
 			}
 		});
 
@@ -30,8 +29,8 @@ app.controller("ComZeappsCrmQuoteConfigCtrl", ["$scope", "$route", "$routeParams
 				value: $scope.format
 			};
 			data[1] = {
-				id: "crm_quote_frequency",
-				value: $scope.frequency
+				id: "crm_quote_numerotation",
+				value: $scope.numerotation
 			};
 
 			var formatted_data = angular.toJson(data);
@@ -43,7 +42,7 @@ app.controller("ComZeappsCrmQuoteConfigCtrl", ["$scope", "$route", "$routeParams
 			var data = {};
 
 			data["format"] = $scope.format;
-			data["frequency"] = $scope.frequency;
+			data["numerotation"] = $scope.numerotation;
 
 			var formatted_data = angular.toJson(data);
 			zhttp.crm.quote.test(formatted_data).then(function(response){

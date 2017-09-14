@@ -1,18 +1,18 @@
 // declare the modal to the app service
 listModuleModalFunction.push({
 	module_name:"com_zeapps_crm",
-	function_name:"transform_delivery",
-	templateUrl:"/com_zeapps_crm/deliveries/transform_modal",
-	controller:"ZeAppsCrmModalDeliveryTransformCtrl",
+	function_name:"transform_document",
+	templateUrl:"/com_zeapps_crm/crm_commons/transform_modal",
+	controller:"ZeAppsCrmModalDocumentTransformCtrl",
 	size:"lg",
 	resolve:{
 		titre: function () {
-			return "Dupliquer le bon de livraison";
+			return "Dupliquer le document";
 		}
 	}
 });
 
-app.controller("ZeAppsCrmModalDeliveryTransformCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ZeAppsCrmModalDocumentTransformCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.form = {};

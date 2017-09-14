@@ -11,9 +11,9 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		$scope.documents = [];
 
 		$scope.invoiceLineTplUrl = "/com_zeapps_crm/invoices/form_line";
-        $scope.invoiceCommentTplUrl = "/com_zeapps_crm/invoices/form_comment";
-        $scope.invoiceActivityTplUrl = "/com_zeapps_crm/invoices/form_activity";
-        $scope.invoiceDocumentTplUrl = "/com_zeapps_crm/invoices/form_document";
+        $scope.invoiceCommentTplUrl = "/com_zeapps_crm/crm_commons/form_comment";
+        $scope.invoiceActivityTplUrl = "/com_zeapps_crm/crm_commons/form_activity";
+        $scope.invoiceDocumentTplUrl = "/com_zeapps_crm/crm_commons/form_document";
 		$scope.templateEdit = "/com_zeapps_crm/invoices/form_modal";
 
 		$scope.lines = [];
@@ -61,14 +61,9 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.invoices == undefined || $rootScope.invoices.ids == undefined) {
-			zhttp.crm.invoice.get_all("0", "invoices", 0, 0, true).then(function (response) {
-				if (response.status == 200) {
-                    $rootScope.invoices = {};
-					$rootScope.invoices.ids = response.data.ids;
-					initNavigation();
-				}
-			});
+		if($rootScope.invoices === undefined || $rootScope.invoices.ids === undefined) {
+            $rootScope.invoices = {};
+            $rootScope.invoices.ids = [];
 		}
 		else{
 			initNavigation();
@@ -200,14 +195,12 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function transform(){
-			zeapps_modal.loadModule("com_zeapps_crm", "transform_invoice", {}, function(objReturn) {
+			zeapps_modal.loadModule("com_zeapps_crm", "transform_document", {}, function(objReturn) {
 				if (objReturn) {
 					var formatted_data = angular.toJson(objReturn);
 					zhttp.crm.invoice.transform($scope.invoice.id, formatted_data).then(function(response){
 						if(response.data && response.data != "false"){
-							if(objReturn.order){
-								$location.url("/ng/com_zeapps_crm/order/" + response.data.order);
-							}
+                            zeapps_modal.loadModule("com_zeapps_crm", "transformed_document", response.data);
 						}
 					});
 				}

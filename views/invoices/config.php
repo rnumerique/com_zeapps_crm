@@ -43,33 +43,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
 
             <div class="col-md-6">
-                {{ numerotation }}
                 <div class="form-group">
-                    <strong>Frequence de remise a 0 de la numérotation des factures</strong>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" value="lifetime" ng-model="frequency">
-                            Lifetime
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" value="year" ng-model="frequency">
-                            Année
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" value="month" ng-model="frequency">
-                            Mois
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" value="week" ng-model="frequency">
-                            Semaine
-                        </label>
-                    </div>
+                    <label>Numérotation de la prochaine facture</label>
+                    <input type="number" class="form-control" ng-value="numerotation" disabled="true">
                 </div>
             </div>
         </div>

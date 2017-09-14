@@ -3,10 +3,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div ng-controller="ComZeappsCrmQuoteFormCtrl">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-group">
                 <label>Libellé du devis</label>
                 <input type="text" ng-model="form.libelle" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Canal</label>
+                <select ng-model="form.id_origin" class="form-control" ng-required="true">
+                    <option ng-repeat="crm_origin in crm_origins" value="{{crm_origin.id}}">
+                        {{ crm_origin.label }}
+                    </option>
+                </select>
             </div>
         </div>
 

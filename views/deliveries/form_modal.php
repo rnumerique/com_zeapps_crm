@@ -3,21 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div ng-controller="ComZeappsCrmDeliveryFormCtrl">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-group">
                 <label>Libellé du bon de livraison</label>
                 <input type="text" ng-model="form.libelle" class="form-control">
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Gestionnaire du bon de livraison <span class="required">*</span></label>
-                <span   ze-modalsearch="loadAccountManager"
-                        data-http="accountManagerHttp"
-                        data-model="form.name_user_account_manager"
-                        data-fields="accountManagerFields"
-                        data-title="Choisir une entreprise"></span>
             </div>
         </div>
     </div>
@@ -25,19 +14,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label>Statut</label>
-                <select class="form-control" ng-model="form.status">
-                    <option>En cours</option>
-                    <option>Gagné</option>
-                    <option>Perdu</option>
+                <label>Canal</label>
+                <select ng-model="form.id_origin" class="form-control" ng-required="true">
+                    <option ng-repeat="crm_origin in crm_origins" value="{{crm_origin.id}}">
+                        {{ crm_origin.label }}
+                    </option>
                 </select>
             </div>
         </div>
 
         <div class="col-md-6">
             <div class="form-group">
-                <label>Probabilité</label>
-                <input type="number" class="form-control" ng-model="form.probability">
+                <label>Gestionnaire du devis <span class="required">*</span></label>
+                <span   ze-modalsearch="loadAccountManager"
+                        data-http="accountManagerHttp"
+                        data-model="form.name_user_account_manager"
+                        data-fields="accountManagerFields"
+                        data-title="Choisir une entreprise"></span>
             </div>
         </div>
     </div>

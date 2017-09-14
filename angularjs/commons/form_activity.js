@@ -1,4 +1,4 @@
-app.controller("ZeAppsCrmModalInvoiceActivityCtrl", function($scope, zeHttp) {
+app.controller("ZeAppsCrmModalFormActivityCtrl", function($scope, zeHttp) {
     $scope.activity_types = [];
 
     $scope.updateType = updateType;

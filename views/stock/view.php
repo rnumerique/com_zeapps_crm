@@ -38,7 +38,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="product_stock in product_stocks | orderBy:'-dateRupture'">
+                <tr ng-repeat="product_stock in product_stocks">
                     <td ng-click="goTo(product_stock.id_stock)">
                         {{product_stock.ref}}
                     </td>

@@ -57,7 +57,7 @@ class Stock extends ZeCtrl
 
             $product_stock->avg = $this->stock_movements->avg($w);
 
-            if($product_stock->movements = $this->stock_movements->all($w)){
+            if($product_stock->movements = $this->stock_movements->limit(15,0)->order_by('date_mvt', 'DESC')->all($w)){
                 $product_stock->last = [];
                 $product_stock->last['month'] = $this->stock_movements->last_year($w);
                 $product_stock->last['dates'] = $this->stock_movements->last_months($w);
@@ -74,6 +74,7 @@ class Stock extends ZeCtrl
                     'days' => []
                 );
             }
+            $total = $this->stock_movements->count($w);
         }
         else{
             $product_stock = array();
@@ -81,13 +82,34 @@ class Stock extends ZeCtrl
 
         $warehouses = $this->warehouses->all();
 
-        echo json_encode(array('product_stock' => $product_stock, 'warehouses' => $warehouses));
+        echo json_encode(array(
+            'product_stock' => $product_stock,
+            'warehouses' => $warehouses,
+            'total' => $total
+        ));
+    }
+
+    public function get_movements($id_stock, $id_warehouse = null, $limit = 15, $offset = 0){
+        $this->load->model('zeapps_stock_movements', 'stock_movements');
+
+        $w = array('id_stock' => $id_stock);
+        if($id_warehouse)
+            $w['id_warehouse'] = $id_warehouse;
+
+        if(!$stock_movements = $this->stock_movements->limit($limit, $offset)->order_by('date_mvt', 'DESC')->all($w)){
+            $stock_movements = [];
+        }
+        $total = $this->stock_movements->count($w);
+
+        echo json_encode(array(
+            "stock_movements" => $stock_movements,
+            'total' => $total
+        ));
     }
 
     public function getAll($limit = 15, $offset = 0, $context = false){
         $this->load->model('zeapps_stocks', 'stocks');
         $this->load->model('zeapps_warehouses', 'warehouses');
-        $this->load->model('zeapps_stock_movements', 'stock_movements');
 
         $filters = array() ;
 
@@ -103,14 +125,11 @@ class Stock extends ZeCtrl
             $warehouses = null;
         }
 
-        if($product_stocks = $this->stocks->all($filters, $limit, $offset)){
-            foreach($product_stocks as $product_stock){
-                $filters['id_stock'] = $product_stock->id_stock;
-                $product_stock->avg = $this->stock_movements->avg($filters);
-            }
+        if(!$product_stocks = $this->stocks->all($filters, $limit, $offset)){
+            $product_stocks = [];
         }
 
-        $total = $this->stocks->count($filters);
+        $total = $this->stocks->group_by('id_warehouse')->count($filters);
 
         echo json_encode(array(
             'product_stocks' => $product_stocks,

@@ -35,12 +35,18 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 			[]
 		];
 		$scope.navigationState = "chart";
+        $scope.page = {
+            current: 1
+        };
+        $scope.pageSize = 15;
+        $scope.total = 0;
 
 		$scope.postits = [];
 
 		getStocks();
 
         $scope.getStocks = getStocks;
+        $scope.loadList = loadList;
 		$scope.edit = edit;
 		$scope.changeScaleTo = changeScaleTo;
 		$scope.backgroundOf = backgroundOf;
@@ -55,6 +61,8 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 
             zhttp.crm.product_stock.get($routeParams.id, id_warehouse).then(function (response) {
                 if (response.data && response.data != "false") {
+                    $scope.total = response.data.total;
+                    $scope.page.current = 1;
                     $scope.product_stock = response.data.product_stock;
                     $scope.product_stock.value_ht = parseFloat(response.data.product_stock.value_ht);
                     $scope.product_stock.resupply_delay = parseInt(response.data.product_stock.resupply_delay);
@@ -69,6 +77,22 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
                     parseMovements($scope.product_stock.last[$scope.selectedScale], $scope.product_stock.total);
 
                     generatePostits();
+                }
+            });
+        }
+
+        function loadList() {
+            var id_warehouse = $scope.filter_model.id_warehouse || "";
+            var offset = ($scope.page.current - 1) * $scope.pageSize;
+
+            zhttp.crm.product_stock.get_mvt($routeParams.id, id_warehouse, $scope.pageSize, offset).then(function (response) {
+                if (response.data && response.data != "false") {
+                	$scope.total = response.data.total;
+                    $scope.product_stock.movements = response.data.stock_movements;
+
+                    angular.forEach($scope.product_stock.movements, function(mvt){
+                        mvt.date_mvt = new Date(mvt.date_mvt);
+                    });
                 }
             });
         }
@@ -221,8 +245,6 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 		}
 
         function generatePostits(){
-            console.log($scope.product_stock.timeleft);
-            console.log(typeof $scope.product_stock.timeleft);
             $scope.postits = [
                 {
                     value: $scope.product_stock.total || 0,

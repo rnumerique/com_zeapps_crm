@@ -50,6 +50,12 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
 			}
 		});
 
+        zhttp.crm.crm_origin.get_all().then(function(response){
+            if(response.data && response.data != "false"){
+                $scope.crm_origins = response.data;
+            }
+        });
+
 		function Initform(){
 			if($scope.form.id === undefined) {
                 $scope.form.id_user_account_manager = $rootScope.user.id;

@@ -1,4 +1,4 @@
-<div ng-controller="ZeAppsCrmModalOrderActivityCtrl">
+<div ng-controller="ZeAppsCrmModalFormActivityCtrl">
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">

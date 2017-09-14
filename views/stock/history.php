@@ -20,10 +20,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
 </div>
 
-<div class="text-center" ng-show="plans.length > pageSize">
-    <ul uib-pagination total-items="product_stock.movements.length" ng-model="page" items-per-page="pageSize" class="pagination-sm" boundary-links="true"
-        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
-    </ul>
+<div class="text-center" ng-show="total > pageSize">
+    <ul uib-pagination total-items="total" ng-model="page.current" items-per-page="pageSize" ng-change="loadList()"
+        class="pagination-sm" boundary-links="true" max-size="15"
+        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
 </div>
 
 <div class="row">
@@ -38,7 +38,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="movement in product_stock.movements | orderBy:'-date_mvt' | startFrom:(page - 1)*pageSize | limitTo:pageSize"
+            <tr ng-repeat="movement in product_stock.movements"
                 ng-class="backgroundOf(movement)"
             >
                 <td>{{movement.date_mvt | date:'dd/MM/yyyy'}}</td>
@@ -58,8 +58,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </div>
 </div>
 
-<div class="text-center" ng-show="plans.length > pageSize">
-    <ul uib-pagination total-items="product_stock.movements.length" ng-model="page" items-per-page="pageSize" class="pagination-sm" boundary-links="true"
-        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
-    </ul>
+<div class="text-center" ng-show="total > pageSize">
+    <ul uib-pagination total-items="total" ng-model="page" items-per-page="pageSize" ng-change="loadList()"
+        class="pagination-sm" boundary-links="true" max-size="15"
+        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
 </div>

@@ -16,6 +16,12 @@ app.config(["$provide",
 					save : post_taxe,
 					del : del_taxe
 				},
+				crm_origin : {
+					get : get_crmOrigin,
+					get_all : getAll_crmOrigin,
+					save : post_crmOrigin,
+					del : del_crmOrigin
+				},
 				invoice : {
                     get : get_invoice,
                     get_all : getAll_invoice,
@@ -152,6 +158,7 @@ app.config(["$provide",
 				},
 				product_stock : {
 					get : get_product_stock,
+					get_mvt : get_product_stock_mvt,
 					get_all : getAll_product_stock,
 					save : save_product_stock,
 					del : delete_product_stock,
@@ -185,25 +192,25 @@ app.config(["$provide",
 				},
 				invoice : {
 					get : {
-						frequency: get_invoice_freq,
+						numerotation: get_invoice_numerotation,
 						format: get_invoice_format
 					}
 				},
 				quote : {
 					get : {
-						frequency: get_quote_freq,
+                        numerotation: get_quote_numerotation,
 						format: get_quote_format
 					}
 				},
 				order : {
 					get : {
-						frequency: get_order_freq,
+                        numerotation: get_order_numerotation,
 						format: get_order_format
 					}
 				},
 				delivery : {
 					get : {
-						frequency: get_delivery_freq,
+                        numerotation: get_delivery_numerotation,
 						format: get_delivery_format
 					}
 				}
@@ -237,6 +244,20 @@ app.config(["$provide",
 			}
 			function del_taxe(id){
 				return zeHttp.delete("/com_zeapps_crm/taxes/delete/" + id);
+			}
+
+			// CRM ORIGINS
+			function get_crmOrigin(id){
+				return zeHttp.get("/com_zeapps_crm/crm_origins/get/" + id);
+			}
+			function getAll_crmOrigin(){
+				return zeHttp.get("/com_zeapps_crm/crm_origins/getAll/");
+			}
+			function post_crmOrigin(data){
+				return zeHttp.post("/com_zeapps_crm/crm_origins/save", data);
+			}
+			function del_crmOrigin(id){
+				return zeHttp.delete("/com_zeapps_crm/crm_origins/delete/" + id);
 			}
 
 
@@ -531,6 +552,10 @@ app.config(["$provide",
 				id_warehouse = parseInt(id_warehouse) || "";
 				return zeHttp.get("/com_zeapps_crm/stock/get/"+id_stock+"/"+id_warehouse);
 			}
+			function get_product_stock_mvt(id_stock, id_warehouse, limit, offset){
+				id_warehouse = parseInt(id_warehouse) || "";
+				return zeHttp.get("/com_zeapps_crm/stock/get_movements/"+id_stock+"/"+id_warehouse+"/"+limit+"/"+offset);
+			}
             function getAll_product_stock(limit, offset, context, filters){
                 return zeHttp.post("/com_zeapps_crm/stock/getAll/" + limit + "/" + offset + "/" + context, filters);
             }
@@ -583,26 +608,26 @@ app.config(["$provide",
 
 
 			// CONFIG
-			function get_invoice_freq(){
-				return zeHttp.get("/zeapps/config/get/crm_invoice_frequency");
+			function get_invoice_numerotation(){
+				return zeHttp.get("/zeapps/config/get/crm_invoice_numerotation");
 			}
 			function get_invoice_format(){
 				return zeHttp.get("/zeapps/config/get/crm_invoice_format");
 			}
-			function get_quote_freq(){
-				return zeHttp.get("/zeapps/config/get/crm_quote_frequency");
+			function get_quote_numerotation(){
+				return zeHttp.get("/zeapps/config/get/crm_quote_numerotation");
 			}
 			function get_quote_format(){
 				return zeHttp.get("/zeapps/config/get/crm_quote_format");
 			}
-			function get_order_freq(){
-				return zeHttp.get("/zeapps/config/get/crm_order_frequency");
+			function get_order_numerotation(){
+				return zeHttp.get("/zeapps/config/get/crm_order_numerotation");
 			}
 			function get_order_format(){
 				return zeHttp.get("/zeapps/config/get/crm_order_format");
 			}
-			function get_delivery_freq(){
-				return zeHttp.get("/zeapps/config/get/crm_delivery_frequency");
+			function get_delivery_numerotation(){
+				return zeHttp.get("/zeapps/config/get/crm_delivery_numerotation");
 			}
 			function get_delivery_format(){
 				return zeHttp.get("/zeapps/config/get/crm_delivery_format");

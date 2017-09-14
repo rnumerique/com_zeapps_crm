@@ -22,20 +22,6 @@ class Quotes extends ZeCtrl
         $this->load->view('quotes/form_line');
     }
 
-    public function form_comment(){
-        $this->load->view('quotes/form_comment');
-    }
-
-    public function form_activity()
-    {
-        $this->load->view('quotes/form_activity');
-    }
-
-    public function form_document()
-    {
-        $this->load->view('quotes/form_document');
-    }
-
     public function lists()
     {
         $this->load->view('quotes/lists');
@@ -44,11 +30,6 @@ class Quotes extends ZeCtrl
     public function lists_partial()
     {
         $this->load->view('quotes/lists_partial');
-    }
-
-    public function transform_modal()
-    {
-        $this->load->view('quotes/transform_modal');
     }
 
     public function config()
@@ -152,8 +133,7 @@ class Quotes extends ZeCtrl
         }
 
         $format = $data['format'];
-        $frequency = $data['frequency'];
-        $num = $this->quotes->get_numerotation($frequency);
+        $num = $data['numerotation'];
 
         $result = $this->quotes->parseFormat($format, $num);
 
@@ -305,8 +285,7 @@ class Quotes extends ZeCtrl
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_quote_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_quote_frequency'))->value;
-            $num = $this->quotes->get_numerotation($frequency);
+            $num = $this->quotes->get_numerotation();
             $data['numerotation'] = $this->quotes->parseFormat($format, $num);
 
             $id = $this->quotes->insert($data);

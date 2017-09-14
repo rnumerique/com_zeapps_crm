@@ -22,20 +22,6 @@ class Orders extends ZeCtrl
         $this->load->view('orders/form_line');
     }
 
-    public function form_comment(){
-        $this->load->view('orders/form_comment');
-    }
-
-    public function form_activity()
-    {
-        $this->load->view('orders/form_activity');
-    }
-
-    public function form_document()
-    {
-        $this->load->view('orders/form_document');
-    }
-
     public function lists()
     {
         $this->load->view('orders/lists');
@@ -44,11 +30,6 @@ class Orders extends ZeCtrl
     public function lists_partial()
     {
         $this->load->view('orders/lists_partial');
-    }
-
-    public function transform_modal()
-    {
-        $this->load->view('orders/transform_modal');
     }
 
     public function config()
@@ -114,7 +95,7 @@ class Orders extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/orders/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['order']->numerotation.'|C. Compta : '.$data['order']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Commande €<br>n° : '.$data['order']->numerotation.'|C. Compta : '.$data['order']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
@@ -152,8 +133,7 @@ class Orders extends ZeCtrl
         }
 
         $format = $data['format'];
-        $frequency = $data['frequency'];
-        $num = $this->orders->get_numerotation($frequency);
+        $num = $data['numerotation'];
 
         $result = $this->orders->parseFormat($format, $num);
 
@@ -306,8 +286,7 @@ class Orders extends ZeCtrl
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_order_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_order_frequency'))->value;
-            $num = $this->orders->get_numerotation($frequency);
+            $num = $this->orders->get_numerotation();
             $data['numerotation'] = $this->orders->parseFormat($format, $num);
 
             $id = $this->orders->insert($data);

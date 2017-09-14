@@ -131,7 +131,7 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 		}
 
 		function updatePrice(price){
-			if($scope.form.value_taxe && $scope.form.value_taxe > 0) {
+			if($scope.form.value_taxe || $scope.form.value_taxe === 0) {
 				if (price === "ht") {
 					$scope.form.price_ht = round2(parseFloat($scope.form.price_ttc) / ( 1 + parseFloat($scope.form.value_taxe) / 100));
 				}

@@ -15,16 +15,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <p class="small">
                         n° {{ order.numerotation }}
                     </p>
-                    <p>
-                        <span class="form-group form-inline">
-                            <select class="form-control input-sm" ng-model="order.status" ng-change="updateStatus()">
-                                <option>En cours</option>
-                                <option>Gagné</option>
-                                <option>Perdu</option>
-                            </select>
-                        </span>
-                        ({{ order.probability | number:2 }}%)
-                    </p>
                     <button type="button" class="btn btn-xs btn-info" ng-click="showDetailsEntreprise = !showDetailsEntreprise">
                         {{ showDetailsEntreprise ? 'Masquer' : 'Voir' }} en cours
                     </button>
@@ -52,14 +42,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
-                        <ze-btn fa="pencil" color="info" hint="Editer"
+                        <ze-btn fa="arrow-left" color="primary" hint="Retour" direction="left" ng-click="back()"></ze-btn>
+                        <ze-btn fa="pencil" color="info" hint="Editer" direction="left"
                                 ze-modalform="updateOrder"
                                 data-edit="order"
                                 data-template="templateEdit"
                                 data-title="Modifier la commande"></ze-btn>
-                        <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
-                        <ze-btn fa="files-o" color="success" hint="Dupliquer" ng-click="transform()"></ze-btn>
+                        <ze-btn fa="download" color="primary" hint="PDF" direction="left" ng-click="print()"></ze-btn>
+                        <ze-btn fa="files-o" color="success" hint="Dupliquer" direction="left" ng-click="transform()"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_orders > 0">
                             <button type="button" class="btn btn-default" ng-class="order_first == 0 ? 'disabled' :''" ng-click="first_order()"><span class="fa fa-fw fa-fast-backward"></span></button>

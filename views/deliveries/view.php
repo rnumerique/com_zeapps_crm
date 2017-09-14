@@ -42,14 +42,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <ze-btn fa="arrow-left" color="primary" hint="Retour" ng-click="back()"></ze-btn>
-                        <ze-btn fa="pencil" color="info" hint="Editer"
+                        <ze-btn fa="arrow-left" color="primary" hint="Retour" direction="left" ng-click="back()"></ze-btn>
+                        <ze-btn fa="pencil" color="info" hint="Editer" direction="left"
                                 ze-modalform="updateDelivery"
                                 data-edit="delivery"
                                 data-template="templateEdit"
                                 data-title="Modifier le bon de livraison"></ze-btn>
-                        <ze-btn fa="download" color="primary" hint="PDF" ng-click="print()"></ze-btn>
-                        <ze-btn fa="files-o" color="success" hint="Dupliquer" ng-click="transform()"></ze-btn>
+                        <ze-btn fa="download" color="primary" hint="PDF" direction="left" ng-click="print()"></ze-btn>
+                        <ze-btn fa="files-o" color="success" hint="Dupliquer" direction="left" ng-click="transform()"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_deliveries > 0">
                             <button type="button" class="btn btn-default" ng-class="delivery_first == 0 ? 'disabled' :''" ng-click="first_delivery()"><span class="fa fa-fw fa-fast-backward"></span></button>

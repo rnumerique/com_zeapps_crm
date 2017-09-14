@@ -17,8 +17,7 @@ class Zeapps_stock_movements extends ZeModel{
     public function avg($where = array()){
         $query = "select sum(zeapps_stock_movements.qty) as average 
                   from zeapps_stock_movements 
-                  where date_mvt > date_sub(CURDATE(),INTERVAL 12 MONTH) 
-                  and deleted_at is null 
+                  where deleted_at is null 
                   and qty < 0
                   and ignored = '0'
                   and date_mvt BETWEEN CURDATE() - INTERVAL 90 DAY AND CURDATE() + INTERVAL 1 DAY
@@ -54,7 +53,7 @@ class Zeapps_stock_movements extends ZeModel{
     }
 
     public function last_year($where = array()){
-        $query = "select * 
+        $query = "select date_mvt, qty
                   from zeapps_stock_movements 
                   where date_mvt > date_sub(CURDATE(),INTERVAL 12 MONTH) 
                   and deleted_at is null 
@@ -67,7 +66,7 @@ class Zeapps_stock_movements extends ZeModel{
     }
 
     public function last_months($where = array()){
-        $query = "select * 
+        $query = "select date_mvt, qty 
                   from zeapps_stock_movements 
                   where date_mvt > date_sub(CURDATE(),INTERVAL 90 DAY) 
                   and deleted_at is null 
@@ -80,7 +79,7 @@ class Zeapps_stock_movements extends ZeModel{
     }
 
     public function last_month($where = array()){
-        $query = "select * 
+        $query = "select date_mvt, qty 
                   from zeapps_stock_movements 
                   where date_mvt > date_sub(CURDATE(),INTERVAL 30 DAY) 
                   and deleted_at is null 
@@ -93,7 +92,7 @@ class Zeapps_stock_movements extends ZeModel{
     }
 
     public function last_week($where = array()){
-        $query = "select * 
+        $query = "select date_mvt, qty 
                   from zeapps_stock_movements 
                   where date_mvt > date_sub(CURDATE(),INTERVAL 7 DAY) 
                   and deleted_at is null 

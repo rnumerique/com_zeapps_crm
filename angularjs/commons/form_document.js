@@ -1,4 +1,4 @@
-app.controller("ZeAppsCrmModalOrderDocumentCtrl", function($scope) {
+app.controller("ZeAppsCrmModalFormDocumentCtrl", function($scope) {
 
     $scope.upload = upload;
 

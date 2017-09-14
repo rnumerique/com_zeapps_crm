@@ -11,9 +11,9 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		$scope.documents = [];
 
 		$scope.orderLineTplUrl = "/com_zeapps_crm/orders/form_line";
-        $scope.orderCommentTplUrl = "/com_zeapps_crm/orders/form_comment";
-        $scope.orderActivityTplUrl = "/com_zeapps_crm/orders/form_activity";
-        $scope.orderDocumentTplUrl = "/com_zeapps_crm/orders/form_document";
+        $scope.orderCommentTplUrl = "/com_zeapps_crm/crm_commons/form_comment";
+        $scope.orderActivityTplUrl = "/com_zeapps_crm/crm_commons/form_activity";
+        $scope.orderDocumentTplUrl = "/com_zeapps_crm/crm_commons/form_document";
 		$scope.templateEdit = "/com_zeapps_crm/orders/form_modal";
 
 		$scope.lines = [];
@@ -62,14 +62,9 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.orders == undefined || $rootScope.orders.ids == undefined) {
-			zhttp.crm.order.get_all("0", "orders", 0, 0, true).then(function (response) {
-				if (response.status == 200) {
-                    $rootScope.orders = {};
-					$rootScope.orders.ids = response.data.ids;
-					initNavigation();
-				}
-			});
+		if($rootScope.orders === undefined || $rootScope.orders.ids === undefined) {
+            $rootScope.orders = {};
+            $rootScope.orders.ids = [];
 		}
 		else{
 			initNavigation();
@@ -215,14 +210,12 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 		}
 
 		function transform(){
-			zeapps_modal.loadModule("com_zeapps_crm", "transform_order", {}, function(objReturn) {
+			zeapps_modal.loadModule("com_zeapps_crm", "transform_document", {}, function(objReturn) {
 				if (objReturn) {
 					var formatted_data = angular.toJson(objReturn);
 					zhttp.crm.order.transform($scope.order.id, formatted_data).then(function(response){
 						if(response.data && response.data != "false"){
-							if(objReturn.order){
-								$location.url("/ng/com_zeapps_crm/order/" + response.data.order);
-							}
+                            zeapps_modal.loadModule("com_zeapps_crm", "transformed_document", response.data);
 						}
 					});
 				}

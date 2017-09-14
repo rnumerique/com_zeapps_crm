@@ -11,9 +11,9 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		$scope.documents = [];
 
 		$scope.deliveryLineTplUrl = "/com_zeapps_crm/deliveries/form_line";
-		$scope.deliveryCommentTplUrl = "/com_zeapps_crm/deliveries/form_comment";
-        $scope.deliveryActivityTplUrl = "/com_zeapps_crm/deliveries/form_activity";
-        $scope.deliveryDocumentTplUrl = "/com_zeapps_crm/deliveries/form_document";
+		$scope.deliveryCommentTplUrl = "/com_zeapps_crm/crm_commons/form_comment";
+        $scope.deliveryActivityTplUrl = "/com_zeapps_crm/crm_commons/form_activity";
+        $scope.deliveryDocumentTplUrl = "/com_zeapps_crm/crm_commons/form_document";
 		$scope.templateEdit = "/com_zeapps_crm/deliveries/form_modal";
 
 		$scope.lines = [];
@@ -62,14 +62,9 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 
 
 		//////////////////// INIT ////////////////////
-		if($rootScope.deliveries == undefined || $rootScope.deliveries.ids == undefined) {
-			zhttp.crm.delivery.get_all("0", "deliveries", 0, 0, true).then(function (response) {
-				if (response.status == 200) {
-					$rootScope.deliveries = {};
-					$rootScope.deliveries.ids = response.data.ids;
-					initNavigation();
-				}
-			});
+		if($rootScope.deliveries === undefined || $rootScope.deliveries.ids === undefined) {
+            $rootScope.deliveries = {};
+            $rootScope.deliveries.ids = [];
 		}
 		else{
 			initNavigation();
@@ -215,14 +210,12 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
 		}
 
 		function transform(){
-			zeapps_modal.loadModule("com_zeapps_crm", "transform_delivery", {}, function(objReturn) {
+			zeapps_modal.loadModule("com_zeapps_crm", "transform_document", {}, function(objReturn) {
 				if (objReturn) {
 					var formatted_data = angular.toJson(objReturn);
 					zhttp.crm.delivery.transform($scope.delivery.id, formatted_data).then(function(response){
 						if(response.data && response.data != "false"){
-							if(objReturn.order){
-								$location.url("/ng/com_zeapps_crm/order/" + response.data.order);
-							}
+                            zeapps_modal.loadModule("com_zeapps_crm", "transformed_document", response.data);
 						}
 					});
 				}

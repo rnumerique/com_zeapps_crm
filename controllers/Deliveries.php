@@ -22,20 +22,6 @@ class Deliveries extends ZeCtrl
         $this->load->view('deliveries/form_line');
     }
 
-    public function form_comment(){
-        $this->load->view('deliveries/form_comment');
-    }
-
-    public function form_activity()
-    {
-        $this->load->view('deliveries/form_activity');
-    }
-
-    public function form_document()
-    {
-        $this->load->view('deliveries/form_document');
-    }
-
     public function lists()
     {
         $this->load->view('deliveries/lists');
@@ -44,11 +30,6 @@ class Deliveries extends ZeCtrl
     public function lists_partial()
     {
         $this->load->view('deliveries/lists_partial');
-    }
-
-    public function transform_modal()
-    {
-        $this->load->view('deliveries/transform_modal');
     }
 
     public function config()
@@ -114,7 +95,7 @@ class Deliveries extends ZeCtrl
         $pdfFilePath = FCPATH . 'tmp/com_zeapps_crm/deliveries/'.$nomPDF.'.pdf';
 
         //set the PDF header
-        $this->M_pdf->pdf->SetHeader('Devis €<br>n° : '.$data['delivery']->numerotation.'|C. Compta : '.$data['delivery']->accounting_number.'|{DATE d/m/Y}');
+        $this->M_pdf->pdf->SetHeader('Bon de livraison €<br>n° : '.$data['delivery']->numerotation.'|C. Compta : '.$data['delivery']->accounting_number.'|{DATE d/m/Y}');
 
         //set the PDF footer
         $this->M_pdf->pdf->SetFooter('{PAGENO}/{nb}');
@@ -152,8 +133,7 @@ class Deliveries extends ZeCtrl
         }
 
         $format = $data['format'];
-        $frequency = $data['frequency'];
-        $num = $this->deliveries->get_numerotation($frequency);
+        $num = $data['numerotation'];
 
         $result = $this->deliveries->parseFormat($format, $num);
 
@@ -306,8 +286,7 @@ class Deliveries extends ZeCtrl
         } else {
 
             $format = $this->configs->get(array('id'=>'crm_delivery_format'))->value;
-            $frequency = $this->configs->get(array('id'=>'crm_delivery_frequency'))->value;
-            $num = $this->deliveries->get_numerotation($frequency);
+            $num = $this->deliveries->get_numerotation();
             $data['numerotation'] = $this->deliveries->parseFormat($format, $num);
 
             $id = $this->deliveries->insert($data);

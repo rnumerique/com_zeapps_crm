@@ -46,7 +46,7 @@ $tabMenu["order"] = 46 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
-$tabMenu["id"] = "com_ze_apps_delivery" ;
+$tabMenu["id"] = "com_ze_apps_deliveries" ;
 $tabMenu["space"] = "com_ze_apps_config" ;
 $tabMenu["label"] = "Livraisons" ;
 $tabMenu["fa-icon"] = "truck" ;
