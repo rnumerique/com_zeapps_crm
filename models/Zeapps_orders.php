@@ -130,4 +130,27 @@ class Zeapps_orders extends ZeModel {
         }
         return false;
     }
+
+    public function frequencyOf($id = 0, $src = 'contact'){
+        if($orders = $this->database()->select('date_creation')->order_by('date_creation', 'asc')->where(array('id_'.$src => $id, 'date_creation !=' => '0000-00-00 00:00:00'))->table('zeapps_orders')->result()) {
+            $nb = $this->count(array('id_'.$src => $id));
+            $first = $orders[0]->date_creation;
+            $first = strtotime($first);
+
+            if(sizeof($orders) > 1) {
+                $last = $orders[sizeof($orders) - 1]->date_creation;
+                $last = strtotime($last);
+            }
+            else{
+                $last = time();
+            }
+
+            $diff = intval((($last - $first) / $nb) / 86400); // 86400 = 60*60*24
+
+            return $diff;
+        }
+        else{
+            return '--';
+        }
+    }
 }

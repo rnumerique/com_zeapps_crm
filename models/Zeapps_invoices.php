@@ -50,6 +50,22 @@ class Zeapps_invoices extends ZeModel {
         return $this->database()->customQuery($query)->result();
     }
 
+    public function turnoverByYearsOf($id = 0, $src = 'contact'){
+        $query = "SELECT SUM(l.total_ht) as total_ht,
+                         YEAR(i.date_limit) as year
+                  FROM zeapps_invoices i
+                  LEFT JOIN zeapps_invoice_lines l ON i.id = l.id_invoice
+                  WHERE i.finalized = '1'
+                        AND i.deleted_at IS NULL
+                        AND l.deleted_at IS NULL";
+
+        $query .= " AND i.id_".$src." = ".$id;
+
+        $query .= " GROUP BY YEAR(i.date_limit) ORDER BY i.date_limit DESC";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
     public function getDueOf($type, $id = null){
         $total = 0;
         $invoices = $this->all(array('id_'.$type => $id, 'due >' => 0));
