@@ -2,8 +2,6 @@
 class Zeapps_stocks extends ZeModel {
     public function all($where = array(), $limit = 2147483647, $offset = 0){
 
-        $where['deleted_at'] = null;
-
         $query = "select  s.id_stock as id_stock,
                           s.ref as ref,
                           s.label as label,
@@ -69,7 +67,7 @@ class Zeapps_stocks extends ZeModel {
                     if (isset($where['id_warehouse'])) {
                         $w['id_warehouse'] = $where['id_warehouse'];
                     }
-                    if ($ret = $this->database()->select('date_mvt')->where($w)->table('zeapps_stock_movements')->result()) {
+                    if ($ret = $this->database()->select('date_mvt')->where($w)->table('zeapps_stock_movements')->limit(1)->order_by('date_mvt', 'ASC')->result()) {
                         $first = $ret[0]->date_mvt;
                         $now = time();
                         $first = strtotime($first);
