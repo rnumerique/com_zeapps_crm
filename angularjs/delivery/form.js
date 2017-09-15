@@ -35,7 +35,6 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
             {label:'Type',key:'type_label'}
         ];
 
-		$scope.updateDateLimit = updateDateLimit;
 		$scope.loadAccountManager = loadAccountManager;
 		$scope.loadCompany = loadCompany;
 		$scope.loadContact = loadContact;
@@ -62,8 +61,6 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
                 $scope.form.name_user_account_manager = $rootScope.user.firstname + " " + $rootScope.user.lastname;
                 $scope.form.id_warehouse = $rootScope.user.id_warehouse;
                 $scope.form.date_creation = new Date();
-                $scope.form.date_limit = new Date();
-                $scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
 
                 if($routeParams.id_company !== undefined && $routeParams.id_company !== 0){
                     zhttp.contact.company.get($routeParams.id_company).then(function(response){
@@ -80,11 +77,6 @@ app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParam
                     });
                 }
             }
-		}
-
-		function updateDateLimit(){
-			$scope.form.date_limit = new Date($scope.form.date_creation);
-			$scope.form.date_limit.setDate($scope.form.date_limit.getDate() + 30);
 		}
 
         function loadAccountManager(user) {

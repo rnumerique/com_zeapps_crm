@@ -89,13 +89,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <input type="date" ng-model="form.date_creation" ng-change="updateDateLimit()" class="form-control" ng-required="true">
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Date de validité <span class="required">*</span></label>
-                <input type="date" ng-model="form.date_limit" class="form-control" ng-required="true">
-            </div>
-        </div>
     </div>
 
     <div class="row">

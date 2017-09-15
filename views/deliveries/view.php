@@ -80,7 +80,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit || "-" | date:'dd/MM/yyyy' }}</td>
+                            <td>{{ due_line.date_creation || "-" | date:'dd/MM/yyyy' }}</td>
                             <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
                             <td class="text-right">
                                 <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
@@ -306,9 +306,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <br/>
             <strong>Date de création du bon de livraison :</strong>
             {{ delivery.date_creation || "-" | date:'dd/MM/yyyy' }}
-            <br/>
-            <strong>Date de validité du bon de livraison :</strong>
-            {{ delivery.date_limit || "-" | date:'dd/MM/yyyy' }}
             <br/>
         </div>
 

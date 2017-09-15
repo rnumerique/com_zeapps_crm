@@ -48,20 +48,6 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
                 },
                 {
                     format: 'input',
-                    field: 'date_limite >',
-                    type: 'date',
-                    label: 'Date limite : Début',
-                    size: 3
-                },
-                {
-                    format: 'input',
-                    field: 'date_limite <',
-                    type: 'date',
-                    label: 'Fin',
-                    size: 3
-                },
-                {
-                    format: 'input',
                     field: 'total_ht >',
                     type: 'text',
                     label: 'Total HT : Supérieur à',
@@ -145,7 +131,6 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
 
                     for (var i = 0; i < $scope.deliveries.length; i++) {
                         $scope.deliveries[i].date_creation = $scope.deliveries[i].date_creation !== "0000-00-00 00:00:00" ? new Date($scope.deliveries[i].date_creation) : 0;
-                        $scope.deliveries[i].date_limit = $scope.deliveries[i].date_limit !== "0000-00-00 00:00:00" ? new Date($scope.deliveries[i].date_limit) : 0;
                         $scope.deliveries[i].global_discount = parseFloat($scope.deliveries[i].global_discount);
                         $scope.deliveries[i].probability = parseFloat($scope.deliveries[i].probability);
                     }
@@ -177,17 +162,6 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
                 data.date_creation = 0;
             }
 
-            if(data.date_limit) {
-                var y = data.date_limit.getFullYear();
-                var M = data.date_limit.getMonth();
-                var d = data.date_limit.getDate();
-
-                data.date_limit = new Date(Date.UTC(y, M, d));
-            }
-            else{
-                data.date_limit = 0;
-            }
-
             var formatted_data = angular.toJson(data);
             zhttp.crm.delivery.save(formatted_data).then(function (response) {
                 if (response.data && response.data != "false") {
@@ -209,17 +183,6 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
             }
             else{
                 data.date_creation = 0;
-            }
-
-            if(data.date_limit) {
-                var y = data.date_limit.getFullYear();
-                var M = data.date_limit.getMonth();
-                var d = data.date_limit.getDate();
-
-                data.date_limit = new Date(Date.UTC(y, M, d));
-            }
-            else{
-                data.date_limit = 0;
             }
 
             var formatted_data = angular.toJson(data);

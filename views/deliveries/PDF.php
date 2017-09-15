@@ -104,12 +104,6 @@
             <?php echo $delivery->modalities; ?>
         </td>
         <?php } ?>
-        <?php if($delivery->date_limit !== "0000-00-00 00:00:00"){ ?>
-        <td class="border">
-            <strong>Date de validité</strong><br>
-            <?php  echo date('d/m/Y', strtotime($delivery->date_limit)); ?>
-        </td>
-        <?php } ?>
     </tr>
     <tr>
         <td colspan="2">

@@ -99,7 +99,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
                     $scope.delivery.global_discount = parseFloat($scope.delivery.global_discount);
                     $scope.delivery.probability = parseFloat($scope.delivery.probability);
 					$scope.delivery.date_creation = new Date($scope.delivery.date_creation);
-					$scope.delivery.date_limit = new Date($scope.delivery.date_limit);
 
 					var i;
 
@@ -426,12 +425,6 @@ app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParam
                 var d = data.date_creation.getDate();
 
                 data.date_creation = new Date(Date.UTC(y, M, d));
-
-                var y = data.date_limit.getFullYear();
-                var M = data.date_limit.getMonth();
-                var d = data.date_limit.getDate();
-
-                data.date_limit = new Date(Date.UTC(y, M, d));
 
                 var formatted_data = angular.toJson(data);
                 zhttp.crm.delivery.save(formatted_data).then(function(response){

@@ -525,7 +525,7 @@ class Deliveries extends ZeCtrl
                     "qty" => -1 * floatval($line->qty),
                     "id_table" => $delivery->id,
                     "name_table" => "zeapps_deliveries",
-                    "date_mvt" => $delivery->date_limit,
+                    "date_mvt" => $delivery->date_creation,
                     "ignored" => 0
                 ));
             }

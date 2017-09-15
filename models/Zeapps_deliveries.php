@@ -53,7 +53,6 @@ class Zeapps_deliveries extends ZeModel {
         $num = $this->get_numerotation();
         $src->numerotation = $this->parseFormat($format, $num);
         $src->date_creation = date('Y-m-d');
-        $src->date_limit = date("Y-m-d", strtotime("+1 month", time()));
 
         $id = parent::insert($src);
 
@@ -83,7 +82,7 @@ class Zeapps_deliveries extends ZeModel {
                         "qty" => -1 * floatval($line->qty),
                         "id_table" => $src->id,
                         "name_table" => "zeapps_deliveries",
-                        "date_mvt" => $src->date_limit,
+                        "date_mvt" => $src->date_creation,
                         "ignored" => 0
                     ));
                 }
@@ -111,7 +110,7 @@ class Zeapps_deliveries extends ZeModel {
                         "qty" => -1 * floatval($line->qty),
                         "id_table" => $src->id,
                         "name_table" => "zeapps_deliveries",
-                        "date_mvt" => $src->date_limit,
+                        "date_mvt" => $src->date_creation,
                         "ignored" => 0
                     ));
                 }
