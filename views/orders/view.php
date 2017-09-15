@@ -80,7 +80,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr ng-repeat="due_line in (company_due_lines.length > 0 ?  company_due_lines : contact_due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
+                            <td>{{ due_line.date_limit || "-" | date:'dd/MM/yyyy' }}</td>
                             <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
                             <td class="text-right">
                                 <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
@@ -308,10 +308,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             {{ order.reference_client }}
             <br/>
             <strong>Date de création de la commande :</strong>
-            {{ order.date_creation | date:'dd/MM/yyyy' }}
+            {{ order.date_creation || "-" | date:'dd/MM/yyyy' }}
             <br/>
             <strong>Date de validité de la commande :</strong>
-            {{ order.date_limit | date:'dd/MM/yyyy' }}
+            {{ order.date_limit || "-" | date:'dd/MM/yyyy' }}
             <br/>
         </div>
 
@@ -339,7 +339,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         data-title="Modifier l'activité"></ze-btn>
                                 <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteActivity(activity)" ze-confirmation></ze-btn>
                             </div>
-                            <strong>{{ activity.libelle }}</strong>
+                            <strong>{{ activity.label_type ? activity.label_type + " : " : "" }}{{ activity.libelle }}</strong><br>
+                            Date limite : {{ activity.deadline || "-" | date:'dd/MM/yyyy' }} - {{ activity.status }}
                         </div>
                         <div class="card_document-body" ng-if="activity.description">{{ activity.description }}</div>
                         <div class="card_document-footer text-muted">

@@ -144,8 +144,8 @@ app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$ro
                     $scope.deliveries = response.data.deliveries;
 
                     for (var i = 0; i < $scope.deliveries.length; i++) {
-                        $scope.deliveries[i].date_creation = new Date($scope.deliveries[i].date_creation);
-                        $scope.deliveries[i].date_limit = new Date($scope.deliveries[i].date_limit);
+                        $scope.deliveries[i].date_creation = $scope.deliveries[i].date_creation !== "0000-00-00 00:00:00" ? new Date($scope.deliveries[i].date_creation) : 0;
+                        $scope.deliveries[i].date_limit = $scope.deliveries[i].date_limit !== "0000-00-00 00:00:00" ? new Date($scope.deliveries[i].date_limit) : 0;
                         $scope.deliveries[i].global_discount = parseFloat($scope.deliveries[i].global_discount);
                         $scope.deliveries[i].probability = parseFloat($scope.deliveries[i].probability);
                     }

@@ -50,8 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </td>
                     <td ng-click="goTo(invoice.id)" class="text-right">{{invoice.total_ht | currency:'€':2}}</td>
                     <td ng-click="goTo(invoice.id)" class="text-right">{{invoice.total_ttc | currency:'€':2}}</td>
-                    <td ng-click="goTo(invoice.id)">{{invoice.date_creation | date:'dd/MM/yyyy'}}</td>
-                    <td ng-click="goTo(invoice.id)">{{invoice.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(invoice.id)">{{invoice.date_creation || "-" | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(invoice.id)">{{invoice.date_limit || "-" | date:'dd/MM/yyyy'}}</td>
                     <td ng-click="goTo(invoice.id)">{{invoice.name_user_account_manager}}</td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"

@@ -48,8 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </td>
                     <td ng-click="goTo(order.id)" class="text-right">{{order.total_ht | currency:'€':2}}</td>
                     <td ng-click="goTo(order.id)" class="text-right">{{order.total_ttc | currency:'€':2}}</td>
-                    <td ng-click="goTo(order.id)">{{order.date_creation | date:'dd/MM/yyyy'}}</td>
-                    <td ng-click="goTo(order.id)">{{order.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(order.id)">{{order.date_creation || "-" | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(order.id)">{{order.date_limit || "-" | date:'dd/MM/yyyy'}}</td>
                     <td ng-click="goTo(order.id)">{{order.name_user_account_manager}}</td>
                     <td class="text-right">
                         <ze-btn fa="pencil" color="info" direction="left" hint="Editer"

@@ -90,7 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
                             <td>{{ due_line.numerotation }}</td>
                             <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit | date:'dd/MM/yyyy' }}</td>
+                            <td>{{ due_line.date_limit || "-" | date:'dd/MM/yyyy' }}</td>
                             <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
                             <td class="text-right">
                                 <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
@@ -315,10 +315,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             {{ quote.reference_client }}
             <br/>
             <strong>Date de création du devis :</strong>
-            {{ quote.date_creation | date:'dd/MM/yyyy' }}
+            {{ quote.date_creation || "-" | date:'dd/MM/yyyy' }}
             <br/>
             <strong>Date de validité du devis :</strong>
-            {{ quote.date_limit | date:'dd/MM/yyyy' }}
+            {{ quote.date_limit || "-" | date:'dd/MM/yyyy' }}
             <br/>
         </div>
 
@@ -347,7 +347,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <ze-btn data-fa="trash" data-hint="Supprimer" data-direction="left" data-color="danger" ng-click="deleteActivity(activity)" ze-confirmation></ze-btn>
                             </div>
                             <strong>{{ activity.label_type ? activity.label_type + " : " : "" }}{{ activity.libelle }}</strong><br>
-                            Date limite : {{ activity.deadline | date:'dd/MM/yyyy' }} - {{ activity.status }}
+                            Date limite : {{ activity.deadline || "-" | date:'dd/MM/yyyy' }} - {{ activity.status }}
                         </div>
                         <div class="card_document-body" ng-if="activity.description">{{ activity.description }}</div>
                         <div class="card_document-footer text-muted">
@@ -384,7 +384,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div class="card_document-body" ng-if="document.description">{{ document.description }}</div>
                         <div class="card_document-footer text-muted">
-                            Envoyé par <strong>{{ document.name_user }}</strong> le <strong>{{ document.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ document.date | date:'HH:mm' }}</strong>
+                            Envoyé par <strong>{{ document.name_user }}</strong> le <strong>{{ document.date | date:'dd/MM/yyyy' }}</strong> à <strong>{{ document.date || "-" | date:'HH:mm' }}</strong>
                         </div>
                     </div>
                 </div>

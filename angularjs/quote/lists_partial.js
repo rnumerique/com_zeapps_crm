@@ -144,8 +144,8 @@ app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$route
                     $scope.quotes = response.data.quotes;
 
                     for (var i = 0; i < $scope.quotes.length; i++) {
-                        $scope.quotes[i].date_creation = new Date($scope.quotes[i].date_creation);
-                        $scope.quotes[i].date_limit = new Date($scope.quotes[i].date_limit);
+                        $scope.quotes[i].date_creation = $scope.quotes[i].date_creation !== "0000-00-00 00:00:00" ? new Date($scope.quotes[i].date_creation) : 0;
+                        $scope.quotes[i].date_limit = $scope.quotes[i].date_limit !== "0000-00-00 00:00:00" ? new Date($scope.quotes[i].date_limit) : 0;
                         $scope.quotes[i].global_discount = parseFloat($scope.quotes[i].global_discount);
                         $scope.quotes[i].probability = parseFloat($scope.quotes[i].probability);
                     }

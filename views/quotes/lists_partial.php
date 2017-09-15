@@ -50,8 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </td>
                     <td ng-click="goTo(quote.id)" class="text-right">{{quote.total_ht | currency:'€':2}}</td>
                     <td ng-click="goTo(quote.id)" class="text-right">{{quote.total_ttc | currency:'€':2}}</td>
-                    <td ng-click="goTo(quote.id)">{{quote.date_creation | date:'dd/MM/yyyy'}}</td>
-                    <td ng-click="goTo(quote.id)">{{quote.date_limit | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.date_creation || "-" | date:'dd/MM/yyyy'}}</td>
+                    <td ng-click="goTo(quote.id)">{{quote.date_limit || "-" | date:'dd/MM/yyyy'}}</td>
                     <td ng-click="goTo(quote.id)">{{quote.name_user_account_manager}}</td>
                     <td ng-click="goTo(quote.id)" class="text-right">{{quote.probability | number:2}}</td>
                     <td ng-click="goTo(quote.id)">{{quote.status}}</td>

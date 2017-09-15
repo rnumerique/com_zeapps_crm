@@ -144,8 +144,8 @@ app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$rou
                     $scope.invoices = response.data.invoices;
 
                     for (var i = 0; i < $scope.invoices.length; i++) {
-                        $scope.invoices[i].date_creation = new Date($scope.invoices[i].date_creation);
-                        $scope.invoices[i].date_limit = new Date($scope.invoices[i].date_limit);
+                        $scope.invoices[i].date_creation = $scope.invoices[i].date_creation !== "0000-00-00 00:00:00" ? new Date($scope.invoices[i].date_creation) : 0;
+                        $scope.invoices[i].date_limit = $scope.invoices[i].date_limit !== "0000-00-00 00:00:00" ? new Date($scope.invoices[i].date_limit) : 0;
                         $scope.invoices[i].global_discount = parseFloat($scope.invoices[i].global_discount);
                         $scope.invoices[i].probability = parseFloat($scope.invoices[i].probability);
                     }
