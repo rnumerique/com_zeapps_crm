@@ -23,6 +23,14 @@ class Zeapps_stocks extends ZeModel {
             $query .= " and s.id_warehouse = ".$where['id_warehouse'];
         }
 
+        if(isset($where['ref LIKE'])){
+            $query .= " and s.ref LIKE '%".$where['ref LIKE']."%'";
+        }
+
+        if(isset($where['label LIKE'])){
+            $query .= " and s.label LIKE '%".$where['label LIKE']."%'";
+        }
+
         $query .= " group by s.id_stock order by label limit ".$limit." offset ".$offset;
 
         /* TODO : sql query w/o using the view to improve performances. Crash when resquesting a warehouse != 1
