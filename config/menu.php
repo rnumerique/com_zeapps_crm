@@ -130,6 +130,16 @@ $tabMenu["order"] = 6 ;
 $menuLeft[] = $tabMenu ;
 
 $tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_credit_balance" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Credits en cours" ;
+$tabMenu["fa-icon"] = "money" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/credit_balances" ;
+$tabMenu["access"] = "com_zeapps_crm_read" ;
+$tabMenu["order"] = 7 ;
+$menuLeft[] = $tabMenu ;
+
+$tabMenu = array () ;
 $tabMenu["id"] = "com_zeapps_crm_contract" ;
 $tabMenu["space"] = "com_ze_apps_sales" ;
 $tabMenu["label"] = "Contrats" ;
@@ -241,6 +251,15 @@ $tabMenu["label"] = "Factures" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/invoice" ;
 $tabMenu["access"] = "com_zeapps_crm_read" ;
 $tabMenu["order"] = 5 ;
+$menuHeader[] = $tabMenu ;
+
+$tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_credit_balance" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Credits en cours" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/credit_balances" ;
+$tabMenu["access"] = "com_zeapps_crm_read" ;
+$tabMenu["order"] = 6 ;
 $menuHeader[] = $tabMenu ;
 
 $tabMenu = array () ;

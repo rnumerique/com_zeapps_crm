@@ -139,6 +139,12 @@ app.config(["$provide",
 						make : make_pdf_quote
 					}
 				},
+                credit_balance : {
+				    get : get_creditBalance,
+				    get_all : getAll_creditBalance,
+				    save : save_creditBalance,
+				    del : delete_creditBalance
+                },
 				product : {
 					get : get_product,
 					get_code : getCode_product,
@@ -486,6 +492,20 @@ app.config(["$provide",
 			function make_pdf_quote(id){
 				return zeHttp.post("/com_zeapps_crm/quotes/makePDF/" + id);
 			}
+
+			// CREDIT BALANCES
+            function get_creditBalance(id){
+			    return zeHttp.get('/com_zeapps_crm/credit_balances/get/' + id);
+            }
+            function getAll_creditBalance(src_id, src, limit, offset, filters){
+			    return zeHttp.post('/com_zeapps_crm/credit_balances/all/' + src_id + "/"  + src + "/"  + limit + "/" + offset, filters);
+            }
+            function save_creditBalance(data){
+			    return zeHttp.post('/com_zeapps_crm/credit_balances/save', data);
+            }
+            function delete_creditBalance(id){
+			    return zeHttp.delete('/com_zeapps_crm/credit_balances/delete/' + id);
+            }
 
 
 			// PRODUCT

@@ -185,6 +185,8 @@ class Invoices extends ZeCtrl
             $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
             $this->load->model("Zeapps_accounting_entries", "accounting_entries");
             $this->load->model("Zeapps_taxes", "taxes");
+            $this->load->model("Zeapps_modalities", "modalities");
+            $this->load->model("Zeapps_credit_balance_details", "credit_balance_details");
 
             if($invoice = $this->invoices->get($id)){
                 if($invoice->id_modality === '0'){
@@ -208,6 +210,18 @@ class Invoices extends ZeCtrl
                     'numerotation' => $numerotation,
                     'final_pdf' => $pdf
                 ), $id)) {
+                    if(($modality = $this->modalities->get($invoice->id_modality)) && ($modality->situation !== '0')){
+
+                        $data_details = array(
+                            "id_invoice" => $invoice->id,
+                            "paid" => $invoice->total_ttc,
+                            "id_modality" => $invoice->id_modality,
+                            "label_modality" => $invoice->label_modality,
+                            "date_payment" => date('Y-m-d')." 00:00:00"
+                        );
+
+                        $id = $this->credit_balance_details->insert($data_details);
+                    }
 
                     $label_entry = $numerotation . ' - ';
                     $label_entry .= $invoice->name_company ?: ($invoice->name_contact ?: "");
@@ -375,25 +389,30 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
         $this->load->model("Zeapps_invoice_activities", "invoice_activities");
         $this->load->model("Zeapps_crm_origins", "crm_origins");
+        $this->load->model("Zeapps_credit_balances", "credit_balances");
 
-        $data = new stdClass();
+        $invoice = $this->invoices->get($id);
 
-        $data->invoice = $this->invoices->get($id);
+        $lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
+        $line_details = $this->invoice_line_details->all(array('id_invoice'=>$id));
+        $documents = $this->invoice_documents->all(array('id_invoice'=>$id));
+        $activities = $this->invoice_activities->all(array('id_invoice'=>$id));
 
-        $data->lines = $this->invoice_lines->order_by('sort')->all(array('id_invoice'=>$id));
-        $data->line_details = $this->invoice_line_details->all(array('id_invoice'=>$id));
-        $data->documents = $this->invoice_documents->all(array('id_invoice'=>$id));
-        $data->activities = $this->invoice_activities->all(array('id_invoice'=>$id));
+        if($invoice->id_company) {
+            $credits = $this->credit_balances->all(array('id_company' => $invoice->id_company));
+        }
+        else {
+            $credits = $this->credit_balances->all(array('id_contact' => $invoice->id_contact));
+        }
 
-        $res = $this->invoices->getDueOf('company', $data->invoice->id_company);
-        $data->company_due = $res['due'];
-        $data->company_due_lines = $res['due_lines'];
-
-        $res = $this->invoices->getDueOf('contact', $data->invoice->id_contact);
-        $data->contact_due = $res['due'];
-        $data->contact_due_lines = $res['due_lines'];
-
-        echo json_encode($data);
+        echo json_encode(array(
+            'invoice' => $invoice,
+            'lines' => $lines,
+            'line_details' => $line_details,
+            'documents' => $documents,
+            'activities' => $activities,
+            'credits' => $credits
+        ));
     }
 
     public function save() {

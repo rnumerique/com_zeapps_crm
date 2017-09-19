@@ -66,19 +66,6 @@ class Zeapps_invoices extends ZeModel {
         return $this->database()->customQuery($query)->result();
     }
 
-    public function getDueOf($type, $id = null){
-        $total = 0;
-        $invoices = $this->all(array('id_'.$type => $id, 'due >' => 0));
-
-        if($invoices){
-            foreach($invoices as $invoice){
-                $total += floatval($invoice->due);
-            }
-        }
-
-        return array('due' => $total, 'due_lines' => $invoices);
-    }
-
     public function createFrom($src){
         $this->_pLoad->model("Zeapps_invoice_lines", "invoice_lines");
         $this->_pLoad->model("Zeapps_invoice_line_details", "invoice_line_details");

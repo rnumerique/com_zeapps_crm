@@ -245,26 +245,30 @@ class Quotes extends ZeCtrl
         $this->load->model("Zeapps_quote_line_details", "quote_line_details");
         $this->load->model("Zeapps_quote_documents", "quote_documents");
         $this->load->model("Zeapps_quote_activities", "quote_activities");
-        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_credit_balances", "credit_balances");
 
-        $data = new stdClass();
+        $quote = $this->quotes->get($id);
 
-        $data->quote = $this->quotes->get($id);
+        $lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
+        $line_details = $this->quote_line_details->all(array('id_quote'=>$id));
+        $documents = $this->quote_documents->all(array('id_quote'=>$id));
+        $activities = $this->quote_activities->all(array('id_quote'=>$id));
 
-        $data->lines = $this->quote_lines->order_by('sort')->all(array('id_quote'=>$id));
-        $data->line_details = $this->quote_line_details->all(array('id_quote'=>$id));
-        $data->documents = $this->quote_documents->all(array('id_quote'=>$id));
-        $data->activities = $this->quote_activities->all(array('id_quote'=>$id));
+        if($quote->id_company) {
+            $credits = $this->credit_balances->all(array('id_company' => $quote->id_company));
+        }
+        else {
+            $credits = $this->credit_balances->all(array('id_contact' => $quote->id_contact));
+        }
 
-        $res = $this->quotes->getDueOf('company', $data->quote->id_company);
-        $data->company_due = $res['due'];
-        $data->company_due_lines = $res['due_lines'];
-
-        $res = $this->quotes->getDueOf('contact', $data->quote->id_contact);
-        $data->contact_due = $res['due'];
-        $data->contact_due_lines = $res['due_lines'];
-
-        echo json_encode($data);
+        echo json_encode(array(
+            'quote' => $quote,
+            'lines' => $lines,
+            'line_details' => $line_details,
+            'documents' => $documents,
+            'activities' => $activities,
+            'credits' => $credits
+        ));
     }
 
     public function save() {

@@ -27,6 +27,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 
 		$scope.setTab = setTab;
 
+		$scope.goToPayment = goToPayment;
 		$scope.back = back;
 		$scope.first_invoice = first_invoice;
 		$scope.previous_invoice = previous_invoice;
@@ -84,10 +85,7 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
 						$scope.sortable.disabled = true;
 					}
 
-                    $scope.company_due = response.data.company_due;
-                    $scope.company_due_lines = response.data.company_due_lines;
-                    $scope.contact_due = response.data.contact_due;
-                    $scope.contact_due_lines = response.data.contact_due_lines;
+                    $scope.credits = response.data.credits;
 
                     $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
@@ -157,6 +155,10 @@ app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams
             $rootScope.comZeappsCrmLastShowTabInvoice = tab;
             $scope.navigationState = tab;
 		}
+
+		function goToPayment(){
+		    $location.url("/ng/com_zeapps_crm/credit_balances/" + $scope.invoice.id);
+        }
 
 		function back(){
             if ($rootScope.invoices.src === undefined || $rootScope.invoices.src === "invoices") {

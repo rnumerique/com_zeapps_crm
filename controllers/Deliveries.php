@@ -246,26 +246,30 @@ class Deliveries extends ZeCtrl
         $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
         $this->load->model("Zeapps_delivery_documents", "delivery_documents");
         $this->load->model("Zeapps_delivery_activities", "delivery_activities");
-        $this->load->model("Zeapps_invoices", "invoices");
+        $this->load->model("Zeapps_credit_balances", "credit_balances");
 
-        $data = new stdClass();
+        $delivery = $this->deliveries->get($id);
 
-        $data->delivery = $this->deliveries->get($id);
+        $lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
+        $line_details = $this->delivery_line_details->all(array('id_delivery'=>$id));
+        $documents = $this->delivery_documents->all(array('id_delivery'=>$id));
+        $activities = $this->delivery_activities->all(array('id_delivery'=>$id));
 
-        $data->lines = $this->delivery_lines->order_by('sort')->all(array('id_delivery'=>$id));
-        $data->line_details = $this->delivery_line_details->all(array('id_delivery'=>$id));
-        $data->documents = $this->delivery_documents->all(array('id_delivery'=>$id));
-        $data->activities = $this->delivery_activities->all(array('id_delivery'=>$id));
+        if($delivery->id_company) {
+            $credits = $this->credit_balances->all(array('id_company' => $delivery->id_company));
+        }
+        else {
+            $credits = $this->credit_balances->all(array('id_contact' => $delivery->id_contact));
+        }
 
-        $res = $this->deliveries->getDueOf('company', $data->delivery->id_company);
-        $data->company_due = $res['due'];
-        $data->company_due_lines = $res['due_lines'];
-
-        $res = $this->deliveries->getDueOf('contact', $data->delivery->id_contact);
-        $data->contact_due = $res['due'];
-        $data->contact_due_lines = $res['due_lines'];
-
-        echo json_encode($data);
+        echo json_encode(array(
+            'delivery' => $delivery,
+            'lines' => $lines,
+            'line_details' => $line_details,
+            'documents' => $documents,
+            'activities' => $activities,
+            'credits' => $credits
+        ));
     }
 
     public function save() {

@@ -87,6 +87,17 @@ app.config(["$routeProvider",
 				controller: "ComZeappsCrmInvoiceConfigCtrl"
 			})
 
+		// CREDIT BALANCE
+			.when("/ng/com_zeapps_crm/credit_balances", {
+				templateUrl: "/com_zeapps_crm/credit_balances/lists",
+				controller: "ComZeappsCrmCreditBalanceListsCtrl"
+			})
+
+            .when("/ng/com_zeapps_crm/credit_balances/:id", {
+                templateUrl: "/com_zeapps_crm/credit_balances/view",
+                controller: "ComZeappsCrmCreditBalanceViewCtrl"
+            })
+
 		// PRODUCT
 			.when("/ng/com_zeapps_crm/product/", {
 				templateUrl: "/com_zeapps_crm/product/view",

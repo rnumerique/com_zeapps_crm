@@ -51,6 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <ze-btn fa="download" color="primary" hint="PDF" direction="left" ng-click="print()"></ze-btn>
                         <ze-btn fa="files-o" color="success" hint="Dupliquer" direction="left" ng-click="transform()"></ze-btn>
                         <ze-btn fa="lock" color="warning" hint="Clôturer" always-on="true" ng-click="finalize()" ng-if="invoice.finalized === '0'"></ze-btn>
+                        <ze-btn fa="money" color="info" hint="Paiement" always-on="true" ng-click="goToPayment()" ng-if="invoice.finalized !== '0'"></ze-btn>
 
                         <div class="btn-group btn-group-xs" role="group" ng-if="nb_invoices > 0">
                             <button type="button" class="btn btn-default" ng-class="invoice_first == 0 ? 'disabled' :''" ng-click="first_invoice()"><span class="fa fa-fw fa-fast-backward"></span></button>
@@ -64,31 +65,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
 
-        <div class="row" ng-if="showDetailsEntreprise">
-            <div class="col-md-12">
-                <div class="well">
-                    <strong>En cours :</strong> {{ (company.due || contact.due) | currency:'€':2 }}
-                    <table class="table table-stripped table-condensed table-responsive" ng-if="(company.due_lines || contact.due_lines).length > 0">
+        <div class="well" ng-if="showDetailsEntreprise">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-responsive table-condensed">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Libelle</th>
-                            <th>Date limite</th>
-                            <th class="text-right">Somme due</th>
-                            <th></th>
+                            <th>N° Facture</th>
+                            <th>Entreprise</th>
+                            <th>Contact</th>
+                            <th class="text-right">Total à payer</th>
+                            <th class="text-right">Payé</th>
+                            <th class="text-right">Restant à payer</th>
+                            <th class="text-right">Date limite</th>
                         </tr>
                         </thead>
-                        <tr ng-repeat="due_line in (company.due_lines || contact.due_lines)">
-                            <td>{{ due_line.numerotation }}</td>
-                            <td>{{ due_line.libelle }}</td>
-                            <td>{{ due_line.date_limit || "-" | date:'dd/MM/yyyy' }}</td>
-                            <td class="text-right">{{ due_line.due | currency:'€':2 }}</td>
-                            <td class="text-right">
-                                <a class="btn btn-xs btn-primary" ng-href="/ng/com_zeapps_crm/invoice/{{ due_line.id }}">
-                                    <i class="fa fa-fw fa-eye"></i>
-                                </a>
-                            </td>
+                        <tbody>
+                        <tr ng-repeat="credit in credits">
+                            <td><a href="/ng/com_zeapps_crm/invoice/{{credit.id_invoice}}">{{ credit.numerotation }}</a></td>
+                            <td><a href="/ng/com_zeapps_contact/companies/{{credit.id_company}}">{{ credit.name_company }}</a></td>
+                            <td><a href="/ng/com_zeapps_contact/contacts/{{credit.id_contact}}">{{ credit.name_contact }}</a></td>
+                            <td class="text-right">{{ credit.total | currency:'€':2 }}</td>
+                            <td class="text-right">{{ credit.paid | currency:'€':2 }}</td>
+                            <td class="text-right">{{ credit.left_to_pay | currency:'€':2 }}</td>
+                            <td class="text-right">{{ credit.due_date | date:'dd/MM/yyyy' }}</td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

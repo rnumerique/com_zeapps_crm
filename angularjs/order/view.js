@@ -81,10 +81,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 				if(response.data && response.data != "false"){
 					$scope.order = response.data.order;
 
-					$scope.company_due = response.data.company_due;
-					$scope.company_due_lines = response.data.company_due_lines;
-					$scope.contact_due = response.data.contact_due;
-					$scope.contact_due_lines = response.data.contact_due_lines;
+                    $scope.credits = response.data.credits;
 
                     $scope.activities = response.data.activities || [];
 					angular.forEach($scope.activities, function(activity){
