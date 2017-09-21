@@ -100,7 +100,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
-            <div class="well">
+            <div class="well" ng-show="attributes.length">
                 <div class="row">
 
                     <div class="form-group" ng-repeat="attribute in attributes">
