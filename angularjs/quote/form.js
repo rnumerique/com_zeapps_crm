@@ -103,6 +103,9 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
                 $scope.form.id_company = company.id;
                 $scope.form.name_company = company.company_name;
                 $scope.form.accounting_number = company.accounting_number || $scope.form.accounting_number;
+                $scope.form.global_discount = parseFloat(company.discount) || $scope.form.global_discount;
+                $scope.form.id_modality = company.id_modality || $scope.form.id_modality;
+                $scope.form.label_modality = company.label_modality || $scope.form.label_modality;
 
                 if(company.billing_address_1) {
                     $scope.form.billing_address_1 = company.billing_address_1 || "";
@@ -136,6 +139,9 @@ app.controller("ComZeappsCrmQuoteFormCtrl", ["$scope", "$route", "$routeParams",
                 $scope.form.id_contact = contact.id;
                 $scope.form.name_contact = contact.last_name + " " + contact.first_name;
                 $scope.form.accounting_number = $scope.form.accounting_number || contact.accounting_number;
+                $scope.form.global_discount = $scope.form.global_discount || parseFloat(contact.discount);
+                $scope.form.id_modality = $scope.form.id_modality || contact.id_modality;
+                $scope.form.label_modality = $scope.form.label_modality || contact.label_modality;
 
                 if(contact.address_1) {
                     $scope.form.billing_address_1 = contact.address_1 || "";
