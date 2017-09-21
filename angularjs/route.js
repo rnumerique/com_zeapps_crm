@@ -159,6 +159,12 @@ app.config(["$routeProvider",
 				templateUrl: "/com_zeapps_crm/warehouse/config",
 				controller: "ComZeappsCrmWarehouseConfigCtrl"
 			})
+
+		// POTENTIAL ORDERS
+			.when("/ng/com_zeapps_crm/potential_orders/", {
+				templateUrl: "/com_zeapps_crm/potential_orders/view",
+				controller: "ComZeappsCrmPotentialOrderViewCtrl"
+			})
 		;
 	}]);
 
