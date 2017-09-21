@@ -189,7 +189,15 @@ $tabMenu["access"] = "com_zeapps_crm_read" ;
 $tabMenu["order"] = 11 ;
 $menuLeft[] = $tabMenu ;
 
-
+$tabMenu = array () ;
+$tabMenu["id"] = "com_zeapps_crm_potential_orders" ;
+$tabMenu["space"] = "com_ze_apps_sales" ;
+$tabMenu["label"] = "Commandes probables" ;
+$tabMenu["fa-icon"] = "question-circle" ;
+$tabMenu["url"] = "/ng/com_zeapps_crm/potential_orders" ;
+$tabMenu["access"] = "com_zeapps_crm_read" ;
+$tabMenu["order"] = 50 ;
+$menuLeft[] = $tabMenu ;
 
 
 $tabMenu = array () ;
@@ -208,16 +216,6 @@ $tabMenu["label"] = "Bon de réception" ;
 $tabMenu["url"] = "/ng/com_zeapps_crm/delivery_receipt" ;
 $tabMenu["access"] = "com_zeapps_crm_read" ;
 $tabMenu["order"] = 2 ;
-//$menuLeft[] = $tabMenu ;
-
-
-$tabMenu = array () ;
-$tabMenu["id"] = "com_zeapps_crm_purchase" ;
-$tabMenu["space"] = "com_ze_apps_accounting" ;
-$tabMenu["label"] = "Achats" ;
-$tabMenu["url"] = "/ng/com_zeapps_crm/purchase" ;
-$tabMenu["access"] = "com_zeapps_crm_read" ;
-$tabMenu["order"] = 1 ;
 //$menuLeft[] = $tabMenu ;
 
 

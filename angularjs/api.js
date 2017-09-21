@@ -184,7 +184,10 @@ app.config(["$provide",
 				},
 				activity_types : {
 					all : all_activityTypes
-				}
+				},
+                potential_orders : {
+                    all : all_potentialOrders
+                }
 			};
 
 			zeHttp.config = angular.extend(zeHttp.config || {}, {
@@ -625,6 +628,11 @@ app.config(["$provide",
 			function all_activityTypes(){
             	return zeHttp.get("/com_zeapps_crm/activity_types/all/");
 			}
+
+            // ACTIVITY TYPES
+            function all_potentialOrders(limit, offset, context, filters){
+                return zeHttp.post("/com_zeapps_crm/potential_orders/all/" + limit + "/" + offset + "/" + context, filters);
+            }
 
 
 			// CONFIG

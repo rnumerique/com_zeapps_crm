@@ -132,25 +132,73 @@ class Zeapps_orders extends ZeModel {
     }
 
     public function frequencyOf($id = 0, $src = 'contact'){
-        if($orders = $this->database()->select('date_creation')->order_by('date_creation', 'asc')->where(array('id_'.$src => $id, 'date_creation !=' => '0000-00-00 00:00:00'))->table('zeapps_orders')->result()) {
-            $nb = $this->count(array('id_'.$src => $id));
-            $first = $orders[0]->date_creation;
-            $first = strtotime($first);
-
-            if(sizeof($orders) > 1) {
-                $last = $orders[sizeof($orders) - 1]->date_creation;
-                $last = strtotime($last);
-            }
-            else{
-                $last = time();
-            }
-
-            $diff = intval((($last - $first) / $nb) / 86400); // 86400 = 60*60*24
-
-            return $diff;
+        if($orders = $this->database()->select('TIMESTAMPDIFF(DAY, MIN(date_creation),MAX(date_creation)) as total_time, COUNT(id) as nb_orders')->where(array('id_'.$src => $id, 'date_creation !=' => '0000-00-00 00:00:00', 'deleted_at' => null))->table('zeapps_orders')->result()) {
+            return intval($orders[0]->total_time) / intval($orders[0]->nb_orders);
         }
         else{
             return '--';
         }
+    }
+
+    public function getPotentialOrders($limit = 2147483647, $offset = 0){
+        $result = false;
+
+        $orders = $this->database()
+            ->select('id_contact, id_company, TIMESTAMPDIFF(DAY, MIN(date_creation),MAX(date_creation)) as total_time, COUNT(id) as nb_orders')
+            ->where(array('deleted_at' => null, "id_company !=" => 0))
+            ->group_by('id_company, id_contact')
+            ->table('zeapps_orders')
+            ->result();
+
+        if($orders) {
+            $result = [];
+
+            $start = microtime(true);
+            foreach($orders as $order){
+                if($order->id_company !== "0" || $order->id_contact !== "0") {
+                    if ($avg = intval(intval($order->total_time) / intval($order->nb_orders))) {
+
+                        $query = "
+                        SELECT  id,
+                                id_contact, 
+                                id_company, 
+                                name_contact, 
+                                name_company, 
+                                libelle, 
+                                numerotation,
+                                date_creation,
+                                DATE_ADD(date_creation, INTERVAL ".$avg." DAY) as date_next
+                        FROM zeapps_invoices
+                        WHERE deleted_at is null";
+
+                        if ($order->id_company !== "0") $query .= " AND id_company = " . $order->id_company;
+                        elseif ($order->id_contact !== "0") $query .= " AND id_contact = " . $order->id_contact;
+
+                        $query .= " 
+                            AND date_creation > DATE_SUB(CURDATE(), INTERVAL " . ($avg + 15) . " DAY)
+                        GROUP BY ";
+
+                        if ($order->id_company !== "0") $query .= " id_company";
+                        elseif ($order->id_contact !== "0") $query .= " id_contact";
+
+                        if ($rows = $this->database()->customQuery($query)->result()) {
+                            $row = $rows[0];
+                            $row->avg = $avg;
+                            $result[] = $row;
+                        }
+                    }
+                }
+            }
+
+            $total = sizeof($result);
+
+            usort($result, function($a, $b){ $at = strtotime($a->date_next); $bt = strtotime($b->date_next); return $at > $bt ? 1 : ($at < $bt ? -1 : 0); });
+            $result = array(
+                "orders" => array_splice($result, $offset, $limit),
+                "total" => $total
+            );
+        }
+
+        return $result;
     }
 }
