@@ -256,10 +256,10 @@ class Orders extends ZeCtrl
         $activities = $this->order_activities->all(array('id_order'=>$id));
 
         if($order->id_company) {
-            $credits = $this->credit_balances->all(array('id_company' => $order->id_company));
+            $credits = $this->credit_balances->all(array('id_company' => $order->id_company, 'left_to_pay >=' => 0.01));
         }
         else {
-            $credits = $this->credit_balances->all(array('id_contact' => $order->id_contact));
+            $credits = $this->credit_balances->all(array('id_contact' => $order->id_contact, 'left_to_pay >=' => 0.01));
         }
 
         echo json_encode(array(

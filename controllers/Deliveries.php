@@ -256,10 +256,10 @@ class Deliveries extends ZeCtrl
         $activities = $this->delivery_activities->all(array('id_delivery'=>$id));
 
         if($delivery->id_company) {
-            $credits = $this->credit_balances->all(array('id_company' => $delivery->id_company));
+            $credits = $this->credit_balances->all(array('id_company' => $delivery->id_company, 'left_to_pay >=' => 0.01));
         }
         else {
-            $credits = $this->credit_balances->all(array('id_contact' => $delivery->id_contact));
+            $credits = $this->credit_balances->all(array('id_contact' => $delivery->id_contact, 'left_to_pay >=' => 0.01));
         }
 
         echo json_encode(array(

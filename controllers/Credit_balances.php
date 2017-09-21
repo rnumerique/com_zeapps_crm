@@ -49,7 +49,7 @@ class Credit_balances extends ZeCtrl
             $filters = json_decode(file_get_contents('php://input'), true);
         }
 
-        $filters['left_to_pay >'] = 0;
+        $filters['left_to_pay >='] = 0.01;
 
         if($src !== null && $src !== "credits"){
             $filters['id_'.$src] = $src_id;

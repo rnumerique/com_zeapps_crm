@@ -255,10 +255,10 @@ class Quotes extends ZeCtrl
         $activities = $this->quote_activities->all(array('id_quote'=>$id));
 
         if($quote->id_company) {
-            $credits = $this->credit_balances->all(array('id_company' => $quote->id_company));
+            $credits = $this->credit_balances->all(array('id_company' => $quote->id_company, 'left_to_pay >=' => 0.01));
         }
         else {
-            $credits = $this->credit_balances->all(array('id_contact' => $quote->id_contact));
+            $credits = $this->credit_balances->all(array('id_contact' => $quote->id_contact, 'left_to_pay >=' => 0.01));
         }
 
         echo json_encode(array(
