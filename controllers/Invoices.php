@@ -399,10 +399,10 @@ class Invoices extends ZeCtrl
         $activities = $this->invoice_activities->all(array('id_invoice'=>$id));
 
         if($invoice->id_company) {
-            $credits = $this->credit_balances->all(array('id_company' => $invoice->id_company));
+            $credits = $this->credit_balances->all(array('id_company' => $invoice->id_company, 'left_to_pay >=' => 0.01));
         }
         else {
-            $credits = $this->credit_balances->all(array('id_contact' => $invoice->id_contact));
+            $credits = $this->credit_balances->all(array('id_contact' => $invoice->id_contact, 'left_to_pay >=' => 0.01));
         }
 
         echo json_encode(array(
@@ -427,8 +427,10 @@ class Invoices extends ZeCtrl
         }
 
         if (isset($data["id"]) && is_numeric($data["id"])) {
-            $this->invoices->update($data, $data["id"]);
-            $id = $data["id"];
+            if(($invoice = $this->invoices->get($data['id'])) && $invoice->finalized === "0") {
+                $this->invoices->update($data, $data["id"]);
+                $id = $data["id"];
+            }
         } else {
             $id = $this->invoices->insert($data);
         }
@@ -442,24 +444,29 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_line_details", "invoice_line_details");
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
-        $this->invoices->delete($id);
+        if(($invoice = $this->invoices->get($id)) && $invoice->finalized === "0") {
+            $this->invoices->delete($id);
 
-        $this->invoice_lines->delete(array('id_invoice' => $id));
-        $this->invoice_line_details->delete(array('id_invoice' => $id));
+            $this->invoice_lines->delete(array('id_invoice' => $id));
+            $this->invoice_line_details->delete(array('id_invoice' => $id));
 
-        $documents = $this->invoice_documents->all(array('id_invoice' => $id));
+            $documents = $this->invoice_documents->all(array('id_invoice' => $id));
 
-        $path = FCPATH;
+            $path = FCPATH;
 
-        if($documents && is_array($documents)){
-            for($i=0;$i<sizeof($documents);$i++){
-                unlink($path . $documents[$i]->path);
+            if ($documents && is_array($documents)) {
+                for ($i = 0; $i < sizeof($documents); $i++) {
+                    unlink($path . $documents[$i]->path);
+                }
             }
+
+            $this->invoice_documents->delete(array('id_invoice' => $id));
+
+            echo json_encode("OK");
         }
-
-        $this->invoice_documents->delete(array('id_invoice' => $id));
-
-        echo json_encode("OK");
+        else{
+            echo json_encode(false);
+        }
     }
 
     public function saveLine(){

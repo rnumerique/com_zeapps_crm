@@ -42,11 +42,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td ng-click="goTo(invoice.id)" class="text-center"><i class='fa fa-fw fa-lock text-danger' ng-if="invoice.finalized === '1'"></i></td>
                     <td ng-click="goTo(invoice.id)">{{invoice.libelle}}</td>
                     <td ng-click="goTo(invoice.id)">
-
                             {{invoice.name_company}}
                             <span ng-if="invoice.name_company && invoice.name_contact">-</span>
                             {{invoice.name_contact ? invoice.name_contact : ''}}
-
                     </td>
                     <td ng-click="goTo(invoice.id)" class="text-right">{{invoice.total_ht | currency:'€':2}}</td>
                     <td ng-click="goTo(invoice.id)" class="text-right">{{invoice.total_ttc | currency:'€':2}}</td>
@@ -59,7 +57,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 data-edit="invoice"
                                 data-title="Editer la facture"
                                 data-template="templateInvoice"></ze-btn>
-                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(invoice)" ze-confirmation></ze-btn>
+                        <ze-btn fa="trash" color="danger" hint="Supprimer" direction="left" ng-click="delete(invoice)" ze-confirmation ng-if="invoice.finalized === '0'"></ze-btn>
                     </td>
                 </tr>
                 </tbody>
