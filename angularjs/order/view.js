@@ -3,6 +3,9 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_order");
 
+		var code_exists = 0;
+		var code = "";
+
 		$scope.$on("comZeappsCrm_triggerOrderHook", broadcast);
 		$scope.hooks = zeHooks.get("comZeappsCrm_OrderHook");
 
@@ -139,10 +142,33 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 		//////////////////// FUNCTIONS ////////////////////
 
-		function broadcast(){
+		function broadcast(event, data){
+			if(data.received){
+                code_exists++;
+			}
+			else if(data.found !== undefined && code_exists > 0){
+				if(data.found){
+					code_exists = 0;
+				}
+				else{
+					code_exists--;
+					if(code_exists === 0){
+                        toasts("danger", "Aucun produit avec le code " + code + " trouvé dans la base de donnée.");
+					}
+				}
+			}
+			else {
+                $rootScope.$broadcast("comZeappsCrm_dataOrderHook",
+                    {
+                        order: $scope.order
+                    }
+                );
+            }
+		}
+		function broadcast_code(code){
 			$rootScope.$broadcast("comZeappsCrm_dataOrderHook",
 				{
-					order: $scope.order
+                    code: code
 				}
 			);
 		}
@@ -227,7 +253,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 
 		function addFromCode(){
 			if($scope.codeProduct !== "") {
-                var code = $scope.codeProduct;
+                code = $scope.codeProduct;
                 zhttp.crm.product.get_code(code).then(function (response) {
                     if (response.data && response.data != "false") {
                         var line = {
@@ -240,7 +266,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
                             qty: 1,
                             discount: 0.00,
                             price_unit: parseFloat(response.data.price_ht) || parseFloat(response.data.price_ttc),
-                            id_taxe: parseFloat(response.data.id_taxe),
+                            id_taxe: response.data.id_taxe,
                             value_taxe: parseFloat(response.data.value_taxe),
                             accounting_number: parseFloat(response.data.accounting_number),
                             sort: $scope.lines.length
@@ -259,7 +285,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
                         });
                     }
                     else {
-                        toasts("danger", "Aucun produit avec le code " + code + " trouvé dans la base de donnée.");
+                        broadcast_code($scope.codeProduct);
                     }
                 });
             }
@@ -279,7 +305,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
 						qty: 1,
 						discount: 0.00,
 						price_unit: parseFloat(objReturn.price_ht) || parseFloat(objReturn.price_ttc),
-						id_taxe: parseFloat(objReturn.id_taxe),
+						id_taxe: objReturn.id_taxe,
 						value_taxe: parseFloat(objReturn.value_taxe),
                         accounting_number: parseFloat(objReturn.accounting_number),
 						sort: $scope.lines.length
