@@ -285,7 +285,12 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$route", "$routeParams",
                         });
                     }
                     else {
-                        broadcast_code($scope.codeProduct);
+                    	if($scope.hooks.length > 0) {
+                            broadcast_code($scope.codeProduct);
+                        }
+                        else{
+                            toasts("danger", "Aucun produit avec le code " + code + " trouvé dans la base de donnée.");
+						}
                     }
                 });
             }
