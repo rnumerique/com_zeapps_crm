@@ -76,9 +76,12 @@ app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams
 							$scope.form.price_ht = parseFloat($scope.form.price_ht);
 							$scope.form.value_taxe = parseFloat($scope.form.value_taxe);
                             updatePrice('ttc');
-							if($scope.form.extra !== "") {
+							if($scope.form.extra) {
                                 $scope.form.extra = angular.fromJson($scope.form.extra);
                             }
+                            else{
+								$scope.form.extra = {};
+							}
 							zhttp.crm.category.openTree($scope.tree, $scope.form.id_cat);
 							zhttp.crm.category.get($scope.form.id_cat).then(function (response) {
 								if (response.status == 200) {
