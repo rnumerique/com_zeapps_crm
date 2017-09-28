@@ -9,7 +9,7 @@ class Zeapps_stocks extends ZeModel {
                           s.resupply_delay as resupply_delay,
                           s.resupply_unit as resupply_unit,
                           s.total as total,
-                          avg(m.qty) as average 
+                          sum(m.qty) as average 
                   from zeapps_stocks s
                   left join zeapps_stock_movements m 
                   on s.id_stock = m.id_stock
