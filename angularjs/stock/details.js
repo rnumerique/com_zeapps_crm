@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal) {
+app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "toasts",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, toasts) {
 
 		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
@@ -21,6 +21,7 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
         };
         $scope.templateStock = '/com_zeapps_crm/stock/form_modal';
         $scope.templateMvt = '/com_zeapps_crm/stock/form_mvt';
+        $scope.templateTransfert = '/com_zeapps_crm/stock/form_transfert';
 
 		$scope.shownMvtForm = false;
 		var scales = {
@@ -52,6 +53,7 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 		$scope.backgroundOf = backgroundOf;
 		$scope.setIgnoredTo = setIgnoredTo;
 		$scope.addMvt = addMvt;
+		$scope.addTransfert = addTransfert;
 
 
         function getStocks(){
@@ -129,10 +131,36 @@ app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParam
 
 			zhttp.crm.product_stock.add_mvt(formatted_data).then(function(response){
 				if(response.data && response.data != "false"){
-					$scope.shownMvtForm = false;
 					getStocks();
 				}
 			});
+		}
+
+		function addTransfert(transfert){
+
+			if(transfert.src !== transfert.trgt) {
+                transfert.id_stock = $scope.product_stock.id_stock;
+                transfert.id_table = "0";
+                transfert.name_table = "zeapps_stock_movements";
+
+                if (transfert.date_mvt) {
+                    var y = transfert.date_mvt.getFullYear();
+                    var M = transfert.date_mvt.getMonth();
+                    var d = transfert.date_mvt.getDate();
+
+                    transfert.date_mvt = new Date(Date.UTC(y, M, d));
+                }
+
+                var formatted_data = angular.toJson(transfert);
+                zhttp.crm.product_stock.add_transfert(formatted_data).then(function (response) {
+                    if (response.data && response.data != "false") {
+                        getStocks();
+                    }
+                });
+            }
+            else{
+				toasts("warning", "Vous ne pouvez pas faire de transferts vers l'entrepôt de départ");
+			}
 		}
 
 		function setIgnoredTo(mvt, value){

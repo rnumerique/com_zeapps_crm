@@ -169,6 +169,7 @@ app.config(["$provide",
 					save : save_product_stock,
 					del : delete_product_stock,
 					add_mvt : add_mvt,
+                    add_transfert : add_transfert,
 					ignore_mvt : ignore_mvt
 				},
 				warehouse : {
@@ -591,6 +592,9 @@ app.config(["$provide",
 			}
 			function add_mvt(data){
 				return zeHttp.post("/com_zeapps_crm/stock/add_mvt/", data);
+			}
+			function add_transfert(data){
+				return zeHttp.post("/com_zeapps_crm/stock/add_transfert/", data);
 			}
 			function ignore_mvt(id, value, id_stock, id_warehouse){
 				id_warehouse = parseInt(id_warehouse) || "";

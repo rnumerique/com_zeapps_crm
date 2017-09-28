@@ -28,6 +28,10 @@ class Stock extends ZeCtrl
         $this->load->view('stock/form_modal');
     }
 
+    public function form_transfert(){
+        $this->load->view('stock/form_transfert');
+    }
+
     public function form_mvt(){
         $this->load->view('stock/form_mvt');
     }
@@ -179,6 +183,30 @@ class Stock extends ZeCtrl
         }
 
         $id = $this->stock_movements->insert($data);
+
+        echo $id;
+    }
+
+    public function add_transfert() {
+        $this->load->model('zeapps_stock_movements', 'stock_movements');
+
+        // constitution du tableau
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        $data['id_warehouse'] = $data['src'];
+        $data['qty'] = - $data['qty'];
+
+        $id = $this->stock_movements->insert($data);
+
+        $data['id_warehouse'] = $data['trgt'];
+        $data['qty'] = - $data['qty'];
+
+        $this->stock_movements->insert($data);
 
         echo $id;
     }

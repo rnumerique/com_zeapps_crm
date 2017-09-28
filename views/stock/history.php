@@ -4,6 +4,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <div class="row">
     <div class="col-md-12 text-right" ng-show="filter_model.id_warehouse">
+        <ze-btn fa="plus" color="success" hint="Ajouter un transfert" always-on="true"
+                ze-modalform="addTransfert"
+                data-template="templateTransfert"
+                data-title="Ajouter un transfert entre 2 entrepôts"></ze-btn>
         <ze-btn fa="plus" color="success" hint="Ajouter un mouvement de stock" always-on="true"
                 ze-modalform="addMvt"
                 data-template="templateMvt"
