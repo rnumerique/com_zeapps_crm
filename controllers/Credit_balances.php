@@ -20,6 +20,9 @@ class Credit_balances extends ZeCtrl
     public function form_modal(){
         $this->load->view('credit_balances/form_modal');
     }
+    public function form_multiple_modal(){
+        $this->load->view('credit_balances/form_multiple_modal');
+    }
 
 
 
@@ -86,6 +89,32 @@ class Credit_balances extends ZeCtrl
         }
 
         echo $id;
+    }
+
+    public function save_multiples(){
+        $this->load->model('Zeapps_credit_balance_details', 'credit_details');
+
+        $data = array() ;
+
+        if (strcasecmp($_SERVER['REQUEST_METHOD'], 'post') === 0 && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+            // POST is actually in json format, do an internal translation
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($data['lines']){
+            foreach($data['lines'] as $id_invoice => $paid){
+                $detail = array(
+                    "id_invoice" => $id_invoice,
+                    "paid" => $paid,
+                    "id_modality" => $data['id_modality'],
+                    "label_modality" => $data['label_modality'],
+                    "date_payment" => $data['date_payment']
+                );
+                $this->credit_details->insert($detail);
+            }
+        }
+
+        echo true;
     }
 
     public function delete($id){

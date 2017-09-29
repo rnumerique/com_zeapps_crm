@@ -1,6 +1,8 @@
 app.controller("ComZeappsCrmCreditBalanceListsPartialCtrl", ["$scope", "zeHttp", "$location", "$timeout",
 	function ($scope, zhttp, $location, $timeout) {
 
+        $scope.templateForm = '/com_zeapps_crm/credit_balances/form_multiple_modal';
+
         $scope.id_company = 0;
         $scope.filters = {
             main: [
@@ -33,6 +35,7 @@ app.controller("ComZeappsCrmCreditBalanceListsPartialCtrl", ["$scope", "zeHttp",
         var src_id = 0;
 
         $scope.loadList = loadList;
+        $scope.addPaiements = addPaiements;
         $scope.goTo = goTo;
         $scope.isOverdue = isOverdue;
 
@@ -84,5 +87,28 @@ app.controller("ComZeappsCrmCreditBalanceListsPartialCtrl", ["$scope", "zeHttp",
 
         function isOverdue(credit){
 		    return credit.due_date < new Date() ? 'bg-danger' : '';
+        }
+
+        function addPaiements(detail) {
+            console.log(detail);
+            var data = detail;
+
+            if(data.date_payment) {
+                var y = data.date_payment.getFullYear();
+                var M = data.date_payment.getMonth();
+                var d = data.date_payment.getDate();
+
+                data.date_payment = new Date(Date.UTC(y, M, d));
+            }
+            else{
+                data.date_payment = 0;
+            }
+
+            var formatted_data = angular.toJson(data);
+            zhttp.crm.credit_balance.save_multiples(formatted_data).then(function(response){
+                if(response.data && response.data !== "false"){
+                    loadList();
+                }
+            });
         }
 	}]);

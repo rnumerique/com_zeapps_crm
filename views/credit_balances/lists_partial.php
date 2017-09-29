@@ -6,6 +6,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="row">
         <div class="col-md-12">
             <ze-filters class="pull-right" data-model="filter_model" data-filters="filters" data-update="loadList"></ze-filters>
+            <ze-btn fa="plus" color="success" hint="paiements" always-on="true"
+                    ze-modalform="addPaiements"
+                    data-template="templateForm"
+                    data-title="Ajouter des paiements"></ze-btn>
         </div>
     </div>
 

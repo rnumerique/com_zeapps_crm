@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <ze-btn fa="plus" color="success" hint="paiement" always-on="true"
                     ze-modalform="add"
                     data-template="templateForm"
-                    data-title="Modifier un paiement"></ze-btn>
+                    data-title="Ajouter un paiement"></ze-btn>
             <table class="table table-responsive table-condensed" ng-if="details.length">
                 <thead>
                 <tr>

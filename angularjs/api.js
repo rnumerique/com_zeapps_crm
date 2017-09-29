@@ -143,6 +143,7 @@ app.config(["$provide",
 				    get : get_creditBalance,
 				    get_all : getAll_creditBalance,
 				    save : save_creditBalance,
+                    save_multiples : saveMultiples_creditBalance,
 				    del : delete_creditBalance
                 },
 				product : {
@@ -506,6 +507,9 @@ app.config(["$provide",
             }
             function save_creditBalance(data){
 			    return zeHttp.post('/com_zeapps_crm/credit_balances/save', data);
+            }
+            function saveMultiples_creditBalance(data){
+			    return zeHttp.post('/com_zeapps_crm/credit_balances/save_multiples', data);
             }
             function delete_creditBalance(id){
 			    return zeHttp.delete('/com_zeapps_crm/credit_balances/delete/' + id);

@@ -133,7 +133,12 @@ class Zeapps_orders extends ZeModel {
 
     public function frequencyOf($id = 0, $src = 'contact'){
         if($orders = $this->database()->select('TIMESTAMPDIFF(DAY, MIN(date_creation),MAX(date_creation)) as total_time, COUNT(id) as nb_orders')->where(array('id_'.$src => $id, 'date_creation !=' => '0000-00-00 00:00:00', 'deleted_at' => null))->table('zeapps_orders')->result()) {
-            return intval($orders[0]->total_time) / intval($orders[0]->nb_orders);
+            if(intval($orders[0]->nb_orders) > 0) {
+                return intval($orders[0]->total_time) / intval($orders[0]->nb_orders);
+            }
+            else{
+                return '--';
+            }
         }
         else{
             return '--';

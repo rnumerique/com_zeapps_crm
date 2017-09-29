@@ -47,8 +47,8 @@ app.controller("ComZeappsCrmCreditBalanceViewCtrl", ["$scope", "zeHttp", "$route
             });
         }
 
-        function edit(delivery){
-            var data = delivery;
+        function edit(detail){
+            var data = detail;
 
             if(data.date_payment) {
                 var y = data.date_payment.getFullYear();
