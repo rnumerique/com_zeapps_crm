@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal) {
+app.controller("ComZeappsCrmProductFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_product");
+        menu("com_ze_apps_sales", "com_zeapps_crm_product");
 
         $scope.currentBranch = {};
 		$scope.tree = {

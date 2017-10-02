@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts) {
+app.controller("ComZeappsCrmQuoteViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_quote");
+        menu("com_ze_apps_sales", "com_zeapps_crm_quote");
 
 		$scope.$on("comZeappsCrm_triggerQuoteHook", broadcast);
 		$scope.hooks = zeHooks.get("comZeappsCrm_QuoteHook");

@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, toasts) {
+app.controller("ComZeappsCrmStockDetailsCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "toasts", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, toasts, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_stock");
+        menu("com_ze_apps_sales", "com_zeapps_crm_stock");
 
         $rootScope.current_warehouse = $rootScope.current_warehouse || $rootScope.user.id_warehouse;
 

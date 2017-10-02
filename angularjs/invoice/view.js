@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts) {
+app.controller("ComZeappsCrmInvoiceViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_invoice");
+        menu("com_ze_apps_sales", "com_zeapps_crm_invoice");
 
 		$scope.$on("comZeappsCrm_triggerInvoiceHook", broadcast);
 		$scope.hooks = zeHooks.get("comZeappsCrm_InvoiceHook");

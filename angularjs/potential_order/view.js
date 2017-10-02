@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmPotentialOrderViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal) {
+app.controller("ComZeappsCrmPotentialOrderViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_potential_orders");
+        menu("com_ze_apps_sales", "com_zeapps_crm_potential_orders");
 
         $scope.filters = {
             main: [

@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmCreditBalanceViewCtrl", ["$scope", "zeHttp", "$routeParams", "toasts",
-	function ($scope, zhttp, $routeParams, toasts) {
+app.controller("ComZeappsCrmCreditBalanceViewCtrl", ["$scope", "zeHttp", "$routeParams", "toasts", "menu",
+	function ($scope, zhttp, $routeParams, toasts, menu) {
 
-        $scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_credit_balance");
+        menu("com_ze_apps_sales", "com_zeapps_crm_credit_balance");
 
         $scope.templateForm = '/com_zeapps_crm/credit_balances/form_modal';
 

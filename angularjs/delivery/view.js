@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts) {
+app.controller("ComZeappsCrmDeliveryViewCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "Upload", "crmTotal", "zeHooks", "toasts", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, Upload, crmTotal, zeHooks, toasts, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_sales", "com_zeapps_crm_delivery");
+        menu("com_ze_apps_sales", "com_zeapps_crm_delivery");
 
 		$scope.$on("comZeappsCrm_triggerDeliveryHook", broadcast);
 		$scope.hooks = zeHooks.get("comZeappsCrm_DeliveryHook");

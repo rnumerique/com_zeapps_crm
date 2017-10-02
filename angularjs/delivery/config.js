@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "zeapps_modal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
+app.controller("ComZeappsCrmDeliveryConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_deliveries");
+        menu("com_ze_apps_config", "com_ze_apps_deliveries");
 
 		$scope.format = "";
 		$scope.numerotation = 1;

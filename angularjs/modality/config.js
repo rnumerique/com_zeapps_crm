@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmModalityConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "zeapps_modal", "$uibModal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal, $uibModal) {
+app.controller("ComZeappsCrmModalityConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
+	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
 
-		$scope.$parent.loadMenu("com_ze_apps_config", "com_ze_apps_modalities");
+        menu("com_ze_apps_config", "com_ze_apps_modalities");
 
         $scope.templateForm = "/com_zeapps_crm/modalities/form_modal";
 
