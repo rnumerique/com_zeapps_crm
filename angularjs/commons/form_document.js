@@ -1,4 +1,4 @@
-app.controller("ZeAppsCrmModalFormDocumentCtrl", function($scope) {
+app.controller("ZeAppsCrmModalFormDocumentCtrl", ["$scope", function($scope) {
 
     $scope.upload = upload;
 
@@ -9,4 +9,4 @@ app.controller("ZeAppsCrmModalFormDocumentCtrl", function($scope) {
             $scope.form.label = $scope.form.files[0].name;
         }
     }
-}) ;
+}]) ;

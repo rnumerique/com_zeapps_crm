@@ -1,4 +1,4 @@
-app.controller("ZeAppsCrmModalFormActivityCtrl", function($scope, zeHttp) {
+app.controller("ZeAppsCrmModalFormActivityCtrl", ["$scope", "zeHttp", function($scope, zeHttp) {
     $scope.activity_types = [];
 
     $scope.updateType = updateType;
@@ -24,4 +24,4 @@ app.controller("ZeAppsCrmModalFormActivityCtrl", function($scope, zeHttp) {
             }
         });
     }
-}) ;
+}]) ;

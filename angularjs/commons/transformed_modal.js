@@ -12,7 +12,8 @@ listModuleModalFunction.push({
 	}
 });
 
-app.controller("ZeAppsCrmModalDocumentTransformedCtrl", function($scope, $location, $uibModalInstance, zeHttp, toasts, titre, option) {
+app.controller("ZeAppsCrmModalDocumentTransformedCtrl", ["$scope", "$location", "$uibModalInstance", "zeHttp", "toasts", "titre", "option",
+	function($scope, $location, $uibModalInstance, zeHttp, toasts, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.documents = option;
@@ -51,4 +52,4 @@ app.controller("ZeAppsCrmModalDocumentTransformedCtrl", function($scope, $locati
 	function cancel() {
 		$uibModalInstance.dismiss("cancel");
 	}
-}) ;
+}]) ;

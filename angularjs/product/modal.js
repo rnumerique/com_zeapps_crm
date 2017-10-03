@@ -13,7 +13,7 @@ listModuleModalFunction.push({
 });
 
 
-app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ComZeappsCrmModalSearchProductCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zeHttp, titre, option) {
 	$scope.titre = titre ;
 
     $scope.currentBranch = {};
@@ -83,4 +83,4 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", function($scope, $uibModalI
 		$uibModalInstance.close(produit);
 	}
 
-}) ;
+}]) ;

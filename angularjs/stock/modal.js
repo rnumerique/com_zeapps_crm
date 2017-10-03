@@ -12,7 +12,7 @@ listModuleModalFunction.push({
 	}
 });
 
-app.controller("ZeAppsCrmModalProductStockCtrl", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ZeAppsCrmModalProductStockCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zeHttp, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.formCtrl = {};
@@ -57,4 +57,4 @@ app.controller("ZeAppsCrmModalProductStockCtrl", function($scope, $uibModalInsta
 		$uibModalInstance.close(product_stocks);
 	}
 
-}) ;
+}]) ;

@@ -1,4 +1,4 @@
-app.directive("zeappsHappylittletree",
+app.directive("zeappsHappylittletree", [
 		function(){
 			return{
 				restrict: "E",
@@ -19,9 +19,9 @@ app.directive("zeappsHappylittletree",
 				}
 			};
 		}
-	)
+	])
 
-	.directive("branch",
+	.directive("branch",[
 		function($compile){
 			return{
 				restrict: "E",
@@ -78,4 +78,4 @@ app.directive("zeappsHappylittletree",
 				}
 			};
 		}
-	);
+	]);

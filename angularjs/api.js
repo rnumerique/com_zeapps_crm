@@ -1,6 +1,6 @@
 app.config(["$provide",
 	function ($provide) {
-		$provide.decorator("zeHttp", function($delegate){
+		$provide.decorator("zeHttp", ["$delegate", function($delegate){
 			var zeHttp = $delegate;
 
 			zeHttp.crm = {
@@ -674,5 +674,5 @@ app.config(["$provide",
 			function save_product_attr(data){
 				return zeHttp.config.save(angular.toJson({id: "crm_product_attributes", value: data}));
 			}
-		});
+		}]);
 	}]);

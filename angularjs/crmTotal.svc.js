@@ -1,4 +1,4 @@
-app.factory("crmTotal", function(){
+app.factory("crmTotal", [function(){
 
 	var doc = {};
 	var lines = [];
@@ -177,4 +177,4 @@ app.factory("crmTotal", function(){
     function round2(num) {
         return +(Math.round(num + "e+2")  + "e-2");
     }
-});
+}]);
