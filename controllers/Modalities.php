@@ -54,8 +54,6 @@ class Modalities extends ZeCtrl
     public function delete($id) {
         $this->load->model("Zeapps_modalities", "modalities");
 
-        $this->modalities->delete($id);
-
-        echo json_encode("OK");
+        echo json_encode($this->modalities->delete($id));
     }
 }

@@ -71,18 +71,16 @@ class Warehouse extends ZeCtrl
             foreach($data as $warehouse){
                 $this->warehouses->update($warehouse, $warehouse['id']);
             }
-            echo json_encode('OK');
+            echo json_encode(true);
         }
         else{
-            echo json_encode('false');
+            echo json_encode(false);
         }
     }
 
     public function delete($id){
         $this->load->model('zeapps_warehouses', 'warehouses');
 
-        $this->warehouses->delete($id);
-
-        echo json_encode('OK');
+        echo json_encode($this->warehouses->delete($id));
     }
 }

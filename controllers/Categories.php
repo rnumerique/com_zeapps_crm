@@ -53,11 +53,11 @@ class Categories extends ZeCtrl
                     foreach ($data['categories'] as $category) {
                         $this->categories->update(array('sort' => intval($category['sort'])), array('id' => intval($category['id'])));
                     }
+                    echo json_encode(true);
+                    return;
                 }
         }
-
-        echo json_encode('OK');
-
+        echo json_encode(false);
         return;
     }
 

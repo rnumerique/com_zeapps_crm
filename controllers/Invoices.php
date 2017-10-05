@@ -445,8 +445,6 @@ class Invoices extends ZeCtrl
         $this->load->model("Zeapps_invoice_documents", "invoice_documents");
 
         if(($invoice = $this->invoices->get($id)) && $invoice->finalized === "0") {
-            $this->invoices->delete($id);
-
             $this->invoice_lines->delete(array('id_invoice' => $id));
             $this->invoice_line_details->delete(array('id_invoice' => $id));
 
@@ -462,7 +460,7 @@ class Invoices extends ZeCtrl
 
             $this->invoice_documents->delete(array('id_invoice' => $id));
 
-            echo json_encode("OK");
+            echo json_encode($this->invoices->delete($id));
         }
         else{
             echo json_encode(false);
@@ -648,9 +646,10 @@ class Invoices extends ZeCtrl
         if($document = $this->invoice_documents->get($id)){
             unlink($document->path);
 
-            $this->invoice_documents->delete($id);
+            echo json_encode($this->invoice_documents->delete($id));
         }
-
-        echo 'OK';
+        else{
+            echo json_encode(false);
+        }
     }
 }

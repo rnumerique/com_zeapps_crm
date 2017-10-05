@@ -49,8 +49,6 @@ class Crm_origins extends ZeCtrl
     public function delete($id) {
         $this->load->model("Zeapps_crm_origins", "crm_origins");
 
-        $this->crm_origins->delete($id);
-
-        echo json_encode("OK");
+        echo json_encode($this->crm_origins->delete($id));
     }
 }

@@ -172,8 +172,7 @@ class Product extends ZeCtrl
             }
         }
 
-        echo json_encode("OK");
-        return;
+        echo $data["id"];
 
     }
 

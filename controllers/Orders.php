@@ -305,8 +305,6 @@ class Orders extends ZeCtrl
         $this->load->model("Zeapps_order_line_details", "order_line_details");
         $this->load->model("Zeapps_order_documents", "order_documents");
 
-        $this->orders->delete($id);
-
         $this->order_lines->delete(array('id_order' => $id));
         $this->order_line_details->delete(array('id_order' => $id));
 
@@ -322,7 +320,7 @@ class Orders extends ZeCtrl
 
         $this->order_documents->delete(array('id_order' => $id));
 
-        echo json_encode("OK");
+        echo json_encode($this->orders->delete($id));
     }
 
     public function saveLine(){
@@ -504,9 +502,10 @@ class Orders extends ZeCtrl
         if($document = $this->order_documents->get($id)){
             unlink($document->path);
 
-            $this->order_documents->delete($id);
+            echo json_encode($this->order_documents->delete($id));
         }
-
-        echo 'OK';
+        else{
+            echo json_encode(false);
+        }
     }
 }

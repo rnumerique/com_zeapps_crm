@@ -53,8 +53,6 @@ class Taxes extends ZeCtrl
     public function delete($id) {
         $this->load->model("Zeapps_taxes", "taxes");
 
-        $this->taxes->delete($id);
-
-        echo json_encode("OK");
+        echo json_encode($this->taxes->delete($id));
     }
 }

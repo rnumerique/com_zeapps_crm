@@ -304,8 +304,6 @@ class Quotes extends ZeCtrl
         $this->load->model("Zeapps_quote_line_details", "quote_line_details");
         $this->load->model("Zeapps_quote_documents", "quote_documents");
 
-        $this->quotes->delete($id);
-
         $this->quote_lines->delete(array('id_quote' => $id));
         $this->quote_line_details->delete(array('id_quote' => $id));
 
@@ -321,7 +319,7 @@ class Quotes extends ZeCtrl
 
         $this->quote_documents->delete(array('id_quote' => $id));
 
-        echo json_encode("OK");
+        echo json_encode($this->quotes->delete($id));
     }
 
     public function saveLine(){
@@ -503,9 +501,10 @@ class Quotes extends ZeCtrl
         if($document = $this->quote_documents->get($id)){
             unlink($document->path);
 
-            $this->quote_documents->delete($id);
+            echo json_encode($this->quote_documents->delete($id));
         }
-
-        echo 'OK';
+        else{
+            echo json_encode(false);
+        }
     }
 }

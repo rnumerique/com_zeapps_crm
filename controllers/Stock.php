@@ -154,8 +154,7 @@ class Stock extends ZeCtrl
         }
 
         if (isset($data["id"])) {
-            $this->product_stocks->update($data, $data["id"]);
-            echo json_encode('OK');
+            echo json_encode($this->product_stocks->update($data, $data["id"]));
         } else {
             $id = $this->product_stocks->insert($data);
             $this->get($id, $id_warehouse);
@@ -165,9 +164,7 @@ class Stock extends ZeCtrl
     public function delete($id){
         $this->load->model('zeapps_product_stocks', 'product_stocks');
 
-        $this->product_stocks->delete($id);
-
-        echo json_encode('OK');
+        echo json_encode($this->product_stocks->delete($id));
     }
 
 

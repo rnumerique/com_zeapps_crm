@@ -305,8 +305,6 @@ class Deliveries extends ZeCtrl
         $this->load->model("Zeapps_delivery_line_details", "delivery_line_details");
         $this->load->model("Zeapps_delivery_documents", "delivery_documents");
 
-        $this->deliveries->delete($id);
-
         $this->delivery_lines->delete(array('id_delivery' => $id));
         $this->delivery_line_details->delete(array('id_delivery' => $id));
 
@@ -322,7 +320,7 @@ class Deliveries extends ZeCtrl
 
         $this->delivery_documents->delete(array('id_delivery' => $id));
 
-        echo json_encode("OK");
+        echo json_encode($this->deliveries->delete($id));
     }
 
     public function saveLine(){
@@ -506,10 +504,11 @@ class Deliveries extends ZeCtrl
         if($document = $this->delivery_documents->get($id)){
             unlink($document->path);
 
-            $this->delivery_documents->delete($id);
+            echo json_encode($this->delivery_documents->delete($id));
         }
-
-        echo 'OK';
+        else{
+            echo json_encode(false);
+        }
     }
 
     public function _updateStocks($id){
