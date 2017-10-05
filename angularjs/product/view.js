@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$location", "zeHttp", "$uibModal", "toasts",
-	function ($scope, $location, zhttp, $uibModal, toasts) {
+app.controller("ComZeappsCrmProductViewCtrl", ["$scope", "$location", "zeHttp", "$uibModal", "toasts", "menu",
+	function ($scope, $location, zhttp, $uibModal, toasts, menu) {
 
         menu("com_ze_apps_sales", "com_zeapps_crm_product");
 

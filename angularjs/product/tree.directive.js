@@ -21,7 +21,7 @@ app.directive("zeappsHappylittletree", [
 		}
 	])
 
-	.directive("branch",[
+	.directive("branch",["$compile",
 		function($compile){
 			return{
 				restrict: "E",
