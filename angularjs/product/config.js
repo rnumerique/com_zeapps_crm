@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmProductConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
+app.controller("ComZeappsCrmProductConfigCtrl", ["$scope", "zeHttp", "menu",
+	function ($scope, zhttp, menu) {
 
         menu("com_ze_apps_config", "com_ze_apps_products");
 

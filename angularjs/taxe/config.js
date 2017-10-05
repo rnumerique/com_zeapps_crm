@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmTaxeConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
+app.controller("ComZeappsCrmTaxeConfigCtrl", ["$scope", "$rootScope", "zeHttp", "menu",
+	function ($scope, $rootScope, zhttp, menu) {
 
         menu("com_ze_apps_config", "com_ze_apps_taxes");
 

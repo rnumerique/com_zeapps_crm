@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
+app.controller("ComZeappsCrmQuoteListsPartialCtrl", ["$scope", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
+	function ($scope, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.quotes)
 			$rootScope.quotes = {};

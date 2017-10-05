@@ -12,7 +12,7 @@ listModuleModalFunction.push({
 	}
 });
 
-app.controller("ZeAppsCrmModalDocumentTransformCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ZeAppsCrmModalDocumentTransformCtrl", ["$scope", "$uibModalInstance", "titre", "option", function($scope, $uibModalInstance, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.form = {};

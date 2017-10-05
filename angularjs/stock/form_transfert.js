@@ -1,5 +1,5 @@
-app.controller("ComZeAppsCrmStockTransfertFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal",
-    function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal) {
+app.controller("ComZeAppsCrmStockTransfertFormCtrl", ["$scope", "$rootScope", "zeHttp",
+    function ($scope, $rootScope, zhttp) {
 
         $scope.form.src = $rootScope.current_warehouse || $rootScope.user.id_warehouse;
         $scope.form.date_mvt = new Date();

@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
+app.controller("ComZeappsCrmInvoiceListsPartialCtrl", ["$scope", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
+	function ($scope, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.invoices)
 			$rootScope.invoices = {};

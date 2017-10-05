@@ -13,7 +13,7 @@ listModuleModalFunction.push({
 });
 
 
-app.controller("ComZeappsCrmModalSearchProductCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ComZeappsCrmModalSearchProductCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zhttp, titre, option) {
 	$scope.titre = titre ;
 
     $scope.currentBranch = {};
@@ -57,7 +57,7 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", ["$scope", "$uibModalInstan
         var offset = ($scope.page - 1) * $scope.pageSize;
         var formatted_filters = angular.toJson($scope.filter_model);
 
-        zeHttp.crm.product.modal(id, $scope.pageSize, offset, formatted_filters).then(function (response) {
+        zhttp.crm.product.modal(id, $scope.pageSize, offset, formatted_filters).then(function (response) {
             if (response.status == 200) {
                 $scope.products = response.data.data;
                 $scope.total = response.data.total;
@@ -66,7 +66,7 @@ app.controller("ComZeappsCrmModalSearchProductCtrl", ["$scope", "$uibModalInstan
     }
 
 	function getTree() {
-		zeHttp.crm.category.tree().then(function (response) {
+        zhttp.crm.category.tree().then(function (response) {
 			if (response.status == 200) {
 				$scope.tree.branches = response.data;
                 $scope.currentBranch = $scope.tree.branches[0];

@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
+app.controller("ComZeappsCrmDeliveryListsPartialCtrl", ["$scope", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
+	function ($scope, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.deliveries)
 			$rootScope.deliveries = {};

@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$uibModal", "zeapps_modal", "menu",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $uibModal, zeapps_modal, menu) {
+app.controller("ComZeappsCrmProductComposeFormCtrl", ["$scope", "$routeParams", "$location", "zeHttp", "zeapps_modal", "menu",
+	function ($scope, $routeParams, $location, zhttp, zeapps_modal, menu) {
 
         menu("com_ze_apps_sales", "com_zeapps_crm_product");
 

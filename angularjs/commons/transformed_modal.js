@@ -13,7 +13,7 @@ listModuleModalFunction.push({
 });
 
 app.controller("ZeAppsCrmModalDocumentTransformedCtrl", ["$scope", "$location", "$uibModalInstance", "zeHttp", "toasts", "titre", "option",
-	function($scope, $location, $uibModalInstance, zeHttp, toasts, titre, option) {
+	function($scope, $location, $uibModalInstance, zhttp, toasts, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.documents = option;
@@ -29,15 +29,15 @@ app.controller("ZeAppsCrmModalDocumentTransformedCtrl", ["$scope", "$location", 
 	}
 
 	function pdf(type, id){
-        zeHttp.crm[type].pdf.make(id).then(function(response){
+        zhttp.crm[type].pdf.make(id).then(function(response){
 			if(response.data && response.data != "false"){
-				window.document.location.href = zeHttp.crm[type].pdf.get() + angular.fromJson(response.data);
+				window.document.location.href = zhttp.crm[type].pdf.get() + angular.fromJson(response.data);
 			}
 		});
 	}
 
 	function finalize(id){
-        zeHttp.crm.invoice.finalize(id).then(function (response) {
+        zhttp.crm.invoice.finalize(id).then(function (response) {
             if (response.data && response.data !== "false") {
                 if(response.data.error){
                     toasts('danger', response.data.error);

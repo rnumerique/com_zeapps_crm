@@ -1,9 +1,9 @@
-app.controller("ZeAppsCrmModalFormActivityCtrl", ["$scope", "zeHttp", function($scope, zeHttp) {
+app.controller("ZeAppsCrmModalFormActivityCtrl", ["$scope", "zeHttp", function($scope, zhttp) {
     $scope.activity_types = [];
 
     $scope.updateType = updateType;
 
-    zeHttp.crm.activity_types.all().then(function(response){
+    zhttp.crm.activity_types.all().then(function(response){
         if(response.data && response.data != "false"){
             $scope.activity_types = response.data.activity_types;
         }

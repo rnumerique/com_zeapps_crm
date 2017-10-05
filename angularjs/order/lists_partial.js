@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, $timeout, toasts) {
+app.controller("ComZeappsCrmOrderListsPartialCtrl", ["$scope", "$location", "$rootScope", "zeHttp", "$timeout", "toasts",
+	function ($scope, $location, $rootScope, zhttp, $timeout, toasts) {
 
 		if(!$rootScope.orders)
 			$rootScope.orders = {};

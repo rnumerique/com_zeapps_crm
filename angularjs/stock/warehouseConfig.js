@@ -1,7 +1,7 @@
-app.controller("ComZeappsCrmWarehouseConfigCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "menu",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, menu) {
+app.controller("ComZeappsCrmWarehouseConfigCtrl", ["$scope", "zeHttp", "menu",
+	function ($scope, zhttp, menu) {
 
-		$menu("com_ze_apps_config", "com_ze_apps_warehouses");
+		menu("com_ze_apps_config", "com_ze_apps_warehouses");
 
         $scope.templateForm = "/com_zeapps_crm/warehouse/form_modal";
 

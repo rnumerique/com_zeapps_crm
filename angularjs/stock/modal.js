@@ -12,7 +12,7 @@ listModuleModalFunction.push({
 	}
 });
 
-app.controller("ZeAppsCrmModalProductStockCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zeHttp, titre, option) {
+app.controller("ZeAppsCrmModalProductStockCtrl", ["$scope", "$uibModalInstance", "zeHttp", "titre", "option", function($scope, $uibModalInstance, zhttp, titre, option) {
 	$scope.titre = titre ;
 
 	$scope.formCtrl = {};
@@ -31,7 +31,7 @@ app.controller("ZeAppsCrmModalProductStockCtrl", ["$scope", "$uibModalInstance",
 
 
 	function loadList() {
-		zeHttp.crm.product_stock.get_all().then(function (response) {
+        zhttp.crm.product_stock.get_all().then(function (response) {
 			if (response.status == 200 && response.data != "false") {
 				$scope.product_stocks = response.data.product_stocks ;
 			}
@@ -41,7 +41,7 @@ app.controller("ZeAppsCrmModalProductStockCtrl", ["$scope", "$uibModalInstance",
 	function addProductStock(){
 		var formatted_data = angular.toJson($scope.form);
 
-		zeHttp.crm.product_stock.save(formatted_data).then(function(response){
+        zhttp.crm.product_stock.save(formatted_data).then(function(response){
 			if(response.data && response.data != "false"){
 				$uibModalInstance.close(response.data.product_stock);
 			}

@@ -1,5 +1,5 @@
-app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$route", "$routeParams", "$location", "$rootScope", "zeHttp", "zeapps_modal",
-	function ($scope, $route, $routeParams, $location, $rootScope, zhttp, zeapps_modal) {
+app.controller("ComZeappsCrmDeliveryFormCtrl", ["$scope", "$routeParams", "$rootScope", "zeHttp",
+	function ($scope, $routeParams, $rootScope, zhttp) {
 
         $scope.accountManagerHttp = zhttp.app.user;
         $scope.accountManagerFields = [
