@@ -206,4 +206,16 @@ class Zeapps_orders extends ZeModel {
 
         return $result;
     }
+
+    public function searchFor($terms = array()){
+        $query = "SELECT * FROM zeapps_orders WHERE (1 ";
+
+        foreach($terms as $term){
+            $query .= "AND (libelle LIKE '%".$term."%') ";
+        }
+
+        $query .= ") AND deleted_at IS NULL LIMIT 10";
+
+        return $this->database()->customQuery($query)->result();
+    }
 }

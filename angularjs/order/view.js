@@ -245,7 +245,7 @@ app.controller("ComZeappsCrmOrderViewCtrl", ["$scope", "$routeParams", "$locatio
 			});
 		}
 
-        function keyEventaddFromCode($event){
+        function keyEventaddFromCode(){
             if($event.which === 13){
                 addFromCode();
             }

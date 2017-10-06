@@ -192,4 +192,16 @@ class Zeapps_product_categories extends ZeModel {
 
         return $ids;
     }
+
+    public function searchFor($terms = array()){
+        $query = "SELECT * FROM zeapps_product_categories WHERE (1 ";
+
+        foreach($terms as $term){
+            $query .= "AND (name LIKE '%".$term."%') ";
+        }
+
+        $query .= ") AND deleted_at IS NULL LIMIT 10";
+
+        return $this->database()->customQuery($query)->result();
+    }
 }

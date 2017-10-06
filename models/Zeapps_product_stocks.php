@@ -16,4 +16,16 @@ class Zeapps_product_stocks extends ZeModel {
                                 ->result();
     }
 
+    public function searchFor($terms = array()){
+        $query = "SELECT * FROM zeapps_product_stocks WHERE (1 ";
+
+        foreach($terms as $term){
+            $query .= "AND (ref LIKE '%".$term."%' OR label LIKE '%".$term."%') ";
+        }
+
+        $query .= ") AND deleted_at IS NULL LIMIT 10";
+
+        return $this->database()->customQuery($query)->result();
+    }
+
 }

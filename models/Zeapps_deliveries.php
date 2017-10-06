@@ -159,4 +159,16 @@ class Zeapps_deliveries extends ZeModel {
         }
         return false;
     }
+
+    public function searchFor($terms = array()){
+        $query = "SELECT * FROM zeapps_deliveries WHERE (1 ";
+
+        foreach($terms as $term){
+            $query .= "AND (libelle LIKE '%".$term."%') ";
+        }
+
+        $query .= ") AND deleted_at IS NULL LIMIT 10";
+
+        return $this->database()->customQuery($query)->result();
+    }
 }

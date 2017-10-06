@@ -58,4 +58,16 @@ class Zeapps_product_products extends ZeModel {
         }
         return;
     }
+
+    public function searchFor($terms = array()){
+        $query = "SELECT * FROM zeapps_product_products WHERE (1 ";
+
+        foreach($terms as $term){
+            $query .= "AND (ref LIKE '%".$term."%' OR name LIKE '%".$term."%') ";
+        }
+
+        $query .= ") AND deleted_at IS NULL LIMIT 10";
+
+        return $this->database()->customQuery($query)->result();
+    }
 }

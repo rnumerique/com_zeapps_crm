@@ -95,4 +95,20 @@ class Zeapps_stocks extends ZeModel {
 
         return $results;
     }
+
+    public function searchFor($terms = array()){
+        $where = [];
+
+        foreach($terms as $term){
+            $where['title'] = $term;
+        }
+
+        return $this->database()->select('*')
+            ->where(array("deleted_at" => null))
+            ->where_like_or($where)
+            ->group_by('id')
+            ->limit(10, 0)
+            ->table('zeapps_projects')
+            ->result();
+    }
 }
